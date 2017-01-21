@@ -56,7 +56,7 @@ export default {
     Chartist
   },
 
-  data () {
+  data() {
     return {
       series: [
         [12, 9, 7, 8, 5],
@@ -96,7 +96,7 @@ export default {
         // Default mobile configuration
         stackBars: true,
         axisX: {
-          labelInterpolationFnc (value) {
+          labelInterpolationFnc(value) {
             return value.split(/\s+/).map((word) => word[0]).join('')
           }
         },
@@ -110,7 +110,7 @@ export default {
           reverseData: true,
           horizontalBars: true,
           axisX: {
-            labelInterpolationFnc: function (n) { return n }
+            labelInterpolationFnc: function(n) { return n }
           },
           axisY: {
             offset: 60
@@ -136,7 +136,7 @@ export default {
         chartPadding: 30,
         labelOffset: 60,
         labelDirection: 'explode',
-        labelInterpolationFnc (value) {
+        labelInterpolationFnc(value) {
           return value
         }
       },
@@ -163,7 +163,7 @@ export default {
   },
 
   computed: {
-    linesData () {
+    linesData() {
       return {
         labels: this.labels,
         series: this.series
@@ -171,7 +171,7 @@ export default {
     }
   },
 
-  created () {
+  created() {
     setInterval(() => {
       // https://vuejs.org/guide/list.html#Mutation-Methods
       this.series.unshift(this.series.pop())

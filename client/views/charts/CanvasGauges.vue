@@ -32,7 +32,7 @@ export default {
     RadialGauge
   },
 
-  data () {
+  data() {
     return {
       value: 75
     }
@@ -41,7 +41,7 @@ export default {
   computed: {
   },
 
-  created () {
+  created() {
     // has bug!
     // setInterval(() => {
     //   this.value = Math.floor(Math.random() * 100)

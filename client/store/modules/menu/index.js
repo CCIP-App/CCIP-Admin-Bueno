@@ -27,7 +27,7 @@ const state = {
 }
 
 const mutations = {
-  [types.EXPAND_MENU] (state, menuItem) {
+  [types.EXPAND_MENU](state, menuItem) {
     if (menuItem.index > -1) {
       if (state.items[menuItem.index] && state.items[menuItem.index].meta) {
         state.items[menuItem.index].meta.expanded = menuItem.expanded

@@ -18,14 +18,14 @@ export default {
     url: String
   },
 
-  data () {
+  data() {
     return {
       src: require('assets/logo.svg')
     }
   },
 
   methods: {
-    open (url) {
+    open(url) {
       window.open(url)
     }
   }

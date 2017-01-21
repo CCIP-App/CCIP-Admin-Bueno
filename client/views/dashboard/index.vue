@@ -113,14 +113,14 @@ export default {
     Chart
   },
 
-  data () {
+  data() {
     return {
       data: [300, 50, 100]
     }
   },
 
   computed: {
-    chartData () {
+    chartData() {
       return {
         labels: [
           'Red',
@@ -139,7 +139,7 @@ export default {
     }
   },
 
-  mounted () {
+  mounted() {
     setInterval(() => {
       // https://github.com/vuejs/vue/issues/2873
       // Array.prototype.$set/$remove deprecated (use Vue.set or Array.prototype.splice instead)

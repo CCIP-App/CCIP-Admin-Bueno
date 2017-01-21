@@ -15,12 +15,12 @@ const state = {
 }
 
 const mutations = {
-  [types.TOGGLE_DEVICE] (state, device) {
+  [types.TOGGLE_DEVICE](state, device) {
     state.device.isMobile = device === 'mobile'
     state.device.isTablet = device === 'tablet'
   },
 
-  [types.TOGGLE_SIDEBAR] (state, opened) {
+  [types.TOGGLE_SIDEBAR](state, opened) {
     if (state.device.isMobile) {
       state.sidebar.opened = opened
     } else {
@@ -28,7 +28,7 @@ const mutations = {
     }
   },
 
-  [types.SWITCH_EFFECT] (state, effectItem) {
+  [types.SWITCH_EFFECT](state, effectItem) {
     for (let name in effectItem) {
       state.effect[name] = effectItem[name]
     }

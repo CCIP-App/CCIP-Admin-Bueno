@@ -59,19 +59,19 @@ export default {
     ProgressBar
   },
 
-  data () {
+  data() {
     return {
       dynamicValue: 60
     }
   },
 
   methods: {
-    plus () {
+    plus() {
       if (this.dynamicValue === 100) return
       this.dynamicValue += 10
     },
 
-    minus () {
+    minus() {
       if (this.dynamicValue === 0) return
       this.dynamicValue -= 10
     }

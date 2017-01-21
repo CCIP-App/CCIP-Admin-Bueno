@@ -63,15 +63,15 @@ export default {
   },
 
   methods: {
-    openModalBasic () {
+    openModalBasic() {
       openModal()
     },
 
-    openModalImage () {
+    openModalImage() {
       openImageModal()
     },
 
-    openModalCard () {
+    openModalCard() {
       openCardModal({
         title: 'Modal title',
         url: this.$store.state.pkg.homepage

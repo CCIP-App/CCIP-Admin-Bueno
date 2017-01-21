@@ -144,13 +144,13 @@ export default {
     Datepicker
   },
 
-  data () {
+  data() {
     return {
       value: '2016-12-12'
     }
   },
 
-  mounted () {
+  mounted() {
     const { checkIn, checkOut } = this.$refs
     checkIn.datepicker.set('onChange', (d) => {
       checkOut.datepicker.set('minDate', d.fp_incr(1))
@@ -162,19 +162,19 @@ export default {
   },
 
   computed: {
-    today () {
+    today() {
       return new Date()
     },
-    maxDate () {
+    maxDate() {
       let d = new Date()
       d.setDate(32)
       return d
     },
-    placeholder () {
+    placeholder() {
       return `minDate: today, maxDate: ${this.maxDate.getFullYear()}-${this.maxDate.getMonth() + 1}-${this.maxDate.getDate()}`
     },
     // https://github.com/chmln/flatpickr/blob/gh-pages/src/flatpickr.l10n.zh.js
-    l10n () {
+    l10n() {
       return {
         firstDayOfWeek: 1,
         weekdays: {
@@ -190,7 +190,7 @@ export default {
   },
 
   watch: {
-    value (newVal, oldVal) {
+    value(newVal, oldVal) {
       console.log(newVal, oldVal)
     }
   }

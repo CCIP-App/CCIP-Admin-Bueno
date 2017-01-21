@@ -22,24 +22,24 @@ export default {
     Breadcrumb
   },
 
-  data () {
+  data() {
     return {
       list: null
     }
   },
 
-  created () {
+  created() {
     this.getList()
   },
 
   computed: {
-    name () {
+    name() {
       return this.$route.name
     }
   },
 
   methods: {
-    getList () {
+    getList() {
       let matched = this.$route.matched
       let first = matched[0]
       if (first && (first.name !== 'Home' || first.path !== '')) {
@@ -50,7 +50,7 @@ export default {
   },
 
   watch: {
-    $route () {
+    $route() {
       this.getList()
     }
   }

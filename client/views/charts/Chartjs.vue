@@ -67,7 +67,7 @@ export default {
     Chart
   },
 
-  data () {
+  data() {
     return {
       labels: ['Sleeping', 'Designing', 'Coding', 'Cycling'],
       data: [20, 40, 5, 35],
@@ -105,7 +105,7 @@ export default {
   },
 
   computed: {
-    pieData () {
+    pieData() {
       return {
         labels: this.labels,
         datasets: [{
@@ -115,7 +115,7 @@ export default {
       }
     },
 
-    waveData () {
+    waveData() {
       return {
         labels: this.labels_2,
         datasets: [{
@@ -126,7 +126,7 @@ export default {
       }
     },
 
-    seriesData () {
+    seriesData() {
       let data = {
         labels: this.labels_3
       }
@@ -143,7 +143,7 @@ export default {
     }
   },
 
-  created () {
+  created() {
     setInterval(() => {
       // https://vuejs.org/guide/list.html#Mutation-Methods
       this.data_2.unshift(this.data_2.pop())

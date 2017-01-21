@@ -81,7 +81,7 @@ export default {
     StepItem
   },
 
-  data () {
+  data() {
     return {
       stepItems: [
         {

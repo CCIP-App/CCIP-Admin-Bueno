@@ -47,13 +47,13 @@ export default {
     show: Boolean
   },
 
-  data () {
+  data() {
     return {
       isReady: false
     }
   },
 
-  mounted () {
+  mounted() {
     let route = this.$route
     if (route.name) {
       this.isReady = true
@@ -70,18 +70,18 @@ export default {
       'expandMenu'
     ]),
 
-    isExpanded (item) {
+    isExpanded(item) {
       return item.meta.expanded
     },
 
-    toggle (index, item) {
+    toggle(index, item) {
       this.expandMenu({
         index: index,
         expanded: !item.meta.expanded
       })
     },
 
-    shouldExpandMatchItem (route) {
+    shouldExpandMatchItem(route) {
       let matched = route.matched
       let lastMatched = matched[matched.length - 1]
       let parent = lastMatched.parent || lastMatched
@@ -101,11 +101,11 @@ export default {
       }
     },
 
-    generatePath (item, subItem) {
+    generatePath(item, subItem) {
       return `${item.component ? item.path + '/' : ''}${subItem.path}`
     },
 
-    findParentFromMenu (route) {
+    findParentFromMenu(route) {
       const menu = this.menu
       for (let i = 0, l = menu.length; i < l; i++) {
         const item = menu[i]
@@ -122,7 +122,7 @@ export default {
   },
 
   watch: {
-    $route (route) {
+    $route(route) {
       this.isReady = true
       this.shouldExpandMatchItem(route)
     }

@@ -58,11 +58,11 @@ import Plotly from 'plotly.js'
 
 export default {
 
-  created () {
+  created() {
     this.fetchData()
   },
 
-  mounted () {
+  mounted() {
     Plotly.plot(
       this.$refs.pie,
       [{
@@ -258,14 +258,14 @@ export default {
     )
   },
 
-  data () {
+  data() {
     return {
       rows: []
     }
   },
 
   methods: {
-    fetchData () {
+    fetchData() {
       Plotly.d3.csv('https://raw.githubusercontent.com/plotly/datasets/master/2014_us_cities.csv', (err, rows) => {
         if (err) {
           rows = []
@@ -275,9 +275,9 @@ export default {
       })
     },
 
-    drawMap () {
+    drawMap() {
       let rows = this.rows
-      function unpack (rows, key) {
+      function unpack(rows, key) {
         return rows.map(row => row[key])
       }
 

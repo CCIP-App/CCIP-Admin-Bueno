@@ -22,7 +22,7 @@ export default {
     NprogressContainer
   },
 
-  beforeMount () {
+  beforeMount() {
     const { body } = document
     const WIDTH = 768
     const RATIO = 3

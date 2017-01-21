@@ -24,7 +24,7 @@
 <script>
 export default {
 
-  data () {
+  data() {
     return this.$store.state.pkg
   }
 
@@ -36,11 +36,11 @@ export default {
 
 .footer {
   margin-left: 180px;
-  
+
   @include mobile() {
     margin-left: 0;
   }
-  
+
   .social a {
     border-bottom: none !important;
   }

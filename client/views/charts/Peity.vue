@@ -74,19 +74,19 @@ export default {
     Peity
   },
 
-  data () {
+  data() {
     return {
       data: [5, 3, 9, 6, 5, 9, 7, 3, 5, 2, 5, 3, 9, 6, 5, 9, 7, 3, 5, 2]
     }
   },
 
   computed: {
-    lineData () {
+    lineData() {
       return this.data.toString()
     }
   },
 
-  created () {
+  created() {
     setInterval(() => {
       // https://vuejs.org/guide/list.html#Mutation-Methods
       let random = Math.round(Math.random() * 10)

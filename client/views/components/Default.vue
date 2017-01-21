@@ -39,27 +39,27 @@ export default {
       parent: 'componententry'
     }),
 
-    parentPath () {
+    parentPath() {
       const parent = this.parent
       return parent ? parent.path : ''
     },
 
-    items () {
+    items() {
       const parent = this.parent
       return parent ? parent.children : []
     }
   },
 
   methods: {
-    getPath (item) {
+    getPath(item) {
       return this.parentPath + '/' + item.path
     },
 
-    getDescription (item) {
+    getDescription(item) {
       return item.meta && item.meta.description
     },
 
-    getRepository (item) {
+    getRepository(item) {
       return item.meta && item.meta.repository
     }
   }

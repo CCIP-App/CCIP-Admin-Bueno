@@ -19,7 +19,7 @@ export default {
     Handsontable
   },
 
-  data () {
+  data() {
     return {
       rawData: [
         ['', 'Kia', 'Nissan', 'Toyota', 'Honda'],

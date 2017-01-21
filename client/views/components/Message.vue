@@ -64,7 +64,7 @@ export default {
     Message
   },
 
-  mounted () {
+  mounted() {
     openMessage({
       message: 'Success lorem ipsum dolor sit amet, consectetur adipiscing elit lorem ipsum dolor sit amet, consectetur adipiscing elit',
       type: 'success',
@@ -74,7 +74,7 @@ export default {
   },
 
   methods: {
-    openMessageWithType (type) {
+    openMessageWithType(type) {
       openMessage({
         title: 'This is a title',
         message: 'This is the message.',

@@ -77,20 +77,20 @@ export default {
     Slider
   },
 
-  data () {
+  data() {
     return {
       value: 23
     }
   },
 
   computed: {
-    per () {
+    per() {
       return this.value + '%'
     }
   },
 
   methods: {
-    update (val) {
+    update(val) {
       this.value = Number(val)
     }
   }

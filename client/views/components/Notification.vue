@@ -64,7 +64,7 @@ export default {
     Notification
   },
 
-  mounted () {
+  mounted() {
     openNotification({
       message: 'Success lorem ipsum dolor sit amet, consectetur adipiscing elit lorem ipsum dolor sit amet, consectetur adipiscing elit',
       type: 'success',
@@ -73,7 +73,7 @@ export default {
   },
 
   methods: {
-    openNotificationWithType (type) {
+    openNotificationWithType(type) {
       openNotification({
         title: 'This is a title',
         message: 'This is the message.',

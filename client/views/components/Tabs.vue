@@ -130,7 +130,7 @@ export default {
     TabPane
   },
 
-  data () {
+  data() {
     return {
       items: [
         {
@@ -157,7 +157,7 @@ export default {
     }
   },
 
-  mounted () {
+  mounted() {
     this.items.splice(0, 1)
     setInterval(() => {
       this.randomTabs()
@@ -165,7 +165,7 @@ export default {
   },
 
   methods: {
-    randomTabs () {
+    randomTabs() {
       this.items.unshift(this.items.pop())
     }
   }

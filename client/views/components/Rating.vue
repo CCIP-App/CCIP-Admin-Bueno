@@ -53,7 +53,7 @@ export default {
     Rating
   },
 
-  data () {
+  data() {
     return {
       value: 3,
       items: [
@@ -82,7 +82,7 @@ export default {
   },
 
   methods: {
-    update (val) {
+    update(val) {
       this.value = val
     }
   }

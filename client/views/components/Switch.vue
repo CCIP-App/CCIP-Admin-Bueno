@@ -74,14 +74,14 @@ export default {
     VbSwitch
   },
 
-  data () {
+  data() {
     return {
       value: false
     }
   },
 
   methods: {
-    updateValue (val) {
+    updateValue(val) {
       this.value = val
     }
   }
