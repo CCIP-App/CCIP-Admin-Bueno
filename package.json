@@ -1,22 +1,18 @@
 {
-  "name": "vue-admin",
-  "version": "0.1.11",
-  "description": "Vue Admin Panel Framework",
-  "repository": "fundon/vue-admin",
-  "homepage": "https://vue-admin.fundon.me",
+  "name": "SITCON-Admin",
+  "version": "0.0.1",
+  "description": "SITCON 2017 PASS Admin by using Vue Admin Panel Framework",
+  "repository": "CCIP-App/CCIP-Admin-Bueno",
+  "homepage": "https://ccip.sitcon.org/",
   "license": "MIT",
   "author": {
-    "name": "Fangdun Cai",
-    "email": "cfddream@gmail.com",
-    "url": "fundon.me"
+    "name": "Erickson Juang",
+    "email": "a820224@gmail.com",
+    "url": "bingluen.tw"
   },
   "keywords": [
     "admin",
-    "bulma",
-    "dashboard",
-    "data",
-    "visualization",
-    "vue"
+    "SITCON"
   ],
   "engines": {
     "node": ">=4",
