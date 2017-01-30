@@ -19,5 +19,9 @@ module.exports = {
     'space-before-function-paren': ['error', 'never'],
     // allow debugger during development
     'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0
-  }
+  },
+  "env": {
+    "browser": true,
+    "es6": true,
+  },
 }
