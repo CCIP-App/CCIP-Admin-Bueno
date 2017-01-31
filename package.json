@@ -4,7 +4,7 @@
   "description": "SITCON 2017 PASS Admin by using Vue Admin Panel Framework",
   "repository": "CCIP-App/CCIP-Admin-Bueno",
   "homepage": "https://ccip.sitcon.org/",
-  "license": "GNU",
+  "license": "GPL-3.0",
   "author": {
     "name": "Erickson Juang",
     "email": "a820224@gmail.com",
