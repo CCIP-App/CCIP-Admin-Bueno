@@ -18,7 +18,8 @@ const store = new Vuex.Store({
     menu
   },
   state: {
-    pkg
+    pkg,
+    api: 'ccip.sitcon.org'
   },
   mutations: {
   }
