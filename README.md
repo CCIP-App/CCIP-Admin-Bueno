@@ -7,7 +7,7 @@
 
 <p>
   <sub>
-    Made by <a href="https://github.com/CCIP-App/CCIP-Admin-Buenographs/contributors">contributors</a>
+    Made by <a href="https://github.com/CCIP-App/CCIP-Admin-Bueno/graphs/contributors">contributors</a>
   </sub>
 </p>
 
