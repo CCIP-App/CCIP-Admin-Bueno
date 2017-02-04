@@ -12,15 +12,15 @@
     </div>
 
     <div class="tile is-ancestor">
-      <div class="tile is-parent is-3">
+      <div class="tile is-parent is-4">
         <article class="tile is-child box">
           <h4 class="title">會眾報到</h4>
           <div class="content">
-            <chart :type="'doughnut'" :data="CIData.attendees"></chart>
+            <chart :type="'doughnut'" :data="CIData.attendees" :options="doughnutOption"></chart>
           </div>
         </article>
       </div>
-      <div class="tile is-parent is-3">
+      <div class="tile is-parent is-4">
         <article class="tile is-child box">
           <h4 class="title">講者報到</h4>
           <div class="content">
@@ -28,19 +28,11 @@
           </div>
         </article>
       </div>
-      <div class="tile is-parent is-3">
+      <div class="tile is-parent is-4">
         <article class="tile is-child box">
           <h4 class="title">工人報到</h4>
           <div class="content">
             <chart :type="'doughnut'" :data="CIData.staff"></chart>
-          </div>
-        </article>
-      </div>
-      <div class="tile is-parent is-3">
-        <article class="tile is-child box">
-          <h4 class="title">迎賓袋領取</h4>
-          <div class="content">
-            <chart :type="'doughnut'" :data="kitData"></chart>
           </div>
         </article>
       </div>
@@ -77,7 +69,7 @@
 </template>
 
 <script>
-import Chart from 'vue-bulma-chartjs'
+import Chart from '../modules/Chartjs'
 import ProgressBar from '../modules/ProgressBar'
 
 export default {
@@ -158,17 +150,15 @@ export default {
           ]
         }]
       }
+    },
+    doughnutOption() {
+      return {
+        showAllTooltips: true
+      }
     }
   },
 
   mounted() {
-    // setInterval(() => {
-    //   // https://github.com/vuejs/vue/issues/2873
-    //   // Array.prototype.$set/$remove deprecated (use Vue.set or Array.prototype.splice instead)
-    //   this.data.forEach((item, i) => {
-    //     this.data.splice(i, 1, Math.ceil(Math.random() * 1000))
-    //   })
-    // }, 1024)
     this.$http.get('//' + this.$store.state.api + '/dashboard').then((res) => {
       console.log('successful')
       console.log(res.body)
@@ -179,8 +169,6 @@ export default {
         window.location = '/'
       }
     })
-
-    console.log(this.kitData)
   }
 }
 </script>
