@@ -1,6 +1,6 @@
 module.exports = {
   root: true,
-  parser: 'babel-eslint',
+  parser: 'Espree',
   parserOptions: {
     sourceType: 'module'
   },

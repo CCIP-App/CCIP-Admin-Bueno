@@ -14,7 +14,7 @@
       </v-row>
       <br>
       <v-row>
-        <v-col xs4>
+        <v-col xs12 md4>
           <v-card>
             <v-card-text>
               <h4 class="ma-0 text-xs-left">App 使用率</h4>
@@ -22,7 +22,7 @@
             </v-card-text>
           </v-card>
         </v-col>
-        <v-col xs4>
+        <v-col xs12 md4>
           <v-card>
             <v-card-text>
               <h4 class="ma-0 text-xs-left">App 使用率</h4>
@@ -30,7 +30,7 @@
             </v-card-text>
           </v-card>
         </v-col>
-        <v-col xs4>
+        <v-col xs12 md4>
           <v-card>
             <v-card-text>
               <h4 class="ma-0 text-xs-left">App 使用率</h4>
@@ -97,7 +97,7 @@
       }
     },
     mounted () {
-      window.resize()
+      
     }
   }
 </script>
