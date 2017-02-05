@@ -1,11 +1,10 @@
 <template>
-  <v-app top-fixed-navbar>
+  <v-app top-fixed-navbar left-fixed-sidebar>
     
     <main-nav></main-nav>
-
+    
     <main>
       <main-side></main-side>
-
       <v-content>
         <v-container fluid>
           <transition name="slide" mode="out-in">

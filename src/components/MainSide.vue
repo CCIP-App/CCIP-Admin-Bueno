@@ -60,22 +60,6 @@
         i
           padding: 0
   
-  .sitcon
-    background-color: $theme.primary
-    text-align: center
-    padding-top: 16px
-    color: #fff
-    
-    a
-      color: #fff
-      text-decoration: none
-      
-    .gitter
-      margin-bottom: 16px
-
-    h1
-      color: #fff
-      font-size: 3em  
   
 
   
@@ -88,4 +72,12 @@
     
     .icon
       color: $grey.darken-3 !important
+
+  .sidebar
+    position: fixed;
+    top: 4rem
+    left: 0px
+    z-index: 5
+    @media screen and (min-width: $grid-breakpoints.sm)
+      min-width:300px
 </style>
