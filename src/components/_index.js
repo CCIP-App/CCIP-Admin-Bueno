@@ -3,7 +3,7 @@ import MainSide from './MainSide.vue'
 import HighChart from './HighChart.vue'
 
 export default{
-    MainNav,
-    MainSide,
-    HighChart
+  MainNav,
+  MainSide,
+  HighChart
 }

@@ -10,6 +10,6 @@ export default new Router({
   mode: 'history',
   routes: [
     { path: '/', component: Login },
-    { path: "/dashboard", component: Dashboard }
+    { path: '/dashboard', component: Dashboard }
   ]
 })
