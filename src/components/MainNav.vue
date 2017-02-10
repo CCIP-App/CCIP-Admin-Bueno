@@ -1,6 +1,6 @@
 <template>
   <header>
-    <v-navbar fixed>
+    <v-navbar fixed class="pl-0">
       <v-btn v-side-bar:mainsidebar="" floating class="side-icon hidden-md-and-up transparent z-depth-0" ripple >
         <v-icon>menu</v-icon>
       </v-btn>
@@ -17,7 +17,9 @@
     name: 'main-nav',
   }
 </script>
-<style scoped>
+<style lang="stylus" scoped>
+  @import '../stylus/settings/_variables'
+ 
   .navbar {
     align-items: center;
     color: #fff;
@@ -27,15 +29,15 @@
     margin: 0 1rem;
   }
   
-  .navbar__side-title {
-    display: flex;
-    flex: 1;
-    align-items: center;
-    justify-content: center;
-    flex-direction: center;
-    margin: 0 0rem;
-    font-size: 15px;
-  }
+  .navbar__side-title 
+    display: flex
+    flex: 1
+    align-items: center
+    justify-content: center
+    flex-direction: center
+    margin: 0 0rem
+    font-size: 15px
+  
   
 
   
