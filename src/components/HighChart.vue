@@ -1,5 +1,5 @@
 <template>
-  <div :id="'chart-'+idName"  style="margin: 0 auto">
+  <div :id="'chart-' + idName"  style="margin: 0 auto">
 
   </div>
 </template>
@@ -12,12 +12,13 @@ export default {
       type: Object,
       default: () => ({})
     },
-    idName:{
+    idName: {
       type: String
     }
   },
-  mounted () {
-    var chart = Highcharts.chart('chart-'+this.idName, this.options);
+  mounted() {
+    console.log(this.$el.clientWidth)
+    Highcharts.chart('chart-' + this.idName, this.options)
   }
 }
 </script>
