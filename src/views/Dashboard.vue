@@ -48,28 +48,37 @@
     name: 'Dashboard',
     data() {
       return {
-        appUse: 45,
+        appUse: 45
       }
     },
     computed: {
       CIData() {
         return {
-          attendees:[
-            {name:"App報到",y:300},
-            {name:"人工報到",y:50},
-            {name:"未報到",y:100}
+          attendees: [
+            {
+              name: 'App報到',
+              y: 300
+            },
+            {
+              name: '人工報到',
+              y: 50
+            },
+            {
+              name: '未報到',
+              y: 100
+            }
           ]
         }
       }
     },
     methods: {
       // Overwriting base render method with actual data.
-      defaultOption(datas){
+      defaultOption(datas) {
         return {
           chart: {
             type: 'pie',
-            spacing:[0,0,0,0],
-            reflow:true
+            spacing: [0, 0, 0, 0],
+            reflow: true
           },
           title: {
             text: ''
@@ -96,8 +105,7 @@
         }
       }
     },
-    mounted () {
-      window.resize()
+    mounted() {
     }
   }
 </script>
