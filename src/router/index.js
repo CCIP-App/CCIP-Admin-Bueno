@@ -3,6 +3,7 @@ import Router from 'vue-router'
 
 import Login from '../views/Login.vue'
 import Dashboard from '../views/Dashboard.vue'
+import CheckIn from '../views/CheckIn.vue'
 
 Vue.use(Router)
 
@@ -10,6 +11,7 @@ export default new Router({
   mode: 'history',
   routes: [
     { path: '/', component: Login },
-    { path: '/dashboard', component: Dashboard }
+    { path: '/dashboard', component: Dashboard },
+    { path: '/checkin', component: CheckIn }
   ]
 })
