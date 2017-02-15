@@ -34,7 +34,8 @@
       return {
         result: "Loading...",
         cam: null,
-        webrtc: true
+        webrtc: true,
+        stream: null
       }
     },
     watch: {
@@ -64,7 +65,8 @@
     },
     beforeDestroy() {
       var self = this;
-      self.cam.stop()
+      self.cam.stop();
+      self.stream.getTracks()[0].stop();
     },
     methods: {
       init(vid_id) {
@@ -77,6 +79,7 @@
         // Replace the source of the video element with the stream from the camera
         if (navigator.getUserMedia) {
           navigator.getUserMedia(options, function (stream) {
+            self.stream = stream;
             video.src = (window.URL && window.URL.createObjectURL(stream)) || stream;
           }, function (error) {
             console.log(error)
