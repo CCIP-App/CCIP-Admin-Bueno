@@ -12,8 +12,8 @@
 </template>
 
 <script>
-  import Qrcode from 'qrcode-reader';
-  var qr = new Qrcode();
+  import Qrcode from 'qrcode-reader'
+  var qr = new Qrcode()
   export default {
     name: 'QrcodeReader',
     props: {
@@ -32,92 +32,89 @@
     },
     data() {
       return {
-        result: "Loading...",
+        result: 'Loading...',
         cam: null,
         webrtc: true,
         stream: null
       }
     },
     watch: {
-      enable: function (state) {
-        var self = this;
-        if (state == true) {
+      enable: function(state) {
+        var self = this
+        if (state === true) {
           self.cam.start()
-        } else if (state == false) {
+        } else if (state === false) {
           self.cam.stop()
         }
       }
     },
     mounted() {
-      var self = this;
-      navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
-      self.init("camsource");
+      var self = this
+      navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia
+      self.init('camsource')
       if (navigator.getUserMedia) {
         self.webrtc = true
-        self.cam = this.camera("camsource")
+        self.cam = this.camera('camsource')
         self.cam.start()
       } else {
         self.webrtc = false
-        console.log("Sorry, native web camera streaming (getUserMedia) is not supported by this browser...")
-        self.$emit('OnError', "No support getUserMedia");
+        console.log('Sorry, native web camera streaming (getUserMedia) is not supported by this browser...')
+        self.$emit('OnError', 'No support getUserMedia')
       }
-      qr.callback = self.onSuccess;
+      qr.callback = self.onSuccess
     },
     beforeDestroy() {
-      var self = this;
-      self.cam.stop();
-      self.stream.getTracks()[0].stop();
+      var self = this
+      self.cam.stop()
+      self.stream.getTracks()[0].stop()
     },
     methods: {
-      init(vid_id) {
-        var self = this;
-        var video = document.getElementById(vid_id);
+      init(videoId) {
+        var self = this
+        var video = document.getElementById(videoId)
         var options = {
-          "audio": false,
-          "video": true
-        };
+          'audio': false,
+          'video': true
+        }
         // Replace the source of the video element with the stream from the camera
         if (navigator.getUserMedia) {
-          navigator.getUserMedia(options, function (stream) {
-            self.stream = stream;
-            video.src = (window.URL && window.URL.createObjectURL(stream)) || stream;
-          }, function (error) {
-            console.log(error)
-            self.$emit('OnError', error);
-          });
+          navigator.getUserMedia(options, function(stream) {
+            self.stream = stream
+            video.src = (window.URL && window.URL.createObjectURL(stream)) || stream
+          }, function(error) {
+            self.$emit('OnError', error)
+          })
           // Below is the latest syntax. Using the old syntax for the time being for backwards compatibility.
           // navigator.getUserMedia({video: true}, successCallback, errorCallback);
         } else {
-          self.result = 'Sorry, native web camera streaming (getUserMedia) is not supported by this browser...';
-          self.$emit('OnError', "No support getUserMedia");
+          self.result = 'Sorry, native web camera streaming (getUserMedia) is not supported by this browser...'
+          self.$emit('OnError', 'No support getUserMedia')
         }
       },
-      camera(p_vid_id) {
-        var self = this;
+      camera(videoId) {
+        var self = this
 
-        var vid_id = p_vid_id;
-        var interval = 100;
-        var scale = 0.5;
-        var video = document.getElementById(vid_id);
-        var int_id = null;
+        var interval = 100
+        var scale = 0.5
+        var video = document.getElementById(videoId)
+        var initId = null
 
         function start() {
-          int_id = setInterval(function (video, scale) { capture() }, interval);
+          initId = setInterval(function(video, scale) { capture() }, interval)
         }
 
         function stop() {
-          console.log("Clearing interval with id " + int_id);
-          clearInterval(int_id);
+          console.log('Clearing interval with id ' + initId)
+          clearInterval(initId)
         }
 
         function capture() {
           // console.time('capture');
-          var w = self.width * scale;
-          var h = self.height * scale;
-          var qr_can = document.getElementById('qr-canvas').getContext('2d');
-          qr_can.drawImage(video, 0, 0, w, h);
-          try { qr.decode(); }
-          catch (err) { self.result = err; }
+          var w = self.width * scale
+          var h = self.height * scale
+          var qrCanvas = document.getElementById('qr-canvas').getContext('2d')
+          qrCanvas.drawImage(video, 0, 0, w, h)
+          try { qr.decode() } catch (err) { self.result = err }
           // console.timeEnd('capture');
         }
 
@@ -131,53 +128,50 @@
       },
       onSuccess(result, err) {
         if (result !== undefined) {
-          console.log(result)
-          this.result = result;
-          this.$emit('OnSuccess', result);
+          this.result = result
+          this.$emit('OnSuccess', result)
         } else {
-          console.log(err)
-          this.result = err;
-          this.$emit('OnError', err);
+          this.result = err
+          this.$emit('OnError', err)
         }
-
       },
       uploadChange() {
-        var file = document.getElementById("upload").files[0];
-        var imageType = /^image\//;
+        var file = document.getElementById('upload').files[0]
+        var imageType = /^image\//
 
         if (!imageType.test(file.type)) {
-          console.log('File type not valid');
+          console.log('File type not valid')
         }
         // Read file
-        var reader = new FileReader();
-        reader.addEventListener('load', function () {
-          var image = new Image();
-          image.onload = function (imageEvent) {
+        var reader = new FileReader()
+        reader.addEventListener('load', function() {
+          var image = new Image()
+          image.onload = function(imageEvent) {
             // Resize the image
-            var canvas = document.getElementById("qr-canvas"),
-              max_size = 320,// TODO : pull max size from a site config
-              width = image.width,
-              height = image.height;
+            var canvas = document.getElementById('qr-canvas')
+            var maxSize = 320 // TODO : pull max size from a site config
+            var width = image.width
+            var height = image.height
             if (width > height) {
-              if (width > max_size) {
-                height *= max_size / width;
-                width = max_size;
+              if (width > maxSize) {
+                height *= maxSize / width
+                width = maxSize
               }
             } else {
-              if (height > max_size) {
-                width *= max_size / height;
-                height = max_size;
+              if (height > maxSize) {
+                width *= maxSize / height
+                height = maxSize
               }
             }
-            canvas.width = width;
-            canvas.height = height;
-            canvas.getContext('2d').drawImage(image, 0, 0, width, height);
+            canvas.width = width
+            canvas.height = height
+            canvas.getContext('2d').drawImage(image, 0, 0, width, height)
 
-            qr.decode();
+            qr.decode()
           }
           image.src = this.result
-        }.bind(reader), false);
-        reader.readAsDataURL(file);
+        }.bind(reader), false)
+        reader.readAsDataURL(file)
       }
 
     }
