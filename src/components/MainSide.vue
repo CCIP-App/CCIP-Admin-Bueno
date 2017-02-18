@@ -75,5 +75,5 @@
     left: 0px
     z-index: 5
     @media screen and (min-width: $grid-breakpoints.sm)
-      min-width:300px
+      min-width:230px
 </style>
