@@ -59,10 +59,6 @@
           
         i
           padding: 0
-  
-  
-
-  
 
   .list
     margin: 0 0rem !important
