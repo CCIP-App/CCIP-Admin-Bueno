@@ -16,9 +16,14 @@ export default {
       type: String
     }
   },
+  watch: {
+    options: function(value) {
+      this.chart.update(value, true)
+      return value
+    }
+  },
   mounted() {
-    console.log(this.$el.clientWidth)
-    Highcharts.chart('chart-' + this.idName, this.options)
+    this.chart = Highcharts.chart('chart-' + this.idName, this.options)
   }
 }
 </script>
