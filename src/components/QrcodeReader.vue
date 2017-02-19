@@ -1,12 +1,12 @@
 <template>
   <div id='QrcodeReader'>
     <center>
-      <h2 class="ma=0" v-if="title!=''">{{ title }}</h2>
-      <p>{{ subTitle }}</p>
-      <video v-if="webrtc" id="camsource" autoplay :width="width" :height="height">Put your fallback message here.</video>
+      <h2 class="ma-0" v-if=" title != '' ">{{ title }}</h2>
+      <p v-if="subTitle !== '' ">{{ subTitle }}</p>
+      <video v-if="webrtc" id="camsource" autoplay :style="{ width: width, height: height}">Put your fallback message here.</video>
       <input type="file" id="upload" v-else @change="uploadChange">
-      <canvas id="qr-canvas" :width="width" :height="height" style="display:none"></canvas>
-      <h6 class="ma=0" v-if="!noResult">{{ result }}</h6>
+      <canvas id="qr-canvas" style="display:none"></canvas>
+      <h6 class="ma-0" v-if=" !noResult ">{{ result }}</h6>
     </center>
   </div>
 </template>
@@ -17,17 +17,23 @@
   export default {
     name: 'QrcodeReader',
     props: {
-      title: String,
-      subTitle: String,
+      title: {
+        type: String,
+        default: ''
+      },
+      subTitle: {
+        type: String,
+        default: ''
+      },
       enable: Boolean,
       noResult: Boolean,
       width: {
-        type: Number,
-        default: 320
+        type: String,
+        default: 320 + 'px'
       },
       height: {
-        type: Number,
-        default: 240
+        type: String,
+        default: 240 + 'px'
       }
     },
     data() {
