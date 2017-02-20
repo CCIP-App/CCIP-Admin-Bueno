@@ -13,9 +13,15 @@ const client = axios.create(config)
 export default {
   getDasboard: () => {
     console.log('client', client)
-    return client('dashboard')
+    return client.get('dashboard')
   },
   getStatus: (token) => {
-    return client('status?token=' + token)
+    return client.get('status?token=' + token)
+  },
+  getNickname: (token) => {
+    return client.get('landing?token=' + token)
+  },
+  getPuzzle: (pubToken) => {
+    return client.get('event/puzzle?token=' + pubToken)
   }
 }
