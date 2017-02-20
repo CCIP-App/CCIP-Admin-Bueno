@@ -5,21 +5,21 @@
         <qrcode-reader class="mr-3 mt-2" :enable="qrState" :width="'100%'" :height="'75%'" :noResult="true" @OnSuccess="onSuccess" @OnError="onError" />
       </v-col>
       <v-col xs12 md7>
-        <v-card role="puzzle-player">
+        <v-card>
           <v-card-row  class="green darken-1">
             <v-card-title>
               <span class="white--text">Player</span>
             </v-card-title>
           </v-card-row>
           <v-card-text>
-            <v-card-row role="puzzle-player">
+            <v-card-row>
               <ul>
                 <li v-for="player in players">{{ player.nickname }} ({{ player.token }})</li>
               </ul>
             </v-card-row>
           </v-card-text>
           <v-card-row actions>
-            <v-btn flat class="teal lighten-2 white--text">Compiled Successfully (Revoke those of player)</v-btn>
+            <v-btn class="teal lighten-2 white--text">Compiled Successfully (Revoke those of player)</v-btn>
           </v-card-row>
         </v-card>
       </v-col>
@@ -106,9 +106,4 @@ export default {
 </script>
 
 <style lang="stylus">
-  [role="puzzle-debugger"]
-    display: flex
-    flex-wrap: nowrap
-  [role="puzzle-player"]
-    min-height: 14vw
 </style>
