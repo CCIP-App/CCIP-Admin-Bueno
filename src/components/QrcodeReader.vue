@@ -3,185 +3,105 @@
     <center>
       <h2 class="ma-0" v-if=" title != '' ">{{ title }}</h2>
       <p v-if="subTitle !== '' ">{{ subTitle }}</p>
-      <video v-if="webrtc" id="camsource" autoplay :style="{ width: width, height: height}">Put your fallback message here.</video>
+      <div v-if="webrtc" id="camsource" :style="{ width: width, height: height}"></div>
       <input type="file" id="upload" v-else @change="uploadChange">
-      <canvas id="qr-canvas" style="display:none"></canvas>
       <h6 class="ma-0" v-if=" !noResult ">{{ result }}</h6>
     </center>
   </div>
 </template>
 
 <script>
-  import Qrcode from 'qrcode-reader'
-  var qr = new Qrcode()
-  export default {
-    name: 'QrcodeReader',
-    props: {
-      title: {
-        type: String,
-        default: ''
-      },
-      subTitle: {
-        type: String,
-        default: ''
-      },
-      enable: Boolean,
-      noResult: Boolean,
-      width: {
-        type: String,
-        default: 320 + 'px'
-      },
-      height: {
-        type: String,
-        default: 240 + 'px'
-      }
+export default {
+  name: 'QrcodeReader',
+  props: {
+    title: {
+      type: String,
+      default: ''
     },
-    data() {
-      return {
-        result: 'Loading...',
-        cam: null,
-        webrtc: true,
-        stream: null
-      }
+    subTitle: {
+      type: String,
+      default: ''
     },
-    watch: {
-      enable: function(state) {
-        var self = this
-        if (state === true) {
-          self.cam.start()
-        } else if (state === false) {
-          self.cam.stop()
-        }
-      }
+    enable: Boolean,
+    noResult: Boolean,
+    width: {
+      type: String,
+      default: 320 + 'px'
     },
-    mounted() {
-      var self = this
-      navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia
-      self.init('camsource')
-      if (navigator.getUserMedia) {
-        self.webrtc = true
-        self.cam = this.camera('camsource')
-        self.cam.start()
-      } else {
-        self.webrtc = false
-        console.log('Sorry, native web camera streaming (getUserMedia) is not supported by this browser...')
-        self.$emit('OnError', 'No support getUserMedia')
-      }
-      qr.callback = self.onSuccess
-    },
-    beforeDestroy() {
-      var self = this
-      self.cam.stop()
-      self.stream.getTracks()[0].stop()
-    },
-    methods: {
-      init(videoId) {
-        var self = this
-        var video = document.getElementById(videoId)
-        var options = {
-          'audio': false,
-          'video': true
-        }
-        // Replace the source of the video element with the stream from the camera
-        if (navigator.getUserMedia) {
-          navigator.getUserMedia(options, function(stream) {
-            self.stream = stream
-            video.src = (window.URL && window.URL.createObjectURL(stream)) || stream
-          }, function(error) {
-            self.$emit('OnError', error)
-          })
-          // Below is the latest syntax. Using the old syntax for the time being for backwards compatibility.
-          // navigator.getUserMedia({video: true}, successCallback, errorCallback);
-        } else {
-          self.result = 'Sorry, native web camera streaming (getUserMedia) is not supported by this browser...'
-          self.$emit('OnError', 'No support getUserMedia')
-        }
-      },
-      camera(videoId) {
-        var self = this
-
-        var interval = 100
-        var scale = 0.5
-        var video = document.getElementById(videoId)
-        var initId = null
-
-        function start() {
-          initId = setInterval(function(video, scale) { capture() }, interval)
-        }
-
-        function stop() {
-          console.log('Clearing interval with id ' + initId)
-          clearInterval(initId)
-        }
-
-        function capture() {
-          // console.time('capture');
-          var w = self.width * scale
-          var h = self.height * scale
-          var qrCanvas = document.getElementById('qr-canvas').getContext('2d')
-          qrCanvas.drawImage(video, 0, 0, w, h)
-          try { qr.decode() } catch (err) { self.result = err }
-          // console.timeEnd('capture');
-        }
-
-        return {
-          interval: interval,
-          scale: scale,
-          start: start,
-          stop: stop,
-          capture: capture
-        }
-      },
-      onSuccess(result, err) {
-        if (result !== undefined) {
-          this.result = result
-          this.$emit('OnSuccess', result)
-        } else {
-          this.result = err
-          this.$emit('OnError', err)
-        }
-      },
-      uploadChange() {
-        var file = document.getElementById('upload').files[0]
-        var imageType = /^image\//
-
-        if (!imageType.test(file.type)) {
-          console.log('File type not valid')
-        }
-        // Read file
-        var reader = new FileReader()
-        reader.addEventListener('load', function() {
-          var image = new Image()
-          image.onload = function(imageEvent) {
-            // Resize the image
-            var canvas = document.getElementById('qr-canvas')
-            var maxSize = 320 // TODO : pull max size from a site config
-            var width = image.width
-            var height = image.height
-            if (width > height) {
-              if (width > maxSize) {
-                height *= maxSize / width
-                width = maxSize
-              }
-            } else {
-              if (height > maxSize) {
-                width *= maxSize / height
-                height = maxSize
-              }
-            }
-            canvas.width = width
-            canvas.height = height
-            canvas.getContext('2d').drawImage(image, 0, 0, width, height)
-
-            qr.decode()
-          }
-          image.src = this.result
-        }.bind(reader), false)
-        reader.readAsDataURL(file)
-      }
-
+    height: {
+      type: String,
+      default: 240 + 'px'
     }
+  },
+  data() {
+    return {
+      result: 'Loading...',
+      cam: null,
+      webrtc: true,
+      scanner: null
+    }
+  },
+  watch: {
+    enable: function(state) {
+      self.scanner.setStopped(!state)
+    }
+  },
+  mounted() {
+    var self = this
+    window.w69b.qr.decoding.setWorkerUrl('public/barcode.js/w69b.qrcode.decodeworker.min.js')
+    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia
+    if (navigator.getUserMedia) {
+      self.webrtc = true
+      self.scanner = new window.w69b.qr.ui.ContinuousScanner()
+      self.scanner.setDecodedCallback(function(result) {
+        self.onSuccess(result)
+      })
+      self.scanner.render(document.getElementById('camsource'))
+    } else {
+      self.webrtc = false
+      console.log('Sorry, native web camera streaming (getUserMedia) is not supported by this browser...')
+    }
+  },
+  beforeDestroy() {
+    var self = this
+    self.scanner.setStopped(true)
+    self.scanner.dispose()
+  },
+  methods: {
+
+    onSuccess(result) {
+      this.result = result
+      this.$emit('OnSuccess', result)
+    },
+    uploadChange() {
+      var self = this
+      var file = document.getElementById('upload').files[0]
+      var imageType = /^image\//
+
+      if (!imageType.test(file.type)) {
+        console.log('File type not valid')
+      }
+        // Read file
+      var reader = new FileReader()
+      reader.addEventListener('load', function() {
+        var image = new Image()
+        image.onload = function(imageEvent) {
+            // Resize the image
+          var decoder = new window.w69b.qr.decoding.Decoder()
+          decoder.decode(image).then(function(result) {
+              // succesfully decoded QR Code.
+            self.onSuccess(result.text)
+          }, function() {
+            self.$emit('OnError', 'no qr code found')
+          })
+        }
+        image.src = this.result
+      }.bind(reader), false)
+      reader.readAsDataURL(file)
+    }
+
   }
+}
 
 </script>
 
