@@ -1,25 +1,41 @@
 <template>
   <div id='CheckIn'>
-    <qrcode-reader :enable="qrState" width="320px" height="240px" :noResult="true" title="QRCode Scanner" @OnSuccess="OnSuccess"></qrcode-reader>
+    <v-row>
+      <v-col xs12 md5>
+        <qrcode-reader :enable="qrState" :width="'32vw'" :height="'24vw'" :noResult="true" @OnSuccess="OnSuccess" />
+      </v-col>
+      <v-col xs12 md7>
+        <v-card>
+          <v-card-row class="green darken-1">
+            <v-card-title>
+            <span class="white--text">CheckIn</span>
+            </v-card-title>
+          </v-card-row>
+          <v-card-text>
+            <v-card-row>
+            </v-card-row>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
 <script>
 export default {
   name: 'CheckIn',
-  data () {
+  data() {
     return {
-      qrState:true
+      qrState: true
     }
   },
   methods: {
-    OnSuccess(result){
+    OnSuccess(result) {
       window.alert(result)
     }
   }
 }
 </script>
 
-<style scoped>
-
+<style lang="stylus">
 </style>
