@@ -2,7 +2,7 @@
   <div id="Puzzle">
     <v-row>
       <v-col xs12 md5>
-        <qrcode-reader class="mr-3 mt-2" :enable="qrState" :width="'100%'" :height="'75%'" :noResult="true" @OnSuccess="onSuccess" @OnError="onError" />
+        <qrcode-reader class="mr-3 mt-2" :enable="qrState" :width="'32vw'" :height="'24vw'" :noResult="true" @OnSuccess="onSuccess" @OnError="onError" />
       </v-col>
       <v-col xs12 md7>
         <v-card>
@@ -48,24 +48,7 @@ export default {
   data() {
     return {
       qrState: true,
-      players: [
-        {
-          nickname: 'nickname',
-          token: '123232'
-        },
-        {
-          nickname: 'nickname',
-          token: '123232'
-        },
-        {
-          nickname: 'nickname',
-          token: '123232'
-        },
-        {
-          nickname: 'nickname',
-          token: '123232'
-        }
-      ],
+      players: [],
       chips: [],
       tokens: []
     }
