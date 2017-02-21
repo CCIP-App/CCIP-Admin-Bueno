@@ -1,5 +1,9 @@
 {
   "username": "",
   "password": "",
-  "baseUrl": ""
+  "baseUrl": "",
+  "oneSignal": {
+      "app_id": "",
+      "api_key": ""
+    }
 }
