@@ -16,6 +16,11 @@ export default {
       type: String
     }
   },
+  data () {
+    return {
+      chart:null,
+    }
+  },
   watch: {
     options: function(value) {
       this.chart.update(value, true)
@@ -24,6 +29,9 @@ export default {
   },
   mounted() {
     this.chart = Highcharts.chart('chart-' + this.idName, this.options)
+  },
+  beforeDestroy () {
+    this.chart.destory()
   }
 }
 </script>
