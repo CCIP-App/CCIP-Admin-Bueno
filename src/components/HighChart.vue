@@ -16,9 +16,9 @@ export default {
       type: String
     }
   },
-  data () {
+  data() {
     return {
-      chart:null,
+      chart: null
     }
   },
   watch: {
@@ -30,7 +30,7 @@ export default {
   mounted() {
     this.chart = Highcharts.chart('chart-' + this.idName, this.options)
   },
-  beforeDestroy () {
+  beforeDestroy() {
     this.chart.destory()
   }
 }
