@@ -2,25 +2,25 @@
   <div id='Announcement'>
     <v-container fluid>
       <v-row>
-        <v-col xs12 md6 style="margin: 0 auto;">
+        <v-col xs12 md12 style="margin: 0 auto;">
           <v-card style="margin: 0 auto;">
             <v-card-text class=" text-xs-center">
               <h5 class="ma-0">新增大會公告</h5>
-              <v-text-input type="text" placeholder="Chinese" v-model="addAnnounce.zh" :disabled="disabled"></v-text-input>
-              <v-text-input type="text" placeholder="English" v-model="addAnnounce.en" :disabled="disabled"></v-text-input>
-              <v-text-input type="text" placeholder="URI(option)" v-model="addAnnounce.uri" :disabled="disabled"></v-text-input>
+              <v-text-input type="text" placeholder="Msg" v-model="newAnnounce.msg_en" :disabled="disabled"></v-text-input>
+              <v-text-input type="text" placeholder="URI(option)" v-model="newAnnounce.uri" :disabled="disabled"></v-text-input>
               <v-btn ripple info @click.native="send" :disabled="disabled" :loading="disabled">Send!</v-btn>
             </v-card-text>
           </v-card>
         </v-col>
       </v-row>
       <br>
+      <v-alert dismissible warning v-model="alert" role="alert">{{ alertMessage }}</v-alert>
       <v-row>
-        <v-col xs12 md6 style="margin: 0 auto;">
+        <v-col xs12 md12 style="margin: 0 auto;">
           <v-card style="margin: 0 auto;">
             <v-card-text class=" text-xs-center">
               <h5 class="ma-0">大會公告歷程</h5>
-              <v-table-overflow v-if="announcementList.length!=0">
+              <v-table-overflow v-if="announcements.length!=0">
                 <table>
                   <thead>
                     <tr>
@@ -28,9 +28,8 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="(item, index) in announcementList">
+                    <tr v-for="(item, index) in announcements">
                       <td>{{ formatDatetime(item.datetime) }}</td>
-                      <td>{{ item.msg_zh }}</td>
                       <td>{{ item.msg_en }}</td>
                       <td>{{ item.uri }}</td>
                     </tr>
@@ -46,38 +45,84 @@
 </template>
 
 <script>
-  export default {
-    name: 'Announcement',
-    data() {
-      return {
-        addAnnounce: {
-          zh: "",
-          en: "",
-          uri: ""
-        },
-        disabled: false,
-        headers:["公告時間","中文訊息","英文訊息","網址"],
-        announcementList:[]
+import apiClient from '../modal/apiClient'
+import oneSignal from '../modal/onesignal'
+export default {
+  name: 'Announcement',
+  data() {
+    return {
+      newAnnounce: {
+        msg_en: '',
+        uri: ''
+      },
+      disabled: false,
+      headers: ['公告時間', '訊息', '網址'],
+      announcements: [],
+      alert: false,
+      alertMessage: ''
+    }
+  },
+  methods: {
+    send() {
+      this.disabled = true
+      this.alert = false
+      if (this.newAnnounce.msg_en.length > 0) {
+        apiClient.addAnnouncement(this.newAnnounce)
+          .then((res) => {
+            if (res.status === 'OK') {
+              this.newAnnounce.datetime = new Date().getTime() / 1000
+              this.announcements.unshift(this.newAnnounce)
+              this.newAnnounce = {
+                msg_en: '',
+                uri: ''
+              }
+            }
+            return this.announcements[0]
+          })
+          .then((announcement) => {
+            let packet = {
+              target: ['All']
+            }
+            if (announcement.msg_en.length > 0) packet['en'] = announcement.msg_en
+            if (announcement.uri.length > 0) packet['uri'] = announcement.uri
+            return oneSignal.createNotification(packet)
+          })
+          .catch((err) => {
+            console.log(err)
+            this.alertMessage = 'Something error on network'
+            this.alert = true
+          })
+          .then(() => {
+            this.disabled = false
+          })
+      } else {
+        this.alert = true
+        this.alertMessage = '至少需輸入英文'
       }
     },
-    methods: {
-      send() {
-
-      },
-      formatDatetime(time) {
-        let datetime = new Date(time * 1000)
-        return this.leftpad(datetime.getMonth() + 1, 2) + "/" + this.leftpad(datetime.getDate(), 2) + " " +
-          this.leftpad(datetime.getHours(), 2) + ":" + this.leftpad(datetime.getMinutes(), 2)
-      },
-      leftpad(number, targetLength) {
-        var output = number + '';
-        while (output.length < targetLength) {
-          output = '0' + output;
-        }
-        return output;
+    formatDatetime(time) {
+      let datetime = new Date(time * 1000)
+      return this.leftpad(datetime.getMonth() + 1, 2) + '/' + this.leftpad(datetime.getDate(), 2) + ' ' +
+          this.leftpad(datetime.getHours(), 2) + ':' + this.leftpad(datetime.getMinutes(), 2)
+    },
+    leftpad(number, targetLength) {
+      var output = number + ''
+      while (output.length < targetLength) {
+        output = '0' + output
       }
+      return output
     }
+  },
+  mounted() {
+    apiClient.getAnnouncement()
+      .then((Announcements) => {
+        this.announcements = Announcements
+      })
+      .catch((err) => {
+        console.log(err, err.config)
+      })
   }
+}
 
 </script>
 
