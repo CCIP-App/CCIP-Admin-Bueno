@@ -31,7 +31,7 @@ export default {
     this.chart = Highcharts.chart('chart-' + this.idName, this.options)
   },
   beforeDestroy() {
-    this.chart.destory()
+    this.chart.destroy()
   }
 }
 </script>
