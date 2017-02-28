@@ -23,7 +23,7 @@
             <v-btn class="lighten-2 white--text mr-2" info v-on:click.native="clearPlayer">Clear All User</v-btn>
             <v-btn class="lighten-2 white--text" error :loading="revoking" :disabled="revoking" v-on:click.native="revokPlayer">Revoke those of player</v-btn>
 
-            
+
 
           </v-card-row>
         </v-card>
@@ -118,6 +118,7 @@ export default {
       return hashGen.digest('hex')
     },
     clearPlayer() {
+      this.currentScanToken = ''
       this.players = []
       this.chips = []
       this.chipsConuter = []
