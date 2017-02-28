@@ -23,6 +23,9 @@ export default {
   getNickname: (token) => {
     return client.get('landing?token=' + token).then((res) => res.data.nickname)
   },
+  getPuzzleDashboard: () => {
+    return client.get('event/puzzle/dashboard').then((res) => res.data)
+  },
   getPuzzle: (pubToken) => {
     return client.get('event/puzzle?token=' + pubToken).then((res) => res.data)
   },

@@ -1,5 +1,36 @@
 <template>
   <div id="Puzzle">
+    <div class="mb-3" role="puzzle-chips">
+      <v-card>
+        <v-card-row class="red darken-1">
+          <v-card-title>
+          <span class="white--text">Puzzle Dashboard</span>
+          </v-card-title>
+        </v-card-row>
+        <v-card-row role="chips">
+          <v-card-column class="mt-3 ml-3 mb-3 mr-3">
+            <high-chart :options="defaultChartOption(chartData)" style="display: flex" idName="puzzleDash" />
+          </v-card-column>
+          <v-card-column class="mt-3 mb-3 mr-3">
+            <table>
+              <thead>
+                <tr>
+                  <th>Puzzle</th>
+                  <th>Quantity</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="chip in puzzle">
+                  <td>{{ chip.puzzle }}</td>
+                  <td>{{ chip.quantity }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </v-card-column>
+        </v-card-row>
+      </v-card>
+    </div>
+
     <v-row>
       <v-col xs12 md5>
         <qrcode-reader class="mr-3 mt-2" :enable="qrState" :width="'32vw'" :height="'24vw'" :noResult="true" @OnSuccess="onSuccess" @OnError="onError" />
@@ -22,9 +53,6 @@
           <v-card-row actions>
             <v-btn class="lighten-2 white--text mr-2" info v-on:click.native="clearPlayer">Clear All User</v-btn>
             <v-btn class="lighten-2 white--text" error :loading="revoking" :disabled="revoking" v-on:click.native="revokPlayer">Revoke those of player</v-btn>
-
-
-
           </v-card-row>
         </v-card>
       </v-col>
@@ -65,7 +93,24 @@ export default {
       alertMessage: '',
       currentProcessToken: '',
       revoking: false,
-      showConfirm: false
+      showConfirm: false,
+      puzzle: [
+        {
+          'puzzle': '>',
+          'quantity': 5
+        },
+        {
+          'puzzle': 'total',
+          'quantity': 62
+        }
+      ]
+    }
+  },
+  computed: {
+    chartData() {
+      return this.puzzle.filter((el) => el.puzzle !== 'total').map((el) => ({
+        name: el.puzzle, y: el.quantity
+      }))
     }
   },
   methods: {
@@ -145,9 +190,47 @@ export default {
         .then(() => {
           this.revoking = false
         })
+    },
+    defaultChartOption(datas) {
+      return {
+        chart: {
+          type: 'pie',
+          spacing: [0, 0, 0, 0],
+          reflow: true
+        },
+        title: {
+          text: ''
+        },
+        plotOptions: {
+          series: {
+            dataLabels: {
+              enabled: true,
+              format: '{point.name}<br> {point.percentage:.2f} %',
+              distance: -30
+            }
+          }
+        },
+
+        tooltip: {
+          headerFormat: '',
+          pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b><br/>'
+        },
+        series: [{
+          name: 'Brands',
+          colorByPoint: true,
+          data: datas
+        }]
+      }
     }
   },
   mounted() {
+    apiClient.getPuzzleDashboard()
+      .then((res) => {
+        this.puzzle = res
+      })
+      .catch((err) => {
+        console.error(err)
+      })
   }
 }
 </script>
