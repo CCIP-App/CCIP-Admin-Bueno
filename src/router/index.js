@@ -11,9 +11,8 @@ import Puzzle from '../views/Puzzle.vue'
 Vue.use(Router)
 
 export default new Router({
-  mode: 'history',
   routes: [
-    { path: '/', component: Login },
+    { path: '/home', component: Login },
     { path: '/dashboard', component: Dashboard },
     { path: '/checkin', component: CheckIn },
     { path: '/announcement', component: Announcement },

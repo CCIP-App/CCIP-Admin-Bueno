@@ -9,27 +9,27 @@
       return {
         items: [{
           title: 'Dashboard',
-          href: '/dashboard',
+          href: 'dashboard',
           avatar: 'dashboard'
         },
         {
           title: 'CheckIn',
-          href: '/checkin',
+          href: 'checkin',
           avatar: 'check'
         },
         {
           title: 'Annoucement',
-          href: '/announcement',
+          href: 'announcement',
           avatar: 'announcement'
         },
         {
           title: 'PushNotification',
-          href: '/push',
+          href: 'push',
           avatar: 'notifications'
         },
         {
           title: 'Puzzle',
-          href: '/puzzle',
+          href: 'puzzle',
           avatar: 'games'
         }
         ]
