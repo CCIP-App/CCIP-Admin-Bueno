@@ -9,7 +9,7 @@
       return {
         items: [{
           title: 'Dashboard',
-          href: 'dashboard',
+          href: '/',
           avatar: 'dashboard'
         },
         {

@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-import Login from '../views/Login.vue'
 import Dashboard from '../views/Dashboard.vue'
 import CheckIn from '../views/CheckIn.vue'
 import Announcement from '../views/Announcement.vue'
@@ -12,8 +11,7 @@ Vue.use(Router)
 
 export default new Router({
   routes: [
-    { path: '/home', component: Login },
-    { path: '/dashboard', component: Dashboard },
+    { path: '/', component: Dashboard },
     { path: '/checkin', component: CheckIn },
     { path: '/announcement', component: Announcement },
     { path: '/push', component: PushNoti },
