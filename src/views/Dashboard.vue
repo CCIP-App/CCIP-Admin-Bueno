@@ -1,8 +1,16 @@
 <template>
   <div id='Dashboard'>
     <v-container fluid>
+      <v-row xs12 class="mb-3">
+        <v-card>
+          <v-card-text role="refreshCountDown">
+            <span class="text-xs-center">{{ countDown }} 秒後 Refresh 統計資料</span>
+            <v-btn primary dark @click.native="refresh">Refresh Now</v-btn>
+          </v-card-text>
+        </v-card>
+      </v-row>
       <v-row>
-        <v-col xs12>
+        <v-col xs12 class="mb-3">
           <v-card>
             <v-card-text>
               <h4 class="ma-0 text-xs-left">App 使用率</h4>
@@ -12,8 +20,8 @@
           </v-card>
         </v-col>
       </v-row>
-      <v-row class="mt-3">
-        <v-col xs12 md12>
+      <v-row>
+        <v-col xs12 md12 class="mb-3">
           <v-card>
             <v-card-text>
               <h4 class="ma-0 text-xs-left">即時報到率</h4>
@@ -22,8 +30,8 @@
           </v-card>
         </v-col>
       </v-row>
-      <v-row class="mt-3">
-        <v-col xs12 md6>
+      <v-row>
+        <v-col xs12 md6 xl4 class="mb-3">
           <v-card>
             <v-card-text>
               <h4 class="ma-0 text-xs-left">午餐(葷)已報到 {{ lunch.meat.total }}</h4>
@@ -31,7 +39,7 @@
             </v-card-text>
           </v-card>
         </v-col>
-        <v-col xs12 md6>
+        <v-col xs12 md6 xl4 class="mb-3">
           <v-card>
             <v-card-text>
               <h4 class="ma-0 text-xs-left">午餐(素)已報到 {{ lunch.vegetarian.total }}</h4>
@@ -39,9 +47,7 @@
             </v-card-text>
           </v-card>
         </v-col>
-      </v-row>
-      <v-row class="mt-3">
-        <v-col xs12 md6>
+        <v-col xs12 md6 xl4 class="mb-3">
           <v-card>
             <v-card-text>
               <h4 class="ma-0 text-xs-left">迎賓袋領取 {{ totalUser }}</h4>
@@ -49,7 +55,7 @@
             </v-card-text>
           </v-card>
         </v-col>
-        <v-col xs12 md6>
+        <v-col xs12 md6 xl4 class="mb-3">
           <v-card>
             <v-card-text>
               <h4 class="ma-0 text-xs-left">個人贊助領取 {{ kit.vip.total }}</h4>
@@ -84,7 +90,8 @@
             total: 3,
             used: 0
           }
-        }
+        },
+        countDown: 30
       }
     },
     computed: {
@@ -115,11 +122,11 @@
             total: this.CIData.day1lunch.meat,
             chart: [
               {
-                name: '葷食已領取',
+                name: '已領取',
                 y: this.CIData.day1lunch.meat_used
               },
               {
-                name: '葷食未領取',
+                name: '未領取',
                 y: this.CIData.day1lunch.meat - this.CIData.day1lunch.meat_used
               }
             ]
@@ -128,11 +135,11 @@
             total: this.CIData.day1lunch.vegetarian,
             chart: [
               {
-                name: '素食已領取',
+                name: '已領取',
                 y: this.CIData.day1lunch.vegetarian_used
               },
               {
-                name: '素食未領取',
+                name: '未領取',
                 y: this.CIData.day1lunch.vegetarian - this.CIData.day1lunch.vegetarian_used
               }
             ]
@@ -185,7 +192,7 @@
             series: {
               dataLabels: {
                 enabled: true,
-                format: '{point.name}<br> {point.y}',
+                format: '<span style="font-size: 1.1rem">{point.name} - {point.y}</span>',
                 distance: -30
               }
             }
@@ -201,19 +208,31 @@
             data: datas
           }]
         }
+      },
+      refresh() {
+        this.countDown = 30
+        apiClient.getDasboard()
+          .then((res) => {
+            this.CIData = res.data
+          }, (err) => {
+            console.error(err)
+          })
       }
     },
     mounted() {
-      apiClient.getDasboard()
-        .then((res) => {
-          this.CIData = res.data
-        }, (err) => {
-          console.error(err)
-        })
+      this.refresh()
+      setInterval(() => {
+        this.countDown -= 1
+        if (this.countDown === 0) {
+          this.refresh()
+        }
+      }, 1000)
     }
   }
 </script>
 
-<style scoped>
-
+<style lang="stylus">
+ [role="refreshCountDown"]
+   font-size: 1.5rem
+   text-align: center
 </style>
