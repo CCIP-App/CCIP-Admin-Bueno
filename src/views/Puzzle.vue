@@ -164,6 +164,7 @@ export default {
       return hashGen.digest('hex')
     },
     clearPlayer() {
+      this.$vuetify.toast.create(...['玩家清單已經被清空(⊙ω⊙)', 'bottom'])
       this.currentScanToken = ''
       this.players = []
       this.chips = []
@@ -173,6 +174,11 @@ export default {
       this.alertMessage = ''
     },
     revokPlayer() {
+      var self = this
+      if (this.tokens.length === 0) {
+        self.$vuetify.toast.create(...['沒有東西可以註銷，不要亂戳(;´༎ຶД༎ຶ`)', 'bottom'])
+        return
+      }
       this.revoking = this.loader = true
       this.chips = []
       this.chipsConuter = []
