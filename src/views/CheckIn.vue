@@ -95,8 +95,8 @@ export default {
         nickname: data.user_id,
         checkinOn: checkin.used ? new Date(checkin.used * 1000).toLocaleString() : '尚未報到',
         type: data.type,
-        kit: kit.used ? '已領取' : '尚未領取 或 已採用人工報到',
-        lunch: lunch.used ? lunch.attr.diet + ' - 已領取' : lunch.attr.diet + ' - 尚未領取 或 已採用人工報到',
+        kit: kit.used ? '已領取' : '尚未領取',
+        lunch: lunch.used ? lunch.attr.diet + ' - 已領取' : lunch.disabled ? lunch.attr.diet + ' - 採用人工報到(請查驗 Badge)' : lunch.attr.diet + ' - 尚未領取',
         vipKit: vipKit.disabled ? vipKit.disabled : vipKit.attr.toString() + vipKit.used ? ' - 已領取' : ' - 尚未領取'
       }
     }
