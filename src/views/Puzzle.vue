@@ -9,6 +9,10 @@
         </v-card-row>
         <v-card-row role="chips">
           <v-card-column class="mt-3 ml-3 mb-3 mr-3">
+            <div role="refresh" class="mb-3">
+              <v-btn primary dark @click.native="loadDashboard">Refresh Now</v-btn>
+              <div class="text-xs-center mt-1">{{ countDown }} 秒後 Refresh 統計資料</div>
+            </div>
             <high-chart :options="defaultChartOption(chartData)" style="display: flex" idName="puzzleDash" />
           </v-card-column>
           <v-card-column class="mt-3 mb-3 mr-3">
@@ -103,7 +107,8 @@ export default {
           'puzzle': 'total',
           'quantity': 62
         }
-      ]
+      ],
+      countDown: 30
     }
   },
   computed: {
@@ -221,16 +226,26 @@ export default {
           data: datas
         }]
       }
+    },
+    loadDashboard() {
+      this.countDown = 30
+      apiClient.getPuzzleDashboard()
+        .then((res) => {
+          this.puzzle = res
+        })
+        .catch((err) => {
+          console.error(err)
+        })
     }
   },
   mounted() {
-    apiClient.getPuzzleDashboard()
-      .then((res) => {
-        this.puzzle = res
-      })
-      .catch((err) => {
-        console.error(err)
-      })
+    this.loadDashboard()
+    setInterval(() => {
+      this.countDown -= 1
+      if (this.countDown === 0) {
+        this.loadDashboard()
+      }
+    }, 1000)
   }
 }
 </script>
@@ -244,4 +259,7 @@ export default {
   [role="alert"]
     font-size: 1.5rem
     padding: 0.7em
+  [role="refresh"]
+    display: block
+    text-align: center
 </style>
