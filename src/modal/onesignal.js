@@ -22,9 +22,9 @@ export default {
       'app_id': oneSignalConfig.app_id,
       'included_segments': packet.target,
       'contents': {
-        'en': packet.en,
-        'url': packet.uri
-      }
+        'en': packet.en
+      },
+      'url': packet.uri
     })
   }
 }
