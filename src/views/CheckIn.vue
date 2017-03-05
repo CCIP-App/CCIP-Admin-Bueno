@@ -1,12 +1,12 @@
 <template>
   <div id='CheckIn'>
-    <v-row>
+    <v-alert dismissible warning v-model="alert" role="alert" class="mb-3">{{ alertMessage }}</v-alert>
+    <v-alert dismissible success v-model="successCI" role="alert" class="mb-3">{{ alertMessage }}</v-alert>
+    <v-row class="mb-3">
       <v-col xs12 md5>
         <qrcode-reader :enable="qrState" :width="'32vw'" :height="'24vw'" :noResult="true" @OnSuccess="OnSuccess" />
       </v-col>
       <v-col xs12 md7>
-        <v-alert dismissible warning v-model="alert" role="alert">{{ alertMessage }}</v-alert>
-        <v-alert dismissible success v-model="successCI" role="alert">{{ alertMessage }}</v-alert>
         <v-card>
           <v-card-row class="green darken-1">
             <v-card-title>
@@ -23,6 +23,16 @@
         </v-card>
       </v-col>
     </v-row>
+    <v-card class="mb-3">
+      <v-card-row class="green darken-1">
+        <v-card-title>
+        <span class="white--text">手動輸入 KKTIX Token </span>
+        </v-card-title>
+      </v-card-row>
+      <v-card-text>
+        <v-text-input label="Token" v-model="token"></v-text-input>
+      </v-card-text>
+    </v-card>
   </div>
 </template>
 
@@ -33,33 +43,36 @@ export default {
   data() {
     return {
       qrState: true,
-      currentScanToken: '',
+      token: '',
       alert: false,
       successCI: false,
       alertMessage: '',
       user: {}
     }
   },
+  watch: {
+    token() {
+      if (this.token.length < 32) return
+      this.user = {}
+      this.alert = this.successCI = false
+      apiClient.checkIn(this.token).then((res) => {
+        this.updateUserData(res)
+        this.successCI = true
+        this.alertMessage = res.user_id + ' 報到成功'
+      }).catch((err) => {
+        if (err.response) {
+          this.alertMessage = err.response.status + ' - ' + err.response.data.message
+        } else {
+          this.alertMessage = 'Something error on network'
+        }
+        this.alert = true
+        this.getStatus(this.token)
+      })
+    }
+  },
   methods: {
     OnSuccess(token) {
-      if (this.currentScanToken !== token) {
-        this.user = {}
-        this.currentScanToken = token
-        this.alert = this.successCI = false
-        apiClient.checkIn(token).then((res) => {
-          this.updateUserData(res)
-          this.successCI = true
-          this.alertMessage = res.user_id + ' 報到成功'
-        }).catch((err) => {
-          if (err.response) {
-            this.alertMessage = err.response.status + ' - ' + err.response.data.message
-          } else {
-            this.alertMessage = 'Something error on network'
-          }
-          this.alert = true
-          this.getStatus(token)
-        })
-      }
+      this.token = token
     },
     getStatus(token) {
       apiClient.getStatus(token).then((res) => {
@@ -93,5 +106,5 @@ export default {
 
 <style lang="stylus">
   [role="userStatus"]
-    font-size: 1.5rem
+    font-size: 1.2rem
 </style>
