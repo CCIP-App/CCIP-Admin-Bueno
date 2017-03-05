@@ -30,7 +30,12 @@
         {
           title: 'Puzzle',
           href: 'puzzle',
-          avatar: 'games'
+          avatar: 'extension'
+        },
+        {
+          title: 'Coupon',
+          href: 'coupon',
+          avatar: 'receipt'
         }
         ]
       }

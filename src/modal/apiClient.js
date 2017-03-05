@@ -41,5 +41,8 @@ export default {
   },
   getAnnouncement: () => {
     return client.get('announcement').then((res) => res.data)
+  },
+  revokeCoupon: (token) => {
+    return client.get('event/puzzle/coupon?token=').then((res) => res.data)
   }
 }
