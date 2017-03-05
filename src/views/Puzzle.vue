@@ -121,7 +121,7 @@ export default {
         this.alert = false
         apiClient.getPuzzle(this.sha1Gen(token))
           .then((res) => {
-            if (res.valid) {
+            if (!res.valid) {
               this.players.push({
                 nickname: res.user_id,
                 token: token
