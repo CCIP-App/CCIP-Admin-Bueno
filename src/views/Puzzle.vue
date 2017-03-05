@@ -37,7 +37,7 @@
 
     <v-row>
       <v-col xs12 md5>
-        <qrcode-reader class="mr-3 mt-2" :enable="qrState" :width="'32vw'" :height="'24vw'" :noResult="true" @OnSuccess="onSuccess" @OnError="onError" />
+        <qrcode-reader class="mr-3 mt-2 mb-3" :enable="qrState" :width="'32vw'" :height="'24vw'" :noResult="true" @OnSuccess="onSuccess" @OnError="onError" />
       </v-col>
       <v-col xs12 md7>
         <v-alert dismissible warning v-model="alert" role="alert">{{ alertMessage }}</v-alert>
@@ -82,9 +82,6 @@
 import apiClient from '../modal/apiClient'
 import crypto from 'crypto'
 export default {
-  component: {
-
-  },
   name: 'Puzzle',
   data() {
     return {
@@ -97,7 +94,6 @@ export default {
       alertMessage: '',
       currentProcessToken: '',
       revoking: false,
-      showConfirm: false,
       puzzle: [
         {
           'puzzle': '>',
