@@ -12454,11 +12454,8 @@ goog.scope(function() {
    * Alias to getUserMedia functions.
    * @type {Function}
    */
-  LocalVideoCapturer.getMedia = (
-    navigator['getUserMedia'] ||
-      navigator['webkitGetUserMedia'] ||
-      navigator['mozGetUserMedia'] ||
-      navigator['msGetUserMedia']);
+  LocalVideoCapturer.getMedia = 
+    (navigator.mediaDevices)? navigator.mediaDevices.getUserMedia : undefined;
 
   if (LocalVideoCapturer.getMedia)
     LocalVideoCapturer.getMedia =
@@ -12595,17 +12592,9 @@ goog.scope(function() {
   pro.getUserMedia = function() {
     var self = this;
     function gotSources(sources) {
-      var constraint = true;
-      for (var i = 0; i < sources.length; ++i) {
-        var source = sources[i];
-        if (source['kind'] === 'video' && source['facing'] == 'environment') {
-          constraint = {'optional': [{'sourceId': source.id}]};
-          break;
-        }
-      }
-      LocalVideoCapturer.getMedia({'video': constraint},
-        self.onGetMediaSuccess.bind(self),
-        self.onGetMediaError.bind(self));
+      var constraint = { facingMode: { exact: "environment" } };
+      LocalVideoCapturer.getMedia({'video': constraint}).then(self.onGetMediaSuccess.bind(self))
+      .catch(self.onGetMediaSuccess.bind(self));
     }
     if (window['MediaStreamTrack'] && window['MediaStreamTrack']['getSources'])
       window['MediaStreamTrack']['getSources'](gotSources);
