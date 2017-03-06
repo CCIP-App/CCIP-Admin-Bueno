@@ -67,6 +67,7 @@ export default {
       this.disabled = true
       this.alert = false
       if (this.newAnnounce.msg_en.length > 0) {
+        this.newAnnounce.msg_zh = this.newAnnounce.msg_en
         apiClient.addAnnouncement(this.newAnnounce)
           .then((res) => {
             if (res.status === 'OK') {
@@ -78,14 +79,6 @@ export default {
               }
             }
             return this.announcements[0]
-          })
-          .then((announcement) => {
-            let packet = {
-              target: ['All']
-            }
-            if (announcement.msg_en.length > 0) packet['en'] = announcement.msg_en
-            if (announcement.uri.length > 0) packet['uri'] = announcement.uri
-            return oneSignal.createNotification(packet)
           })
           .catch((err) => {
             console.log(err)
