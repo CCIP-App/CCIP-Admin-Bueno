@@ -7,31 +7,33 @@
           <span class="white--text">Puzzle Dashboard</span>
           </v-card-title>
         </v-card-row>
-        <v-card-row role="chips">
-          <v-card-column class="mt-3 ml-3 mb-3 mr-3">
-            <div role="refresh" class="mb-3">
-              <v-btn primary dark @click.native="loadDashboard">Refresh Now</v-btn>
-              <div class="text-xs-center mt-1">{{ countDown }} 秒後 Refresh 統計資料</div>
-            </div>
-            <high-chart :options="defaultChartOption(chartData)" style="display: flex" idName="puzzleDash" />
-          </v-card-column>
-          <v-card-column class="mt-3 mb-3 mr-3">
-            <table>
-              <thead>
-                <tr>
-                  <th>Puzzle</th>
-                  <th>Quantity</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="chip in puzzle">
-                  <td>{{ chip.puzzle }}</td>
-                  <td>{{ chip.quantity }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </v-card-column>
-        </v-card-row>
+        <v-row>
+          <v-card-text>
+            <v-col class="mt-3 ml-3 mb-3 mr-3" xs12 role="dashboard">
+              <div role="refresh" class="mb-3">
+                <v-btn primary dark @click.native="loadDashboard">Refresh Now</v-btn>
+                <div class="text-xs-center mt-1">{{ countDown }} 秒後 Refresh 統計資料</div>
+              </div>
+              <high-chart :options="defaultChartOption(chartData)" style="display: flex" idName="puzzleDash" />
+            </v-col>
+            <v-col class="mt-3 ml-3 mb-3 mr-3" xs12 role="dashboard">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Puzzle</th>
+                    <th>Quantity</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="chip in puzzle">
+                    <td>{{ chip.puzzle }}</td>
+                    <td>{{ chip.quantity }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </v-col>
+          </v-card-text>
+        </v-row>
       </v-card>
     </div>
 
@@ -128,12 +130,23 @@ export default {
               })
               this.chips = this.chips.concat(res.puzzle)
               this.tokens.push(token)
+
+              this.chipsConuter = this.chips.reduce((pv, cv) => {
+                let specialChip = pv.find((el) => el.displayName === cv)
+                if (specialChip === undefined) {
+                  pv.push({ displayName: cv, count: 1 })
+                } else {
+                  specialChip.count++
+                }
+                return pv
+              }, [])
             } else {
               // Show dialog: user is invalid
               this.alertMessage = 'This player has been revoked.'
               this.alert = true
             }
-          }, (err) => {
+          })
+          .catch((err) => {
             // Show dialog: show request err
             if (err.response) {
               this.alertMessage = err.response.status + ' - ' + err.response.data.message
@@ -141,17 +154,6 @@ export default {
               this.alertMessage = 'Something error on network'
             }
             this.alert = true
-          })
-          .then(() => {
-            this.chipsConuter = this.chips.reduce((pv, cv) => {
-              let specialChip = pv.find((el) => el.displayName === cv)
-              if (specialChip === undefined) {
-                pv.push({ displayName: cv, count: 1 })
-              } else {
-                specialChip.count++
-              }
-              return pv
-            }, [])
           })
       }
     },
@@ -253,15 +255,18 @@ export default {
 </script>
 
 <style lang="stylus">
-  [role="chips"]
-    flex-wrap: wrap;
-    display: flex;
-  [role="puzzle-player-item"]
-    font-size: 2rem
-  [role="alert"]
-    font-size: 1.5rem
-    padding: 0.7em
-  [role="refresh"]
-    display: block
-    text-align: center
+  #Puzzle
+    [role="chips"]
+      flex-wrap: wrap;
+      display: flex;
+    [role="puzzle-player-item"]
+      font-size: 2rem
+    [role="alert"]
+      font-size: 1.5rem
+      padding: 0.7em
+    [role="refresh"]
+      display: block
+      text-align: center
+    [role="dashboard"]
+      margin: auto
 </style>
