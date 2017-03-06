@@ -4,7 +4,7 @@
       <h2 class="ma-0" v-if=" title != '' ">{{ title }}</h2>
       <p v-if="subTitle !== '' ">{{ subTitle }}</p>
       <div v-if="webrtc" id="camsource" :style="{ width: width, height: height}"></div>
-      <input type="file" id="upload" v-else @change="uploadChange">
+      <input v-else type="file" id="upload" @change="uploadChange">
       <h6 class="ma-0" v-if=" !noResult ">{{ result }}</h6>
     </center>
   </div>
@@ -49,8 +49,7 @@ export default {
   mounted() {
     var self = this
     window.w69b.qr.decoding.setWorkerUrl('public/barcode.js/w69b.qrcode.decodeworker.min.js')
-    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia
-    if (navigator.getUserMedia) {
+    if (navigator.mediaDevices) {
       self.webrtc = true
       self.scanner = new window.w69b.qr.ui.ContinuousScanner()
       self.scanner.setDecodedCallback(function(result) {
@@ -63,12 +62,13 @@ export default {
     }
   },
   beforeDestroy() {
-    var self = this
-    self.scanner.setStopped(true)
-    self.scanner.dispose()
+    if (navigator.mediaDevices) {
+      var self = this
+      self.scanner.setStopped(true)
+      self.scanner.dispose()
+    }
   },
   methods: {
-
     onSuccess(result) {
       this.result = result
       this.$emit('OnSuccess', result)
@@ -77,7 +77,6 @@ export default {
       var self = this
       var file = document.getElementById('upload').files[0]
       var imageType = /^image\//
-
       if (!imageType.test(file.type)) {
         console.log('File type not valid')
       }
@@ -99,12 +98,6 @@ export default {
       }.bind(reader), false)
       reader.readAsDataURL(file)
     }
-
   }
 }
-
 </script>
-
-<style scoped>
-
-</style>
