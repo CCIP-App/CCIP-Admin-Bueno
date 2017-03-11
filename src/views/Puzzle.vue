@@ -1,42 +1,72 @@
 <template>
   <div id="Puzzle">
-    <div class="mb-3" role="puzzle-chips">
-      <v-card>
-        <v-card-row class="red darken-1">
-          <v-card-title>
-          <span class="white--text">Puzzle Dashboard</span>
-          </v-card-title>
-        </v-card-row>
-        <v-row>
-          <v-card-text>
-            <v-col class="mt-3 ml-3 mb-3 mr-3" xs12 role="dashboard">
-              <div role="refresh" class="mb-3">
-                <v-btn primary dark @click.native="loadDashboard">Refresh Now</v-btn>
-                <div class="text-xs-center mt-1">{{ countDown }} 秒後 Refresh 統計資料</div>
-              </div>
-              <high-chart :options="defaultChartOption(chartData)" style="display: flex" idName="puzzleDash" />
-            </v-col>
-            <v-col class="mt-3 ml-3 mb-3 mr-3" xs12 role="dashboard">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Puzzle</th>
-                    <th>Quantity</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="chip in puzzle">
-                    <td>{{ chip.puzzle }}</td>
-                    <td>{{ chip.quantity }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </v-col>
-          </v-card-text>
-        </v-row>
-      </v-card>
-    </div>
-
+    <v-tabs id="puzzle-state" grow class="mb-3" role="Tab">
+      <v-tabs-tabs>
+        <v-tab-item :item="{ text: 'Total', href: '#total' }" ripple></v-tab-item>
+        <v-tab-item :item="{ text: 'Currency', href: '#currency' }" ripple></v-tab-item>
+      </v-tabs-tabs>
+      <v-tabs-items>
+        <v-tabs-item id="total">
+          <v-card class="ma-0">
+              <v-card-row>
+                <v-card-column>
+                  <div role="refresh" class="mb-3">
+                    <v-btn primary dark @click.native="loadDashboard">Refresh Now</v-btn>
+                    <div class="text-xs-center mt-1">{{ countDown }} 秒後 Refresh 統計資料</div>
+                  </div>
+                  <high-chart :options="defaultChartOption(chartData.total)"  style="display: flex" idName="puzzleDash-1"></high-chart>
+                </v-card-column>
+                <v-card-column class="ma-3">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Puzzle</th>
+                        <th>Quantity</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="chip in puzzle">
+                        <td>{{ chip.puzzle }}</td>
+                        <td>{{ chip.quantity }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </v-card-column>
+              </v-card-row>
+            </v-card-text>
+          </v-card>
+        </v-tabs-item>
+        <v-tabs-item id="currency">
+          <v-card class="ma-0">
+            <v-card-row>
+              <v-card-column>
+                <div role="refresh" class="mb-3">
+                  <v-btn primary dark @click.native="loadDashboard">Refresh Now</v-btn>
+                  <div class="text-xs-center mt-1">{{ countDown }} 秒後 Refresh 統計資料</div>
+                </div>
+                <high-chart :options="defaultChartOption(chartData.currency)"  style="display: flex" idName="puzzleDash-2"></high-chart>
+              </v-card-column>
+              <v-card-column class="ma-3">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Puzzle</th>
+                      <th>Currency</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="chip in puzzle">
+                      <td>{{ chip.puzzle }}</td>
+                      <td>{{ chip.currency }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </v-card-column>
+            </v-card-row>
+          </v-card>
+        </v-tabs-item>
+      </v-tabs-items>
+    </v-tabs>
     <v-row>
       <v-col xs12 md5>
         <qrcode-reader class="mr-3 mt-2 mb-3" :enable="qrState" :width="'32vw'" :height="'24vw'" :noResult="true" @OnSuccess="onSuccess" @OnError="onError" />
@@ -111,9 +141,14 @@ export default {
   },
   computed: {
     chartData() {
-      return this.puzzle.filter((el) => el.puzzle !== 'total').map((el) => ({
-        name: el.puzzle, y: el.quantity
-      }))
+      return {
+        total: this.puzzle.filter((el) => el.puzzle !== 'total').map((el) => ({
+          name: el.puzzle, y: el.quantity
+        })),
+        currency: this.puzzle.filter((el) => el.puzzle !== 'total').map((el) => ({
+          name: el.puzzle, y: el.currency
+        }))
+      }
     }
   },
   methods: {
@@ -256,9 +291,6 @@ export default {
 
 <style lang="stylus">
   #Puzzle
-    [role="chips"]
-      flex-wrap: wrap;
-      display: flex;
     [role="puzzle-player-item"]
       font-size: 2rem
     [role="alert"]
@@ -267,6 +299,9 @@ export default {
     [role="refresh"]
       display: block
       text-align: center
-    [role="dashboard"]
-      margin: auto
+    [role="Tab"]
+      box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+
+    .tabs__item
+      transition: 0s
 </style>
