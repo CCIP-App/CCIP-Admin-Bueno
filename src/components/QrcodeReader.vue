@@ -4,7 +4,10 @@
       <h2 class="ma-0" v-if=" title != '' ">{{ title }}</h2>
       <p v-if="subTitle !== '' ">{{ subTitle }}</p>
       <div v-if="webrtc" id="camsource" :style="{ width: width, height: height}"></div>
-      <input v-else type="file" id="upload" @change="uploadChange">
+      <div v-else id="uploadField">
+        <label id="uploadButton" for="upload">
+        <input type="file" id="upload" @change="uploadChange">
+      </div>
       <h6 class="ma-0" v-if=" !noResult ">{{ result }}</h6>
     </center>
   </div>
@@ -43,6 +46,7 @@ export default {
   },
   watch: {
     enable: function(state) {
+      var self = this
       self.scanner.setStopped(!state)
     }
   },
@@ -101,3 +105,30 @@ export default {
   }
 }
 </script>
+
+<style lang="stylus">
+  #camsource {
+    background: #FFF
+    border: 2px solid #FFF
+    border-radius: 15px
+    padding: 10px
+  }
+
+  #uploadField {
+    max-width: 300px
+  }
+
+  #uploadButton {
+    cursor: pointer
+    z-index: 1
+    display: block
+    margin: auto
+    min-height: 118px
+    background: url('~public/uploadfile.png')
+    background-size: cover
+  }
+
+  #upload {
+    display: none
+  }
+</style>

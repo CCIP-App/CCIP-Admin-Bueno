@@ -12459,7 +12459,7 @@ goog.scope(function() {
 
   if (LocalVideoCapturer.getMedia)
     LocalVideoCapturer.getMedia =
-      LocalVideoCapturer.getMedia.bind(navigator);
+      LocalVideoCapturer.getMedia.bind(navigator.mediaDevices);
 
   /**
    * Canvas uses to call getImageData on.
@@ -12592,9 +12592,9 @@ goog.scope(function() {
   pro.getUserMedia = function() {
     var self = this;
     function gotSources(sources) {
-      var constraint = { facingMode: { exact: "environment" } };
-      LocalVideoCapturer.getMedia({'video': constraint}).then(self.onGetMediaSuccess.bind(self))
-      .catch(self.onGetMediaSuccess.bind(self));
+      var constraint = { audio: false, video:  { facingMode :"environment"}   };
+      LocalVideoCapturer.getMedia(constraint).then(self.onGetMediaSuccess.bind(self))
+      .catch(self.onGetMediaError.bind(self));
     }
     if (window['MediaStreamTrack'] && window['MediaStreamTrack']['getSources'])
       window['MediaStreamTrack']['getSources'](gotSources);
