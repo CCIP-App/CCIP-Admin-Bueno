@@ -15,7 +15,7 @@ export default {
     return client.get('dashboard')
   },
   checkIn: (token) => {
-    return client.get('use/day1checkin?token=' + token + '&StaffQuery=true').then((res) => res.data)
+    return client.get('use/checkin?token=' + token + '&StaffQuery=true').then((res) => res.data)
   },
   getStatus: (token) => {
     return client.get('status?token=' + token).then((res) => res.data)

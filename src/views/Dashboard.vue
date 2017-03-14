@@ -77,8 +77,8 @@
         CIData: {
           logged: 0,
           total: 0,
-          day1checkin_used: 0,
-          day1lunch: {
+          checkin_used: 0,
+          lunch: {
             meat: 0,
             meat_used: 0,
             total: 0,
@@ -108,39 +108,39 @@
         return [
           {
             name: '已報到',
-            y: this.CIData.day1checkin_used
+            y: this.CIData.checkin_used
           },
           {
             name: '未報到',
-            y: this.CIData.total - this.CIData.day1checkin_used
+            y: this.CIData.total - this.CIData.checkin_used
           }
         ]
       },
       lunch() {
         return {
           meat: {
-            total: this.CIData.day1lunch.meat,
+            total: this.CIData.lunch.meat,
             chart: [
               {
                 name: '已領取',
-                y: this.CIData.day1lunch.meat_used
+                y: this.CIData.lunch.meat_used
               },
               {
                 name: '未領取',
-                y: this.CIData.day1lunch.meat - this.CIData.day1lunch.meat_used
+                y: this.CIData.lunch.meat - this.CIData.lunch.meat_used
               }
             ]
           },
           vegetarian: {
-            total: this.CIData.day1lunch.vegetarian,
+            total: this.CIData.lunch.vegetarian,
             chart: [
               {
                 name: '已領取',
-                y: this.CIData.day1lunch.vegetarian_used
+                y: this.CIData.lunch.vegetarian_used
               },
               {
                 name: '未領取',
-                y: this.CIData.day1lunch.vegetarian - this.CIData.day1lunch.vegetarian_used
+                y: this.CIData.lunch.vegetarian - this.CIData.lunch.vegetarian_used
               }
             ]
           }
