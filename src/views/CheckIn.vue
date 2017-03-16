@@ -15,12 +15,15 @@
           </v-card-row>
           <v-card-text>
             <v-card-row>
-              <ul>
-                <template v-for="key in Object.keys(user)">
-                  <li v-if="user[key].value != null" role="userStatus">
-                    {{ key + ": " + user[key].value }}
-                    <ul v-if="user[key].attr">
-                      <li v-for="attr in Object.keys(user[key].attr)">{{ attr + ": " + user[key].attr[attr] }}</li>
+              <ul v-if="user.user_id" role="userStatus">
+                <li>Nickname: {{ user.user_id }}</li>
+                <li>App Login: {{ user.first_use ? user.first_use : 'Not yet' }}</li>
+                <li>User Type: {{ user.type }}</li>
+                <template v-for="scenarios in user.scenarios">
+                  <li>
+                    {{ scenarios.key + ": " + (scenarios.used ? scenarios.used : 'Not yet') }}
+                    <ul v-if="Object.keys(scenarios.attr).length > 0">
+                      <li v-for="key in Object.keys(scenarios.attr)">{{ key + ": " + scenarios.attr[key] }}</li>
                     </ul>
                   </li>
                 </template>
@@ -68,10 +71,15 @@ export default {
         this.alertMessage = res.user_id + ' 報到成功'
       }).catch((err) => {
         if (err.response) {
-          if ('link expired/not available now'.match(err.response.data.message)) this.alertMessage = '還沒開始報到喔(╯°□°）╯︵ ┻━┻'
-          else this.alertMessage = err.response.status + ' - ' + err.response.data.message
+          if ('link expired/not available now'.match(err.response.data.message)) {
+            this.alertMessage = '還沒開始報到喔(╯°□°）╯︵ ┻━┻'
+          } else if ('has been used'.match(err.response.data.message)) {
+            this.alertMessage = '已經報到過了╮(￣▽￣"")╭'
+          } else {
+            this.alertMessage = err.response.status + ' - ' + err.response.data.message
+          }
         } else {
-          this.alertMessage = 'Something error on network'
+          this.alertMessage = '網路壞了，找線路組o(︶︿︶)o'
         }
         this.alert = true
         this.getStatus(this.token)
@@ -89,24 +97,21 @@ export default {
         if (err.response) {
           this.alertMessage = err.response.status + ' - ' + err.response.data.message
         } else {
-          this.alertMessage = 'Something error on network'
+          this.alertMessage = '網路壞了，找線路組o(︶︿︶)o'
         }
         this.alert = true
       })
     },
     updateUserData(data) {
-      const checkin = data.scenarios.find((el) => el.id === 'checkin')
-      const kit = data.scenarios.find((el) => el.id === 'kit' || el.id === 'speaker_packages')
-      const lunch = data.scenarios.find((el) => el.id === 'lunch')
-      const vipKit = data.scenarios.find((el) => el.id === 'vipkit')
-      console.log(lunch)
       this.user = {
-        nickname: { value: data.user_id },
-        checkinOn: { value: checkin.used ? new Date(checkin.used * 1000).toLocaleString() : '尚未報到' },
-        type: { value: data.type },
-        kit: { value: (kit.used ? '已領取' : '尚未領取'), attr: kit.attr },
-        lunch: { value: lunch.used ? lunch.attr.diet + ' - 已領取' : lunch.disabled && checkin.used ? lunch.attr.diet + ' - 採用人工報到(請查驗 Badge)' : lunch.attr.diet + ' - 尚未領取' },
-        vipKit: { value: vipKit ? (vipKit.disabled ? vipKit.disabled : vipKit.used ? ' - 已領取' : ' - 尚未領取') : null, attr: vipKit ? vipKit.attr : null }
+        user_id: data.user_id,
+        first_use: data.first_use ? new Date(data.first_use * 1000).toLocaleString() : null,
+        type: data.type,
+        scenarios: data.scenarios.map((el) => ({
+          key: el.display_text['zh-TW'],
+          used: el.used ? new Date(el.used * 1000).toLocaleString() : null,
+          attr: el.attr
+        }))
       }
     }
   }
