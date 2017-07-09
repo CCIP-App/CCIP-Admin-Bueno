@@ -7,7 +7,8 @@
             <v-card-text class=" text-xs-center">
               <h5 class="ma-0">新增推播通知</h5>
               <v-select v-bind:options="options" placeholder="選擇對象" v-model.number="feed.to" :disabled="disabled"></v-select>
-              <v-text-input type="text" placeholder="Msg" v-model="feed.msg" :disabled="disabled"></v-text-input>
+              <v-text-input type="text" placeholder="Msg(zh)" v-model="feed.msg_zh" :disabled="disabled"></v-text-input>
+              <v-text-input type="text" placeholder="Msg(en)" v-model="feed.msg_en" :disabled="disabled"></v-text-input>
               <v-text-input type="text" placeholder="URI(option)" v-model="feed.uri" :disabled="disabled"></v-text-input>
               <v-btn ripple info @click.native="send" :disabled="disabled" :loading="disabled">Send!</v-btn>
             </v-card-text>
@@ -46,7 +47,8 @@ export default {
       ],
       feed: {
         to: 0,
-        msg: '',
+        msg_en: '',
+        msg_zh: '',
         uri: ''
       },
       disabled: false,
@@ -61,7 +63,9 @@ export default {
       this.success = false
       let packet = {
         target: [this.feed.to],
-        en: this.feed.msg
+        en: this.feed.msg_en,
+        'zh-Hant': this.feed.msg_zh,
+        'zh-Hans': this.feed.msg_zh
       }
       if (this.feed.uri.length > 0) packet['uri'] = this.feed.uri
       if (this.feed.msg.length > 0 && this.feed.to !== 0) {

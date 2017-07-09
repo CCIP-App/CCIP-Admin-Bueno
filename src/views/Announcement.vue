@@ -6,7 +6,8 @@
           <v-card style="margin: 0 auto;">
             <v-card-text class=" text-xs-center">
               <h5 class="ma-0">新增大會公告</h5>
-              <v-text-input type="text" placeholder="Msg" v-model="newAnnounce.msg_en" :disabled="disabled"></v-text-input>
+              <v-text-input type="text" placeholder="Msg(zh)" v-model="newAnnounce.msg_zh" :disabled="disabled"></v-text-input>
+              <v-text-input type="text" placeholder="Msg(en)" v-model="newAnnounce.msg_en" :disabled="disabled"></v-text-input>
               <v-text-input type="text" placeholder="URI(option)" v-model="newAnnounce.uri" :disabled="disabled"></v-text-input>
               <v-btn ripple info @click.native="send" :disabled="disabled" :loading="disabled">Send!</v-btn>
             </v-card-text>
@@ -30,6 +31,7 @@
                   <tbody>
                     <tr v-for="(item, index) in announcements">
                       <td>{{ formatDatetime(item.datetime) }}</td>
+                      <td>{{ item.msg_zh }}</td>
                       <td>{{ item.msg_en }}</td>
                       <td>{{ item.uri }}</td>
                     </tr>
@@ -67,7 +69,6 @@ export default {
       this.disabled = true
       this.alert = false
       if (this.newAnnounce.msg_en.length > 0) {
-        this.newAnnounce.msg_zh = this.newAnnounce.msg_en
         apiClient.addAnnouncement(this.newAnnounce)
           .then((res) => {
             if (res.status === 'OK') {
@@ -75,6 +76,7 @@ export default {
               this.announcements.unshift(this.newAnnounce)
               this.newAnnounce = {
                 msg_en: '',
+                msg_zh: '',
                 uri: ''
               }
             }
