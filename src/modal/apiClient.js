@@ -8,7 +8,13 @@ const config = {
   }
 }
 
+const noHeaderConfig = {
+  baseURL: configs.baseUrl,
+  timeout: 1000
+}
+
 const client = axios.create(config)
+const publicClient = axios.create(noHeaderConfig)
 
 export default {
   getDasboard: () => {
@@ -17,17 +23,20 @@ export default {
   checkIn: (token) => {
     return client.get('use/checkin?token=' + token + '&StaffQuery=true').then((res) => res.data)
   },
+  day1CheckIn: (token) => {
+    return client.get('use/day1checkin?token=' + token + '&StaffQuery=true').then((res) => res.data)
+  },
+  day2CheckIn: (token) => {
+    return client.get('use/day2checkin?token=' + token + '&StaffQuery=true').then((res) => res.data)
+  },
   getStatus: (token) => {
     return client.get('status?token=' + token).then((res) => res.data)
   },
   getNickname: (token) => {
     return client.get('landing?token=' + token).then((res) => res.data.nickname)
   },
-  getPuzzleDashboard: () => {
-    return client.get('event/puzzle/dashboard').then((res) => res.data)
-  },
   getPuzzle: (pubToken) => {
-    return client.get('event/puzzle?token=' + pubToken).then((res) => res.data)
+    return publicClient.get('event/puzzle?token=' + pubToken).then((res) => res.data)
   },
   revokPlayer: (token) => {
     return client.get('event/puzzle/revoke?token=' + token).then((res) => ({token: token, successful: res.data.status === 'OK'}))
@@ -44,5 +53,8 @@ export default {
   },
   revokeCoupon: (token) => {
     return client.get('event/puzzle/coupon?token=').then((res) => res.data)
+  },
+  getBoothList: () => {
+    return publicClient('/event/puzzle/deliverers').then((res) => res.data)
   }
 }
