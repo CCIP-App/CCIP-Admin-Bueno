@@ -19,11 +19,11 @@
                 <li>Nickname: {{ user.user_id }}</li>
                 <li>App Login: {{ user.first_use ? user.first_use : 'Not yet' }}</li>
                 <li>User Type: {{ user.type }}</li>
-                <template v-for="scenarios in user.scenarios">
-                  <li>
+                <template v-for="(scenarios, index) in user.scenarios">
+                  <li :key="index">
                     {{ scenarios.key + ": " + (scenarios.used ? scenarios.used : 'Not yet') }}
                     <ul v-if="Object.keys(scenarios.attr).length > 0">
-                      <li v-for="key in Object.keys(scenarios.attr)">{{ key + ": " + scenarios.attr[key] }}</li>
+                      <li v-for="(key, index) in Object.keys(scenarios.attr)" :key="index">{{ key + ": " + scenarios.attr[key] }}</li>
                     </ul>
                   </li>
                 </template>
@@ -65,7 +65,12 @@ export default {
       if (this.token.length < 32) return
       this.user = {}
       this.alert = this.successCI = false
-      apiClient.checkIn(this.token).then((res) => {
+
+      let today = (new Date()).getTime()
+      let day1 = Date.parse('2017/08/05')
+      let day2 = Date.parse('2017/08/06')
+      let checkInFunction = today >= day1 && today < day2 ? apiClient.day1CheckIn : today >= day2 ? apiClient.day2CheckIn : apiClient.checkIn
+      checkInFunction(this.token).then((res) => {
         this.updateUserData(res)
         this.successCI = true
         this.alertMessage = res.user_id + ' 報到成功'
