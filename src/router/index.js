@@ -16,7 +16,6 @@ export default new Router({
     { path: '/checkin', component: CheckIn },
     { path: '/announcement', component: Announcement },
     { path: '/push', component: PushNoti },
-    { path: '/puzzle', component: Puzzle },
-    { path: '/coupon', component: Coupon }
+    { path: '/puzzle', component: Puzzle }
   ]
 })
