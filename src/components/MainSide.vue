@@ -28,14 +28,9 @@
           avatar: 'notifications'
         },
         {
-          title: 'Puzzle',
+          title: '大地遊戲',
           href: 'puzzle',
           avatar: 'extension'
-        },
-        {
-          title: 'Coupon',
-          href: 'coupon',
-          avatar: 'receipt'
         }
         ]
       }
