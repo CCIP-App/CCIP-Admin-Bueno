@@ -58,7 +58,7 @@ export default {
               this.players.push({
                 nickname: res.user_id,
                 token: token,
-                clear: res.deliverer.length === this.boothList.length
+                clear: this.boothList.filter((el) => res.deliverer.indexOf(el) === -1).length === 0
               })
               this.tokens.push(token)
             } else {
