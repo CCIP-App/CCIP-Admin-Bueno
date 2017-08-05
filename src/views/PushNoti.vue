@@ -68,7 +68,7 @@ export default {
         'zh-Hans': this.feed.msg_zh
       }
       if (this.feed.uri.length > 0) packet['uri'] = this.feed.uri
-      if (this.feed.msg.length > 0 && this.feed.to !== 0) {
+      if (this.feed.msg_en.length > 0 && this.feed.msg_zh.length > 0 && this.feed.to !== 0) {
         oneSignal.createNotification(packet)
           .then((res) => {
             this.success = true
