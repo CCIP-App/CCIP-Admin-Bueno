@@ -2,11 +2,11 @@
   <div id='CheckIn'>
     <v-alert dismissible warning v-model="alert" role="alert" class="mb-3">{{ alertMessage }}</v-alert>
     <v-alert dismissible success v-model="successCI" role="alert" class="mb-3">{{ alertMessage }}</v-alert>
-    <v-row class="mb-3">
-      <v-col xs12 md5>
+    <v-layout class="mb-3">
+      <v-flex xs12 md5>
         <qrcode-reader :enable="qrState" class="mr-3 mt-2 mb-3" :width="'32vw'" :height="'24vw'" :noResult="true" @OnSuccess="OnSuccess" />
-      </v-col>
-      <v-col xs12 md7>
+      </v-flex>
+      <v-flex xs12 md7>
         <v-card>
           <v-card-row class="green darken-1">
             <v-card-title>
@@ -31,8 +31,8 @@
             </v-card-row>
           </v-card-text>
         </v-card>
-      </v-col>
-    </v-row>
+      </v-flex>
+    </v-layout>
     <v-card class="mb-3">
       <v-card-row class="green darken-1">
         <v-card-title>

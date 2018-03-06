@@ -1,8 +1,8 @@
 <template>
   <div id='PushNoti'>
     <v-container fluid>
-      <v-row>
-        <v-col xs12 md12 style="margin: 0 auto;">
+      <v-layout>
+        <v-flex xs12 md12 style="margin: 0 auto;">
           <v-card style="margin: 0 auto;">
             <v-card-text class=" text-xs-center">
               <h5 class="ma-0">新增推播通知</h5>
@@ -13,8 +13,8 @@
               <v-btn ripple info @click.native="send" :disabled="disabled" :loading="disabled">Send!</v-btn>
             </v-card-text>
           </v-card>
-        </v-col>
-      </v-row>
+        </v-flex>
+      </v-layout>
       <v-alert dismissible warning v-model="alert" role="alert">{{ alertMessage }}</v-alert>
       <v-alert dismissible success v-model="success" role="alert">推播成功</v-alert>
 

@@ -9,7 +9,9 @@ module.exports = {
     filename: 'build.js'
   },
   resolve: {
+    extensions: ['.js', '.vue'],
     alias: {
+      'vue$': 'vue/dist/vue.esm.js',
       'public': path.resolve(__dirname, './public')
     }
   },
@@ -19,28 +21,30 @@ module.exports = {
         test: /\.vue$/,
         loader: 'vue-loader',
         options: {
-          // vue-loader options go here
+          loaders: {
+          }
+          // other vue-loader options go here
         }
       },
       {
         test: /\.js$/,
-        loader: 'buble-loader',
-        exclude: /node_modules/,
+        loader: 'babel-loader',
+        exclude: /node_modules/
+      },
+      {
+        test: /\.(png|jpg|gif|svg)$/,
+        loader: 'file-loader',
         options: {
           objectAssign: 'Object.assign'
         }
       },
       {
-        test: /\.styl$/,
-        loader: ['style-loader', 'css-loader', 'stylus-loader']
+        test: /\.css$/,
+        loader: ['style-loader', 'css-loader']
       },
       {
-        test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
-        loader: 'url-loader',
-        query: {
-          limit: 10000,
-          name: 'img/[name].[hash:7].[ext]'
-        }
+        test: /\.styl$/,
+        loader: ['style-loader', 'css-loader', 'stylus-loader']
       }
     ]
   },
@@ -48,8 +52,10 @@ module.exports = {
     historyApiFallback: true,
     noInfo: true
   },
-  devtool: '#eval-source-map',
-  performance: false
+  performance: {
+    hints: false
+  },
+  devtool: '#eval-source-map'
 }
 
 if (process.env.NODE_ENV === 'production') {
@@ -62,6 +68,7 @@ if (process.env.NODE_ENV === 'production') {
       }
     }),
     new webpack.optimize.UglifyJsPlugin({
+      sourceMap: true,
       compress: {
         warnings: false
       }

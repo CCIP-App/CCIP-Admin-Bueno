@@ -1,14 +1,14 @@
 <template>
-  <v-app top-fixed-navbar left-fixed-sidebar>
+  <v-app>
     
-    <main-nav></main-nav>
+    <main-side v-model="drawer"></main-side>
+    <main-nav v-on:sidebar="drawer = !drawer"></main-nav>
     
     <main>
-      <main-side></main-side>
       <v-content>
         <v-container fluid>
           <transition name="slide" mode="out-in">
-            <router-view class="pa-4"></router-view>
+            <router-view></router-view>
           </transition>
         </v-container>
       </v-content>
@@ -20,16 +20,15 @@
   export default {
     data () {
       return {
-        
+        drawer: true
       }
     },
 
     mounted () {
-      this.$vuetify.init()
     }
   }
 </script>
 
 <style lang="stylus">
-  @import './stylus/main'
+
 </style>

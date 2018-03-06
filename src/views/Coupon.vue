@@ -1,11 +1,11 @@
 <template>
   <div id="Coupon">
     <v-alert dismissible warning v-model="alert" role="alert" class="mb-3">{{ alertMessage }}</v-alert>
-    <v-row>
-      <v-col xs12 md5>
+    <v-layout>
+      <v-flex xs12 md5>
         <qrcode-reader class="mr-3 mt-2 mb-3" :enable="qrState" :width="'32vw'" :height="'24vw'" :noResult="true" @OnSuccess="onSuccess" @OnError="onError" />
-      </v-col>
-      <v-col xs12 md7>
+      </v-flex>
+      <v-flex xs12 md7>
         <v-card>
           <v-card-row  class="green darken-1">
             <v-card-title>
@@ -26,8 +26,8 @@
             <v-btn class="lighten-2 white--text" error :loading="revoking" :disabled="revoking" v-on:click.native="revokCoupon">Revoke Coupon</v-btn>
           </v-card-row>
         </v-card>
-      </v-col>
-    </v-row>
+      </v-flex>
+    </v-layout>
   </div>
 </template>
 

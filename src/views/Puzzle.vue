@@ -1,10 +1,10 @@
 <template>
   <div id="Puzzle">
-    <v-row>
-      <v-col xs12 md5>
+    <v-layout>
+      <v-flex xs12 md5>
         <qrcode-reader class="mr-3 mt-2 mb-3" :enable="qrState" :width="'32vw'" :height="'24vw'" :noResult="true" @OnSuccess="onSuccess" @OnError="onError" />
-      </v-col>
-      <v-col xs12 md7>
+      </v-flex>
+      <v-flex xs12 md7>
         <v-alert dismissible warning v-model="alert" role="alert">{{ alertMessage }}</v-alert>
         <v-card>
           <v-card-row  class="green darken-1">
@@ -24,8 +24,8 @@
             <v-btn class="lighten-2 white--text" error :loading="revoking" :disabled="revoking" v-on:click.native="revokPlayer">Revoke those of player</v-btn>
           </v-card-row>
         </v-card>
-      </v-col>
-    </v-row>
+      </v-flex>
+    </v-layout>
 
   </div>
 </template>

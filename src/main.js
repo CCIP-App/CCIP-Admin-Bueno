@@ -1,21 +1,31 @@
 import Vue from 'vue'
 import App from './App.vue'
 import Vuetify from 'vuetify'
-import store from './store/index'
 import router from './router/index'
-import { sync } from 'vuex-router-sync'
 import Components from './components/_index'
 
-sync(store, router)
+import 'vuetify/dist/vuetify.min.css'
+import colors from 'vuetify/es5/util/colors'
 
-Vue.use(Vuetify)
+Vue.use(Vuetify, {
+  theme: {
+    primary: colors.green.base, 
+    secondary: colors.grey.darken3, 
+    accent: colors.blue.accent1 ,
+    info: colors.blue.base,
+    warning: colors.amber.base,
+    error: colors.red.base,
+    success: colors.green.base
+  }
+})
 
 Object.keys(Components).forEach(key => {
   Vue.component(key, Components[key])
 })
 
 new Vue({
+  el: '#app',
   router,
-  store,
-  ...App
-}).$mount('#app')
+  components: { App },
+  template: '<App/>'
+})

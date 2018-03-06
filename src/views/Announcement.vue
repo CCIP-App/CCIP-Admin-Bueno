@@ -1,8 +1,8 @@
 <template>
   <div id='Announcement'>
     <v-container fluid>
-      <v-row>
-        <v-col xs12 md12 style="margin: 0 auto;">
+      <v-layout>
+        <v-flex xs12 md12 style="margin: 0 auto;">
           <v-card style="margin: 0 auto;">
             <v-card-text class=" text-xs-center">
               <h5 class="ma-0">新增大會公告</h5>
@@ -12,12 +12,12 @@
               <v-btn ripple info @click.native="send" :disabled="disabled" :loading="disabled">Send!</v-btn>
             </v-card-text>
           </v-card>
-        </v-col>
-      </v-row>
+        </v-flex>
+      </v-layout>
       <br>
       <v-alert dismissible warning v-model="alert" role="alert">{{ alertMessage }}</v-alert>
-      <v-row>
-        <v-col xs12 md12 style="margin: 0 auto;">
+      <v-layout>
+        <v-flex xs12 md12 style="margin: 0 auto;">
           <v-card style="margin: 0 auto;">
             <v-card-text class=" text-xs-center">
               <h5 class="ma-0">大會公告歷程</h5>
@@ -40,8 +40,8 @@
               </v-table-overflow>
             </v-card-text>
           </v-card>
-        </v-col>
-      </v-row>
+        </v-flex>
+      </v-layout>
     </v-container>
   </div>
 </template>
