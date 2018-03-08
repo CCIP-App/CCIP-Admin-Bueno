@@ -30,6 +30,11 @@
           avatar: 'check'
         },
         {
+          title: 'Lunch',
+          href: 'lunch',
+          avatar: 'check'
+        },
+        {
           title: 'Annoucement',
           href: 'announcement',
           avatar: 'announcement'
@@ -40,8 +45,8 @@
           avatar: 'notifications'
         },
         {
-          title: '大地遊戲',
-          href: 'puzzle',
+          title: '知識王',
+          href: 'king',
           avatar: 'extension'
         }
         ]

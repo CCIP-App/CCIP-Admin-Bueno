@@ -29,6 +29,9 @@ export default {
   day2CheckIn: (token) => {
     return client.get('use/day2checkin?token=' + token + '&StaffQuery=true').then((res) => res.data)
   },
+  lunch: (token) => {
+    return client.get('use/lunch?token=' + token).then((res) => res.data)
+  },
   getStatus: (token) => {
     return client.get('status?token=' + token).then((res) => res.data)
   },

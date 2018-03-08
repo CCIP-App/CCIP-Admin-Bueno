@@ -9,7 +9,7 @@
         <v-card>
           <v-card-row  class="green darken-1">
             <v-card-title>
-              <span class="white--text">User</span>
+              <span>User</span>
             </v-card-title>
           </v-card-row>
           <v-card-text>

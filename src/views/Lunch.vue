@@ -1,5 +1,5 @@
 <template>
-  <div id='CheckIn'>
+  <div id='Lunch'>
     <v-alert dismissible warning v-model="alert" role="alert" class="mb-3">{{ alertMessage }}</v-alert>
     <v-alert dismissible success v-model="successCI" role="alert" class="mb-3">{{ alertMessage }}</v-alert>
     <v-layout class="mb-3">
@@ -10,7 +10,7 @@
         <v-card>
           <!-- <v-card-row class="green darken-1"> -->
             <v-card-title>
-            <span class="white--text">CheckIn</span>
+            <span class="white--text">Lunch</span>
             </v-card-title>
           <!-- </v-card-row> -->
           <v-card-text>
@@ -49,7 +49,7 @@
 <script>
 import apiClient from '../modal/apiClient'
 export default {
-  name: 'CheckIn',
+  name: 'Lunch',
   data() {
     return {
       qrState: true,
@@ -69,17 +69,17 @@ export default {
       // let today = (new Date()).getTime()
       // let day1 = Date.parse('2017/08/05')
       // let day2 = Date.parse('2017/08/06')
-      let checkInFunction = apiClient.checkIn
+      let checkInFunction = apiClient.lunch
       checkInFunction(this.token).then((res) => {
         this.updateUserData(res)
         this.successCI = true
-        this.alertMessage = res.user_id + ' 報到成功'
+        this.alertMessage = res.user_id + ' 登記成功'
       }).catch((err) => {
         if (err.response) {
           if ('link expired/not available now'.match(err.response.data.message)) {
-            this.alertMessage = '還沒開始報到喔(╯°□°）╯︵ ┻━┻'
+            this.alertMessage = '還沒開始登記喔(╯°□°）╯︵ ┻━┻'
           } else if ('has been used'.match(err.response.data.message)) {
-            this.alertMessage = '已經報到過了╮(￣▽￣"")╭'
+            this.alertMessage = '已經登記過了╮(￣▽￣"")╭'
           } else {
             this.alertMessage = err.response.status + ' - ' + err.response.data.message
           }

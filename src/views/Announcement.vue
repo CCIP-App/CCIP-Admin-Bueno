@@ -6,9 +6,9 @@
           <v-card style="margin: 0 auto;">
             <v-card-text class=" text-xs-center">
               <h5 class="ma-0">新增大會公告</h5>
-              <v-text-input type="text" placeholder="Msg(zh)" v-model="newAnnounce.msg_zh" :disabled="disabled"></v-text-input>
-              <v-text-input type="text" placeholder="Msg(en)" v-model="newAnnounce.msg_en" :disabled="disabled"></v-text-input>
-              <v-text-input type="text" placeholder="URI(option)" v-model="newAnnounce.uri" :disabled="disabled"></v-text-input>
+              <v-text-field type="text" placeholder="Msg(zh)" v-model="newAnnounce.msg_zh" :disabled="disabled"></v-text-field>
+              <v-text-field type="text" placeholder="Msg(en)" v-model="newAnnounce.msg_en" :disabled="disabled"></v-text-field>
+              <v-text-field type="text" placeholder="URI(option)" v-model="newAnnounce.uri" :disabled="disabled"></v-text-field>
               <v-btn ripple info @click.native="send" :disabled="disabled" :loading="disabled">Send!</v-btn>
             </v-card-text>
           </v-card>
