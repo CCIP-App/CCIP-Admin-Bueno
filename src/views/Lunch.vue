@@ -2,9 +2,9 @@
   <div id='Lunch'>
     <v-alert dismissible warning v-model="alert" role="alert" class="mb-3">{{ alertMessage }}</v-alert>
     <v-alert dismissible success v-model="successCI" role="alert" class="mb-3">{{ alertMessage }}</v-alert>
-    <v-layout class="mb-3">
+    <v-layout row wrap>
       <v-flex xs12 md6>
-        <qrcode-reader :enable="qrState" class="mr-3 mt-2 mb-3" :width="'45vw'" :height="'45vw'" :noResult="true" @OnSuccess="OnSuccess" />
+        <qrcode-reader :enable="qrState" :width="'100%'" :height="'300px'" :noResult="true" @OnSuccess="OnSuccess" />
       </v-flex>
       <v-flex xs12 md6>
         <v-card>

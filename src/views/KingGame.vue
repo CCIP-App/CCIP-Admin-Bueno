@@ -2,7 +2,7 @@
   <div id="KingGame">
     <v-layout row wrap>
       <v-flex xs12 md6>
-        <qrcode-reader class="mr-3 mt-2 mb-3" :enable="qrState" :width="'45vw'" :height="'45vw'" :noResult="true" @OnSuccess="onSuccess" @OnError="onError" />
+        <qrcode-reader :enable="qrState" :width="'100%'" :height="'300px'" :noResult="true" @OnSuccess="onSuccess" @OnError="onError" />
       </v-flex>
       <v-flex xs12 md6>
         <v-alert dismissible warning v-model="alert" role="alert">{{ alertMessage }}</v-alert>
