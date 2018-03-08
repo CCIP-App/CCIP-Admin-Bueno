@@ -1,5 +1,5 @@
 <template>
-  <div :id="'chart-' + idName"  style="margin: 0 auto">
+  <div style="margin: 0 auto">
 
   </div>
 </template>
@@ -11,9 +11,6 @@ export default {
     options: {
       type: Object,
       default: () => ({})
-    },
-    idName: {
-      type: String
     }
   },
   data() {
@@ -28,7 +25,7 @@ export default {
     }
   },
   mounted() {
-    this.chart = Highcharts.chart('chart-' + this.idName, this.options)
+    this.chart = Highcharts.chart(this.$el, this.options)
   },
   beforeDestroy() {
     this.chart.destroy()

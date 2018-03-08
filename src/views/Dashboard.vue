@@ -23,7 +23,7 @@
           <v-card>
             <v-card-text>
               <h4 class="ma-0 text-xs-left">即時報到率</h4>
-              <high-chart :options="defaultOption(attendees)" style="display: flex" idName="1"></high-chart>
+              <high-chart :options="defaultOption(attendees)" style="display: flex"></high-chart>
             </v-card-text>
           </v-card>
         </v-flex>
@@ -31,7 +31,7 @@
           <v-card>
             <v-card-text>
               <h4 class="ma-0 text-xs-left">午餐(葷)已報到 {{ lunch.meat.total }}</h4>
-              <high-chart :options="defaultOption(lunch.meat.chart)" style="display: flex" idName="2"></high-chart>
+              <high-chart :options="defaultOption(lunch.meat.chart)" style="display: flex"></high-chart>
             </v-card-text>
           </v-card>
         </v-flex>
@@ -39,7 +39,7 @@
           <v-card>
             <v-card-text>
               <h4 class="ma-0 text-xs-left">午餐(素)已報到 {{ lunch.vegetarian.total }}</h4>
-              <high-chart :options="defaultOption(lunch.vegetarian.chart)" style="display: flex" idName="3"></high-chart>
+              <high-chart :options="defaultOption(lunch.vegetarian.chart)" style="display: flex"></high-chart>
             </v-card-text>
           </v-card>
         </v-flex>
@@ -47,7 +47,7 @@
           <v-card>
             <v-card-text>
               <h4 class="ma-0 text-xs-left">迎賓袋領取 {{ totalUser }}</h4>
-              <high-chart :options="defaultOption(kit.normal.chart)" style="display: flex" idName="4"></high-chart>
+              <high-chart :options="defaultOption(kit.normal.chart)" style="display: flex"></high-chart>
             </v-card-text>
           </v-card>
         </v-flex>
@@ -55,7 +55,7 @@
           <v-card>
             <v-card-text>
               <h4 class="ma-0 text-xs-left">個人贊助領取 {{ kit.vip.total }}</h4>
-              <high-chart :options="defaultOption(kit.vip.chart)" style="display: flex" idName="5"></high-chart>
+              <high-chart :options="defaultOption(kit.vip.chart)" style="display: flex"></high-chart>
             </v-card-text>
           </v-card>
         </v-flex>
