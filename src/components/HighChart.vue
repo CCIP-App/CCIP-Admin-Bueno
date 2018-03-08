@@ -9,23 +9,27 @@ import Highcharts from 'highcharts'
 export default {
   props: {
     options: {
-      type: Object,
-      default: () => ({})
+      type: Object
     }
   },
   data() {
     return {
-      chart: null
+      chart: null,
+      oldValue: ''
     }
   },
   watch: {
     options: function(value) {
-      this.chart.update(value, true)
+      if (this.oldValue !== JSON.stringify(value)) {
+        this.chart.update(value, true)
+        this.oldValue = JSON.stringify(value)
+      } 
       return value
     }
   },
   mounted() {
     this.chart = Highcharts.chart(this.$el, this.options)
+    this.oldValue = JSON.stringify(this.options)
   },
   beforeDestroy() {
     this.chart.destroy()

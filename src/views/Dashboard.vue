@@ -179,8 +179,7 @@ export default {
       return {
         chart: {
           type: "pie",
-          spacing: [0, 0, 0, 0],
-          reflow: true
+          spacing: [0, 0, 0, 0]
         },
         title: {
           text: ""
