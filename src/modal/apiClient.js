@@ -2,7 +2,7 @@ import axios from 'axios'
 import configs from '../../config.json'
 const config = {
   baseURL: configs.baseUrl,
-  timeout: 1000,
+  timeout: 5000,
   headers: {
     [configs.username]: configs.password
   }
@@ -10,7 +10,7 @@ const config = {
 
 const noHeaderConfig = {
   baseURL: configs.baseUrl,
-  timeout: 1000
+  timeout: 5000
 }
 
 const client = axios.create(config)
