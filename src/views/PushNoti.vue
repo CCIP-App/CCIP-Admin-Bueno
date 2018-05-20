@@ -32,18 +32,19 @@ export default {
         {
           value: 'All',
           text: '全體'
-        }, {
-          value: 'Audience',
-          text: '僅會眾'
-        },
-        {
-          value: 'Staff',
-          text: '僅工作人員'
-        },
-        {
-          value: 'Speaker',
-          text: '僅講者'
         }
+        // , {
+        //   value: 'Audience',
+        //   text: '僅會眾'
+        // },
+        // {
+        //   value: 'Staff',
+        //   text: '僅工作人員'
+        // },
+        // {
+        //   value: 'Speaker',
+        //   text: '僅講者'
+        // }
       ],
       feed: {
         to: 0,

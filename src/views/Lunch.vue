@@ -66,10 +66,11 @@ export default {
       this.user = {}
       this.alert = this.successCI = false
 
-      // let today = (new Date()).getTime()
-      // let day1 = Date.parse('2017/08/05')
-      // let day2 = Date.parse('2017/08/06')
-      let checkInFunction = apiClient.lunch
+       let today = (new Date()).getTime()
+      let day1 = Date.parse('2018/06/01')
+      let day2 = Date.parse('2018/06/02')
+      // let checkInFunction = apiClient.checkIn
+      let checkInFunction = today >= day1 && today < day2 ? apiClient.day1lunch : today >= day2 ? apiClient.day2lunch : apiClient.lunch
       checkInFunction(this.token).then((res) => {
         this.updateUserData(res)
         this.successCI = true

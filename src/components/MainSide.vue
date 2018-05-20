@@ -45,8 +45,8 @@
           avatar: 'notifications'
         },
         {
-          title: '知識王',
-          href: 'king',
+          title: '大地遊戲',
+          href: 'puzzle',
           avatar: 'extension'
         }
         ]

@@ -9,7 +9,7 @@ import colors from 'vuetify/es5/util/colors'
 
 Vue.use(Vuetify, {
   theme: {
-    primary: colors.green.base, 
+    primary: "#3b097b", 
     secondary: colors.grey.darken3, 
     accent: colors.blue.accent1 ,
     info: colors.blue.base,

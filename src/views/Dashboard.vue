@@ -19,27 +19,51 @@
             </v-card-text>
           </v-card>
         </v-flex>
-        <v-flex xs12 md12 class="mb-3">
+        <v-flex xs12 md6 class="mb-3">
           <v-card>
             <v-card-text>
-              <h4 class="ma-0 text-xs-left">即時報到率</h4>
-              <high-chart :options="defaultOption(attendees)" style="display: flex"></high-chart>
+              <h4 class="ma-0 text-xs-left">Day1 報到率</h4>
+              <high-chart :options="defaultOption(attendeesDay1)" style="display: flex"></high-chart>
+            </v-card-text>
+          </v-card>
+        </v-flex>
+        <v-flex xs12 md6 class="mb-3">
+          <v-card>
+            <v-card-text>
+              <h4 class="ma-0 text-xs-left">Day2 報到率</h4>
+              <high-chart :options="defaultOption(attendeesDay2)" style="display: flex"></high-chart>
             </v-card-text>
           </v-card>
         </v-flex>
         <v-flex xs12 md6 xl4 class="mb-3">
           <v-card>
             <v-card-text>
-              <h4 class="ma-0 text-xs-left">午餐(葷)已報到 {{ lunch.meat.total }}</h4>
-              <high-chart :options="defaultOption(lunch.meat.chart)" style="display: flex"></high-chart>
+              <h4 class="ma-0 text-xs-left">Day1 午餐(葷)已報到 {{ day1lunch.meat.total }}</h4>
+              <high-chart :options="defaultOption(day1lunch.meat.chart)" style="display: flex"></high-chart>
             </v-card-text>
           </v-card>
         </v-flex>
         <v-flex xs12 md6 xl4 class="mb-3">
           <v-card>
             <v-card-text>
-              <h4 class="ma-0 text-xs-left">午餐(素)已報到 {{ lunch.vegetarian.total }}</h4>
-              <high-chart :options="defaultOption(lunch.vegetarian.chart)" style="display: flex"></high-chart>
+              <h4 class="ma-0 text-xs-left">Day1 午餐(素)已報到 {{ day1lunch.vegetarian.total }}</h4>
+              <high-chart :options="defaultOption(day1lunch.vegetarian.chart)" style="display: flex"></high-chart>
+            </v-card-text>
+          </v-card>
+        </v-flex>
+        <v-flex xs12 md6 xl4 class="mb-3">
+          <v-card>
+            <v-card-text>
+              <h4 class="ma-0 text-xs-left">Day2 午餐(葷)已報到 {{ day2lunch.meat.total }}</h4>
+              <high-chart :options="defaultOption(day2lunch.meat.chart)" style="display: flex"></high-chart>
+            </v-card-text>
+          </v-card>
+        </v-flex>
+        <v-flex xs12 md6 xl4 class="mb-3">
+          <v-card>
+            <v-card-text>
+              <h4 class="ma-0 text-xs-left">Day2 午餐(素)已報到 {{ day2lunch.vegetarian.total }}</h4>
+              <high-chart :options="defaultOption(day2lunch.vegetarian.chart)" style="display: flex"></high-chart>
             </v-card-text>
           </v-card>
         </v-flex>
@@ -51,14 +75,14 @@
             </v-card-text>
           </v-card>
         </v-flex>
-        <v-flex xs12 md6 xl4 class="mb-3">
+        <!-- <v-flex xs12 md6 xl4 class="mb-3">
           <v-card>
             <v-card-text>
               <h4 class="ma-0 text-xs-left">個人贊助領取 {{ kit.vip.total }}</h4>
               <high-chart :options="defaultOption(kit.vip.chart)" style="display: flex"></high-chart>
             </v-card-text>
           </v-card>
-        </v-flex>
+        </v-flex> -->
       </v-layout>
     </v-container>
   </div>
@@ -74,18 +98,21 @@ export default {
         logged: 0,
         total: 0,
         checkin_used: 0,
-        lunch: {
+        day1lunch: {
           meat: 0,
           meat_used: 0,
           total: 0,
           vegetarian: 0,
           vegetarian_used: 0
         },
-        kit_used: 0,
-        vipkit: {
-          total: 3,
-          used: 0
-        }
+        day2lunch: {
+          meat: 0,
+          meat_used: 0,
+          total: 0,
+          vegetarian: 0,
+          vegetarian_used: 0
+        },
+        kit_used: 0
       },
       countDown: 30
     };
@@ -100,44 +127,87 @@ export default {
     appPrecnetage() {
       return Math.round(this.appLogged / this.totalUser * 100);
     },
-    attendees() {
+    attendeesDay1() {
       return [
         {
           name: "已報到",
-          y: this.CIData.checkin_used
+          y: this.CIData.day1checkin_used
         },
         {
           name: "未報到",
-          y: this.CIData.total - this.CIData.checkin_used
+          y: this.CIData.total - this.CIData.day1checkin_used
         }
       ];
     },
-    lunch() {
+    attendeesDay2() {
+      return [
+        {
+          name: "已報到",
+          y: this.CIData.day2checkin_used
+        },
+        {
+          name: "未報到",
+          y: this.CIData.total - this.CIData.day2checkin_used
+        }
+      ];
+    },
+    day1lunch() {
       return {
         meat: {
-          total: this.CIData.lunch.meat,
+          total: this.CIData.day1lunch.meat,
           chart: [
             {
               name: "已領取",
-              y: this.CIData.lunch.meat_used
+              y: this.CIData.day1lunch.meat_used
             },
             {
               name: "未領取",
-              y: this.CIData.lunch.meat - this.CIData.lunch.meat_used
+              y: this.CIData.day1lunch.meat - this.CIData.day1lunch.meat_used
             }
           ]
         },
         vegetarian: {
-          total: this.CIData.lunch.vegetarian,
+          total: this.CIData.day1lunch.vegetarian,
           chart: [
             {
               name: "已領取",
-              y: this.CIData.lunch.vegetarian_used
+              y: this.CIData.day1lunch.vegetarian_used
             },
             {
               name: "未領取",
               y:
-                this.CIData.lunch.vegetarian - this.CIData.lunch.vegetarian_used
+                this.CIData.day1lunch.vegetarian - this.CIData.day1lunch.vegetarian_used
+            }
+          ]
+        }
+      };
+    },
+    day2lunch() {
+      return {
+        meat: {
+          total: this.CIData.day2lunch.meat,
+          chart: [
+            {
+              name: "已領取",
+              y: this.CIData.day2lunch.meat_used
+            },
+            {
+              name: "未領取",
+              y: this.CIData.day2lunch.meat - this.CIData.day2lunch.meat_used
+            }
+          ]
+        },
+        vegetarian: {
+          total: this.CIData.day2lunch.vegetarian,
+          chart: [
+            {
+              name: "已領取",
+              y: this.CIData.day2lunch.vegetarian_used
+            },
+            {
+              name: "未領取",
+              y:
+                this.CIData.day2lunch.vegetarian - this.CIData.day2lunch.vegetarian_used
             }
           ]
         }
@@ -156,20 +226,21 @@ export default {
               y: this.totalUser - this.CIData.kit_used
             }
           ]
-        },
-        vip: {
-          total: this.CIData.vipkit.total,
-          chart: [
-            {
-              name: "已領取",
-              y: this.CIData.vipkit.used
-            },
-            {
-              name: "未領取",
-              y: this.CIData.vipkit.total - this.CIData.vipkit.used
-            }
-          ]
         }
+        // },
+        // vip: {
+        //   total: this.CIData.vipkit.total,
+        //   chart: [
+        //     {
+        //       name: "已領取",
+        //       y: this.CIData.vipkit.used
+        //     },
+        //     {
+        //       name: "未領取",
+        //       y: this.CIData.vipkit.total - this.CIData.vipkit.used
+        //     }
+        //   ]
+        // }
       };
     }
   },

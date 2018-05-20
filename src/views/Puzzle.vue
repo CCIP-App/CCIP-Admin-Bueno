@@ -7,22 +7,22 @@
       <v-flex xs12 md7>
         <v-alert dismissible warning v-model="alert" role="alert">{{ alertMessage }}</v-alert>
         <v-card>
-          <v-card-row  class="green darken-1">
+          <!-- <v-card-row  class="green darken-1"> -->
             <v-card-title>
               <span class="white--text">Player</span>
             </v-card-title>
-          </v-card-row>
+          <!-- </v-card-row> -->
           <v-card-text>
-            <v-card-row>
+            <!-- <v-card-row> -->
               <ul>
                 <li v-for="(player, index) in players" role="puzzle-player-item" :key="index">{{ player.nickname }}：{{ player.clear ? '已完成':'尚未完成' }}</li>
               </ul>
-            </v-card-row>
+            <!-- </v-card-row> -->
           </v-card-text>
-          <v-card-row actions>
-            <v-btn class="lighten-2 white--text mr-2" info v-on:click.native="clearPlayer">Clear All User</v-btn>
-            <v-btn class="lighten-2 white--text" error :loading="revoking" :disabled="revoking" v-on:click.native="revokPlayer">Revoke those of player</v-btn>
-          </v-card-row>
+          <!-- <v-card-row actions> -->
+            <v-btn class="lighten-2 mr-2" info v-on:click.native="clearPlayer">Clear All User</v-btn>
+            <v-btn class="lighten-2" error :loading="revoking" :disabled="revoking" v-on:click.native="revokPlayer">Revoke those of player</v-btn>
+          <!-- </v-card-row> -->
         </v-card>
       </v-flex>
     </v-layout>
@@ -87,7 +87,8 @@ export default {
       return hashGen.digest('hex')
     },
     clearPlayer() {
-      this.$vuetify.toast.create(...['玩家清單已經被清空(⊙ω⊙)', 'bottom'])
+      this.alertMessage = '玩家清單已經被清空(⊙ω⊙)'
+      // this.$vuetify.toast.create(...['玩家清單已經被清空(⊙ω⊙)', 'bottom'])
       this.currentScanToken = ''
       this.players = []
       this.tokens = []
@@ -97,12 +98,14 @@ export default {
     revokPlayer() {
       var self = this
       if (this.tokens.length === 0) {
-        self.$vuetify.toast.create(...['沒有東西可以註銷，不要亂戳(;´༎ຶД༎ຶ`)', 'bottom'])
+        self.alertMessage = '沒有東西可以註銷，不要亂戳(;´༎ຶД༎ຶ`)'
+        // self.$vuetify.toast.create(...['沒有東西可以註銷，不要亂戳(;´༎ຶД༎ຶ`)', 'bottom'])
         return
       }
 
       if (this.players.filter((el) => el.clear).length === 0) {
-        self.$vuetify.toast.create(...['沒有完成大地遊戲的玩家喔！', 'bottom'])
+        self.alertMessage = '沒有完成大地遊戲的玩家喔！'
+        // self.$vuetify.toast.create(...['沒有完成大地遊戲的玩家喔！', 'bottom'])
         return
       }
       this.revoking = this.loader = true
