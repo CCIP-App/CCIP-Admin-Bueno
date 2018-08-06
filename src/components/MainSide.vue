@@ -29,11 +29,11 @@
           href: 'checkin',
           avatar: 'check'
         },
-        {
-          title: 'Lunch',
-          href: 'lunch',
-          avatar: 'check'
-        },
+        // {
+        //   title: 'Lunch',
+        //   href: 'lunch',
+        //   avatar: 'check'
+        // },
         {
           title: 'Annoucement',
           href: 'announcement',

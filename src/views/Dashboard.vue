@@ -112,7 +112,11 @@ export default {
           vegetarian: 0,
           vegetarian_used: 0
         },
-        kit_used: 0
+        kit_used: 0,
+        vipkit: {
+          total: 3,
+          used: 0
+        }
       },
       countDown: 30
     };
@@ -226,21 +230,20 @@ export default {
               y: this.totalUser - this.CIData.kit_used
             }
           ]
+        },
+        vip: {
+          total: this.CIData.vipkit.total,
+          chart: [
+            {
+              name: "已領取",
+              y: this.CIData.vipkit.used
+            },
+            {
+              name: "未領取",
+              y: this.CIData.vipkit.total - this.CIData.vipkit.used
+            }
+          ]
         }
-        // },
-        // vip: {
-        //   total: this.CIData.vipkit.total,
-        //   chart: [
-        //     {
-        //       name: "已領取",
-        //       y: this.CIData.vipkit.used
-        //     },
-        //     {
-        //       name: "未領取",
-        //       y: this.CIData.vipkit.total - this.CIData.vipkit.used
-        //     }
-        //   ]
-        // }
       };
     }
   },
