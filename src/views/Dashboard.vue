@@ -35,7 +35,7 @@
             </v-card-text>
           </v-card>
         </v-flex>
-        <v-flex xs12 md6 xl4 class="mb-3">
+        <!-- <v-flex xs12 md6 xl4 class="mb-3">
           <v-card>
             <v-card-text>
               <h4 class="ma-0 text-xs-left">Day1 午餐(葷)已報到 {{ day1lunch.meat.total }}</h4>
@@ -66,7 +66,7 @@
               <high-chart :options="defaultOption(day2lunch.vegetarian.chart)" style="display: flex"></high-chart>
             </v-card-text>
           </v-card>
-        </v-flex>
+        </v-flex> -->
         <v-flex xs12 md6 xl4 class="mb-3">
           <v-card>
             <v-card-text>
@@ -75,14 +75,14 @@
             </v-card-text>
           </v-card>
         </v-flex>
-        <!-- <v-flex xs12 md6 xl4 class="mb-3">
+        <v-flex xs12 md6 xl4 class="mb-3">
           <v-card>
             <v-card-text>
               <h4 class="ma-0 text-xs-left">個人贊助領取 {{ kit.vip.total }}</h4>
               <high-chart :options="defaultOption(kit.vip.chart)" style="display: flex"></high-chart>
             </v-card-text>
           </v-card>
-        </v-flex> -->
+        </v-flex>
       </v-layout>
     </v-container>
   </div>
