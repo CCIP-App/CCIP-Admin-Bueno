@@ -29,6 +29,11 @@
           href: 'checkin',
           avatar: 'check'
         },
+        {
+          title: 'Status',
+          href: 'status',
+          avatar: 'account_box'
+        },
         // {
         //   title: 'Lunch',
         //   href: 'lunch',

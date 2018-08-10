@@ -3,6 +3,7 @@ import Router from 'vue-router'
 
 import Dashboard from '../views/Dashboard.vue'
 import CheckIn from '../views/CheckIn.vue'
+import Status from '../views/Status.vue'
 import Announcement from '../views/Announcement.vue'
 import PushNoti from '../views/PushNoti.vue'
 import Puzzle from '../views/Puzzle.vue'
@@ -16,6 +17,7 @@ export default new Router({
   routes: [
     { path: '/', component: Dashboard },
     { path: '/checkin', component: CheckIn },
+    { path: '/status', component: Status },
     { path: '/lunch', component: Lunch },
     { path: '/announcement', component: Announcement },
     { path: '/push', component: PushNoti },
