@@ -15,7 +15,7 @@
         </v-flex>
       </v-layout>
       <br>
-      <v-alert dismissible warning v-model="alert" role="alert">{{ alertMessage }}</v-alert>
+      <v-alert dismissible type="warning" v-model="alert" role="alert">{{ alertMessage }}</v-alert>
       <v-layout>
         <v-flex xs12 md12 style="margin: 0 auto;">
           <v-card style="margin: 0 auto;">

@@ -5,7 +5,7 @@
         <qrcode-reader class="mr-3 mt-2 mb-3" :enable="qrState" :width="'32vw'" :height="'24vw'" :noResult="true" @OnSuccess="onSuccess" @OnError="onError" />
       </v-flex>
       <v-flex xs12 md7>
-        <v-alert dismissible warning v-model="alert" role="alert">{{ alertMessage }}</v-alert>
+        <v-alert dismissible type="warning" v-model="alert" role="alert">{{ alertMessage }}</v-alert>
         <v-card>
           <!-- <v-card-row  class="green darken-1"> -->
             <v-card-title>
