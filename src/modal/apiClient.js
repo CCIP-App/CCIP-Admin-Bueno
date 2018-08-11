@@ -38,6 +38,9 @@ export default {
   day2lunch: (token) => {
     return client.get('use/day2lunch?token=' + token).then((res) => res.data)
   },
+  vipkit: (token) => {
+    return client.get('use/vipkit?token=' + token).then((res) => res.data)
+  },
   getStatus: (token) => {
     return client.get('status?token=' + token).then((res) => res.data)
   },

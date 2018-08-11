@@ -34,6 +34,11 @@
           href: 'status',
           avatar: 'account_box'
         },
+        {
+          title: 'VipKit',
+          href: 'vipkit',
+          avatar: 'card_travel'
+        },
         // {
         //   title: 'Lunch',
         //   href: 'lunch',
