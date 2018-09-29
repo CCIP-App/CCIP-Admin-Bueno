@@ -34,7 +34,11 @@
                 class="elevation-1"
                 :search="search">
                 <template slot="items" slot-scope="props">
-                  <td v-for="(value, key) in props.item" :key="key+value" :class="{['text-xs-right']: key!=='name'}"> {{ value }}</td>
+                  <td
+                    v-for="(value, key) in props.item"
+                    :key="key+value"
+                    :rows-per-page-text="5"
+                    :class="[{['text-xs-right']: key!=='name'},{['not-exist']: value==='not exist'},{['used']: value==='used'}]"> {{ value }}</td>
                   <!-- <td>{{ props.item.name }}</td>
                   <td class="text-xs-right">{{ props.item.calories }}</td>
                   <td class="text-xs-right">{{ props.item.fat }}</td>
@@ -79,6 +83,7 @@ export default {
           value: element
         })
       })
+      list.push({text: 'attr', value: 'attr'})
       return list
     },
     desserts: function () {
@@ -95,7 +100,7 @@ export default {
             data[ele] = (element.scenario[ele].used === undefined) ? 'not used' : 'used'
           }
         })
-        data['attr'] = element.attr.toString()
+        data['attr'] = JSON.stringify(element.attr)
         return data
       })
     }
@@ -128,5 +133,11 @@ export default {
 <style lang="stylus">
 [role='userStatus'] {
   font-size: 1.2rem;
+}
+.not-exist {
+  background-color black
+}
+.used {
+  background-color green
 }
 </style>

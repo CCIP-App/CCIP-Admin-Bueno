@@ -36,7 +36,7 @@ export default {
     return client.get('scenarios?type=' + type).then((res) => res.data)
   },
   getAllTypeScenarios: (type) => {
-    return client.get('https://ccip.opass.app/dashboard/' + type).then((res) => res.data)
+    return client.get('dashboard/' + type).then((res) => res.data)
   },
   lunch: (token) => {
     return client.get('use/lunch?token=' + token).then((res) => res.data)
