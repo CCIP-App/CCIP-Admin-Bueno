@@ -19,7 +19,7 @@
             </v-card-text>
           </v-card>
         </v-flex>
-        <v-flex xs12 md6 class="mb-3">
+        <v-flex xs12 md4 class="mb-3">
           <v-card>
             <v-card-text>
               <h4 class="ma-0 text-xs-left">Day1 報到率</h4>
@@ -27,7 +27,7 @@
             </v-card-text>
           </v-card>
         </v-flex>
-        <v-flex xs12 md6 class="mb-3">
+        <v-flex xs12 md4 class="mb-3">
           <v-card>
             <v-card-text>
               <h4 class="ma-0 text-xs-left">Day2 報到率</h4>
@@ -35,7 +35,15 @@
             </v-card-text>
           </v-card>
         </v-flex>
-        <!-- <v-flex xs12 md6 xl4 class="mb-3">
+        <v-flex xs12 md4 class="mb-3">
+          <v-card>
+            <v-card-text>
+              <h4 class="ma-0 text-xs-left">Day3 報到率</h4>
+              <high-chart :options="defaultOption(attendeesDay3)" style="display: flex"></high-chart>
+            </v-card-text>
+          </v-card>
+        </v-flex>
+        <v-flex xs12 md6 xl4 class="mb-3">
           <v-card>
             <v-card-text>
               <h4 class="ma-0 text-xs-left">Day1 午餐(葷)已報到 {{ day1lunch.meat.total }}</h4>
@@ -66,7 +74,23 @@
               <high-chart :options="defaultOption(day2lunch.vegetarian.chart)" style="display: flex"></high-chart>
             </v-card-text>
           </v-card>
-        </v-flex> -->
+        </v-flex>
+        <v-flex xs12 md6 xl4 class="mb-3">
+          <v-card>
+            <v-card-text>
+              <h4 class="ma-0 text-xs-left">Day3 午餐(葷)已報到 {{ day3lunch.meat.total }}</h4>
+              <high-chart :options="defaultOption(day3lunch.meat.chart)" style="display: flex"></high-chart>
+            </v-card-text>
+          </v-card>
+        </v-flex>
+        <v-flex xs12 md6 xl4 class="mb-3">
+          <v-card>
+            <v-card-text>
+              <h4 class="ma-0 text-xs-left">Day3 午餐(素)已報到 {{ day3lunch.vegetarian.total }}</h4>
+              <high-chart :options="defaultOption(day3lunch.vegetarian.chart)" style="display: flex"></high-chart>
+            </v-card-text>
+          </v-card>
+        </v-flex>
         <v-flex xs12 md6 xl4 class="mb-3">
           <v-card>
             <v-card-text>
@@ -106,6 +130,13 @@ export default {
           vegetarian_used: 0
         },
         day2lunch: {
+          meat: 0,
+          meat_used: 0,
+          total: 0,
+          vegetarian: 0,
+          vegetarian_used: 0
+        },
+        day3lunch: {
           meat: 0,
           meat_used: 0,
           total: 0,
@@ -152,6 +183,18 @@ export default {
         {
           name: "未報到",
           y: this.CIData.total - this.CIData.day2checkin_used
+        }
+      ];
+    },
+    attendeesDay3() {
+      return [
+        {
+          name: "已報到",
+          y: this.CIData.day3checkin_used
+        },
+        {
+          name: "未報到",
+          y: this.CIData.total - this.CIData.day3checkin_used
         }
       ];
     },
@@ -212,6 +255,37 @@ export default {
               name: "未領取",
               y:
                 this.CIData.day2lunch.vegetarian - this.CIData.day2lunch.vegetarian_used
+            }
+          ]
+        }
+      };
+    },
+    day3lunch() {
+      return {
+        meat: {
+          total: this.CIData.day3lunch.meat,
+          chart: [
+            {
+              name: "已領取",
+              y: this.CIData.day3lunch.meat_used
+            },
+            {
+              name: "未領取",
+              y: this.CIData.day3lunch.meat - this.CIData.day3lunch.meat_used
+            }
+          ]
+        },
+        vegetarian: {
+          total: this.CIData.day3lunch.vegetarian,
+          chart: [
+            {
+              name: "已領取",
+              y: this.CIData.day3lunch.vegetarian_used
+            },
+            {
+              name: "未領取",
+              y:
+                this.CIData.day3lunch.vegetarian - this.CIData.day3lunch.vegetarian_used
             }
           ]
         }

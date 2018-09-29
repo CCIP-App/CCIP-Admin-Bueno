@@ -20,45 +20,45 @@
       return {
         drawer: null,
         items: [{
-          title: 'Dashboard',
+          title: '控制版',
           href: '/',
           avatar: 'dashboard'
         },
         {
-          title: 'CheckIn',
+          title: '查詢',
+          href: 'status',
+          avatar: 'search'
+        },
+        {
+          title: '所有報到（含午餐）',
           href: 'checkin',
           avatar: 'check'
         },
-        {
-          title: 'Status',
-          href: 'status',
-          avatar: 'account_box'
-        },
-        {
-          title: 'VipKit',
-          href: 'vipkit',
-          avatar: 'card_travel'
-        },
+        // {
+        //   title: 'VipKit',
+        //   href: 'vipkit',
+        //   avatar: 'card_travel'
+        // },
         // {
         //   title: 'Lunch',
         //   href: 'lunch',
         //   avatar: 'check'
         // },
         {
-          title: 'Annoucement',
+          title: '公告',
           href: 'announcement',
           avatar: 'announcement'
         },
         {
-          title: 'PushNotification',
+          title: '推播',
           href: 'push',
           avatar: 'notifications'
         },
-        {
-          title: '大地遊戲',
-          href: 'puzzle',
-          avatar: 'extension'
-        }
+        // {
+        //   title: '大地遊戲',
+        //   href: 'puzzle',
+        //   avatar: 'extension'
+        // }
         ]
       }
     },

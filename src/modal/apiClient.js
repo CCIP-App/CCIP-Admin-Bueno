@@ -29,6 +29,15 @@ export default {
   day2CheckIn: (token) => {
     return client.get('use/day2checkin?token=' + token + '&StaffQuery=true').then((res) => res.data)
   },
+  day3CheckIn: (token) => {
+    return client.get('use/day3checkin?token=' + token + '&StaffQuery=true').then((res) => res.data)
+  },
+  allScenarios: (type) => {
+    return client.get('scenarios?type=' + type).then((res) => res.data)
+  },
+  getAllTypeScenarios: (type) => {
+    return client.get('https://ccip.opass.app/dashboard/' + type).then((res) => res.data)
+  },
   lunch: (token) => {
     return client.get('use/lunch?token=' + token).then((res) => res.data)
   },
@@ -37,6 +46,9 @@ export default {
   },
   day2lunch: (token) => {
     return client.get('use/day2lunch?token=' + token).then((res) => res.data)
+  },
+  day3lunch: (token) => {
+    return client.get('use/day3lunch?token=' + token).then((res) => res.data)
   },
   vipkit: (token) => {
     return client.get('use/vipkit?token=' + token).then((res) => res.data)

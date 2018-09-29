@@ -2,6 +2,13 @@
   <div id='CheckIn'>
     <v-alert dismissible type="warning" v-model="alert" role="alert" class="mb-3">{{ alertMessage }}</v-alert>
     <v-alert dismissible type="success" v-model="successCI" role="alert" class="mb-3">{{ alertMessage }}</v-alert>
+    <v-select
+      :items="checkInItems"
+      label="選擇報到方法"
+      solo
+      v-model="nowFunc"
+    ></v-select>
+    <br>
     <v-layout class="mb-3"  row wrap>
       <v-flex xs12 md6>
         <qrcode-reader :enable="qrState" :width="'100%'" :height="'300px'" :noResult="true" @OnSuccess="OnSuccess" />
@@ -52,6 +59,8 @@ export default {
   name: 'CheckIn',
   data() {
     return {
+      checkInItems: ['day1CheckIn', 'day2CheckIn', 'day3CheckIn', 'day1lunch', 'day2lunch', 'day3lunch', 'vipkit'],
+      nowFunc: '',
       qrState: true,
       token: '',
       alert: false,
@@ -66,11 +75,16 @@ export default {
       this.user = {}
       this.alert = this.successCI = false
 
-      let today = (new Date()).getTime()
-      let day1 = Date.parse('2018/08/11')
-      let day2 = Date.parse('2018/08/12')
+      // let today = (new Date()).getTime()
+      // let day1 = Date.parse('2018/08/11')
+      // let day2 = Date.parse('2018/08/12')
       // let checkInFunction = apiClient.checkIn
-      let checkInFunction = today >= day1 && today < day2 ? apiClient.day1CheckIn : today >= day2 ? apiClient.day2CheckIn : apiClient.checkIn
+      // let checkInFunction = today >= day1 && today < day2 ? apiClient.day1CheckIn : today >= day2 ? apiClient.day2CheckIn : apiClient.checkIn
+      if (this.nowFunc === '') {
+        this.alertMessage = '請選擇要報到的方法'
+        this.alert = true
+      }
+      let checkInFunction = apiClient[this.nowFunc]
       checkInFunction(this.token).then((res) => {
         this.updateUserData(res)
         this.successCI = true
