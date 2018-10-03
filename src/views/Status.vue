@@ -5,11 +5,10 @@
     <v-tabs
       v-model="active"
       grow
-      @input="change"
     >
-      <v-tab :key="0" ripple>工作人員</v-tab>
-      <v-tab :key="1" ripple>講者</v-tab>
-      <v-tab :key="2" ripple>會衆</v-tab>
+      <v-tab :key="0" ripple @click="change">工作人員</v-tab>
+      <v-tab :key="1" ripple @click="change">講者</v-tab>
+      <v-tab :key="2" ripple @click="change">會衆</v-tab>
       <v-tab-item
         v-for="n in 3"
         :key="n"
