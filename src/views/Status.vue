@@ -31,12 +31,12 @@
                 :headers="headers"
                 :items="desserts"
                 class="elevation-1"
+                :rows-per-page-items="rowsPerpageItems"
                 :search="search">
                 <template slot="items" slot-scope="props">
                   <td
                     v-for="(value, key) in props.item"
                     :key="key+value"
-                    :rows-per-page-text="5"
                     :class="[{['text-xs-right']: key!=='name'},{['not-exist']: value==='not exist'},{['used']: value==='used'}]"> {{ value }}</td>
                   <!-- <td>{{ props.item.name }}</td>
                   <td class="text-xs-right">{{ props.item.calories }}</td>
@@ -60,6 +60,7 @@ export default {
   name: "Status",
   data() {
     return {
+      rowsPerpageItems: [10,25,50,{"text":"All","value":-1}],
       search: '',
       active: 0,
       tabName: ['staff', 'speaker', 'audience'],
