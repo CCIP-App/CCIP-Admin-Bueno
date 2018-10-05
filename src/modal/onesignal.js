@@ -22,9 +22,9 @@ export default {
       'app_id': oneSignalConfig.app_id,
       'included_segments': packet.target,
       'contents': {
-        'en': packet.en,
-        'zh-Hant': packet.en,
-        'zh-Hans': packet.en
+        'en': packet["en"],
+        'zh-Hant': packet["zh-Hant"],
+        'zh-Hans': packet["zh-Hans"]
       },
       'url': packet.uri
     })
