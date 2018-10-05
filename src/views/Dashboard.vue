@@ -43,7 +43,7 @@
             </v-card-text>
           </v-card>
         </v-flex>
-        <v-flex xs12 md6 xl4 class="mb-3">
+        <v-flex xs12 md4 xl4 class="mb-3">
           <v-card>
             <v-card-text>
               <h4 class="ma-0 text-xs-left">Day1 午餐(葷)已報到 {{ day1lunch.meat.total }}</h4>
@@ -51,7 +51,7 @@
             </v-card-text>
           </v-card>
         </v-flex>
-        <v-flex xs12 md6 xl4 class="mb-3">
+        <v-flex xs12 md4 xl4 class="mb-3">
           <v-card>
             <v-card-text>
               <h4 class="ma-0 text-xs-left">Day1 午餐(素)已報到 {{ day1lunch.vegetarian.total }}</h4>
@@ -59,7 +59,7 @@
             </v-card-text>
           </v-card>
         </v-flex>
-        <v-flex xs12 md6 xl4 class="mb-3">
+        <v-flex xs12 md4 xl4 class="mb-3">
           <v-card>
             <v-card-text>
               <h4 class="ma-0 text-xs-left">Day2 午餐(葷)已報到 {{ day2lunch.meat.total }}</h4>
@@ -67,7 +67,7 @@
             </v-card-text>
           </v-card>
         </v-flex>
-        <v-flex xs12 md6 xl4 class="mb-3">
+        <v-flex xs12 md4 xl4 class="mb-3">
           <v-card>
             <v-card-text>
               <h4 class="ma-0 text-xs-left">Day2 午餐(素)已報到 {{ day2lunch.vegetarian.total }}</h4>
@@ -75,7 +75,7 @@
             </v-card-text>
           </v-card>
         </v-flex>
-        <v-flex xs12 md6 xl4 class="mb-3">
+        <v-flex xs12 md4 xl4 class="mb-3">
           <v-card>
             <v-card-text>
               <h4 class="ma-0 text-xs-left">Day3 午餐(葷)已報到 {{ day3lunch.meat.total }}</h4>
@@ -83,7 +83,7 @@
             </v-card-text>
           </v-card>
         </v-flex>
-        <v-flex xs12 md6 xl4 class="mb-3">
+        <v-flex xs12 md4 xl4 class="mb-3">
           <v-card>
             <v-card-text>
               <h4 class="ma-0 text-xs-left">Day3 午餐(素)已報到 {{ day3lunch.vegetarian.total }}</h4>
@@ -203,27 +203,27 @@ export default {
         meat: {
           total: this.CIData.day1lunch.meat,
           chart: [
+            // {
+            //   name: "已領取",
+            //   y: this.CIData.day1lunch.meat_used
+            // },
             {
-              name: "已領取",
-              y: this.CIData.day1lunch.meat_used
-            },
-            {
-              name: "未領取",
-              y: this.CIData.day1lunch.meat - this.CIData.day1lunch.meat_used
+              name: "需要",
+              y: this.CIData.day1lunch.meat
             }
           ]
         },
         vegetarian: {
           total: this.CIData.day1lunch.vegetarian,
           chart: [
+            // {
+            //   name: "已領取",
+            //   y: this.CIData.day1lunch.vegetarian_used
+            // },
             {
-              name: "已領取",
-              y: this.CIData.day1lunch.vegetarian_used
-            },
-            {
-              name: "未領取",
+              name: "需要",
               y:
-                this.CIData.day1lunch.vegetarian - this.CIData.day1lunch.vegetarian_used
+                this.CIData.day1lunch.vegetarian
             }
           ]
         }
@@ -232,29 +232,29 @@ export default {
     day2lunch() {
       return {
         meat: {
-          total: this.CIData.day2lunch.meat,
+          total: this.CIData.day1lunch.meat,
           chart: [
+            // {
+            //   name: "已領取",
+            //   y: this.CIData.day1lunch.meat_used
+            // },
             {
-              name: "已領取",
-              y: this.CIData.day2lunch.meat_used
-            },
-            {
-              name: "未領取",
-              y: this.CIData.day2lunch.meat - this.CIData.day2lunch.meat_used
+              name: "需要",
+              y: this.CIData.day1lunch.meat
             }
           ]
         },
         vegetarian: {
-          total: this.CIData.day2lunch.vegetarian,
+          total: this.CIData.day1lunch.vegetarian,
           chart: [
+            // {
+            //   name: "已領取",
+            //   y: this.CIData.day1lunch.vegetarian_used
+            // },
             {
-              name: "已領取",
-              y: this.CIData.day2lunch.vegetarian_used
-            },
-            {
-              name: "未領取",
+              name: "需要",
               y:
-                this.CIData.day2lunch.vegetarian - this.CIData.day2lunch.vegetarian_used
+                this.CIData.day1lunch.vegetarian
             }
           ]
         }
@@ -263,29 +263,29 @@ export default {
     day3lunch() {
       return {
         meat: {
-          total: this.CIData.day3lunch.meat,
+          total: this.CIData.day1lunch.meat,
           chart: [
+            // {
+            //   name: "已領取",
+            //   y: this.CIData.day1lunch.meat_used
+            // },
             {
-              name: "已領取",
-              y: this.CIData.day3lunch.meat_used
-            },
-            {
-              name: "未領取",
-              y: this.CIData.day3lunch.meat - this.CIData.day3lunch.meat_used
+              name: "需要",
+              y: this.CIData.day1lunch.meat
             }
           ]
         },
         vegetarian: {
-          total: this.CIData.day3lunch.vegetarian,
+          total: this.CIData.day1lunch.vegetarian,
           chart: [
+            // {
+            //   name: "已領取",
+            //   y: this.CIData.day1lunch.vegetarian_used
+            // },
             {
-              name: "已領取",
-              y: this.CIData.day3lunch.vegetarian_used
-            },
-            {
-              name: "未領取",
+              name: "需要",
               y:
-                this.CIData.day3lunch.vegetarian - this.CIData.day3lunch.vegetarian_used
+                this.CIData.day1lunch.vegetarian
             }
           ]
         }
@@ -359,14 +359,41 @@ export default {
     },
     refresh() {
       this.countDown = 30;
-      apiClient.getDasboard().then(
-        res => {
-          this.CIData = res.data;
+      this.CIData = {
+        "day1checkin_used": 385,
+        "day1lunch": {
+            "meat": 363,
+            "total": 385,
+            "vegetarian": 22
         },
-        err => {
-          console.error(err);
+        "day2checkin_used": 0,
+        "day2lunch": {
+            "meat": 0,
+            "total": 0,
+            "vegetarian": 0
+        },
+        "day3checkin_used": 0,
+        "day3lunch": {
+            "meat": 0,
+            "total": 0,
+            "vegetarian": 0
+        },
+        "kit_used": 298,
+        "logged": 427,
+        "total": 857,
+        "vipkit": {
+            "total": 10,
+            "used": 0
         }
-      );
+      }
+      // apiClient.getDasboard().then(
+      //   res => {
+      //     this.CIData = res.data;
+      //   },
+      //   err => {
+      //     console.error(err);
+      //   }
+      // );
     }
   },
   mounted() {
