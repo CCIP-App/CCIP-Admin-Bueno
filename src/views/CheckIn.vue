@@ -59,7 +59,7 @@ export default {
   name: 'CheckIn',
   data() {
     return {
-      checkInItems: ['day1CheckIn', 'day2CheckIn', 'day3CheckIn', 'day1lunch', 'day2lunch', 'day3lunch', 'vipkit'],
+      checkInItems: ['day1CheckIn', 'day2CheckIn', 'day3CheckIn', 'day1lunch', 'day2lunch', 'day3lunch', 'vipkit', 'shirt'],
       nowFunc: '',
       qrState: true,
       token: '',

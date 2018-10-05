@@ -31,8 +31,10 @@
                 :headers="headers"
                 :items="desserts"
                 class="elevation-1"
+                :loading="loading"
                 :rows-per-page-items="rowsPerpageItems"
                 :search="search">
+                <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
                 <template slot="items" slot-scope="props">
                   <td
                     v-for="(value, key) in props.item"
@@ -62,6 +64,7 @@ export default {
     return {
       rowsPerpageItems: [10,25,50,{"text":"All","value":-1}],
       search: '',
+      loading: false,
       active: 0,
       tabName: ['staff', 'speaker', 'audience'],
       rawHeader: [],
@@ -106,26 +109,25 @@ export default {
     }
   },
   methods: {
-    getHeader () {
-      let self = this
-      apiClient.allScenarios(this.tabName[this.active]).then((res) => {
-        self.rawHeader = res;
-      })
-    },
     getData () {
       let self = this
-      apiClient.getAllTypeScenarios(this.tabName[this.active]).then((res) => {
+      this.loading = true
+      apiClient.allScenarios(this.tabName[this.active]).then((res) => {
+        self.rawHeader = res;
+        return apiClient.getAllTypeScenarios(this.tabName[this.active])
+      }).then((res)=>{
         self.rawData = res;
+        self.loading = false
       })
     },
     change () {
-      this.getHeader()
+      this.rawHeader = []
+      this.rawData = []
       this.getData()
     }
   },
   mouted () {
-    this.getHeader()
-    this.getData()
+    this.change()
   }
 };
 </script>

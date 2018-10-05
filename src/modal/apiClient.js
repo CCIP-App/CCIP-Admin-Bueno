@@ -53,6 +53,9 @@ export default {
   vipkit: (token) => {
     return client.get('use/vipkit?token=' + token).then((res) => res.data)
   },
+  shirt: (token) => {
+    return client.get('use/shirt?token=' + token).then((res) => res.data)
+  },
   getStatus: (token) => {
     return client.get('status?token=' + token).then((res) => res.data)
   },
