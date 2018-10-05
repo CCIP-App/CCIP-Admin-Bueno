@@ -359,41 +359,14 @@ export default {
     },
     refresh() {
       this.countDown = 30;
-      this.CIData = {
-        "day1checkin_used": 385,
-        "day1lunch": {
-            "meat": 363,
-            "total": 385,
-            "vegetarian": 22
+      apiClient.getDasboard().then(
+        res => {
+          this.CIData = res.data;
         },
-        "day2checkin_used": 0,
-        "day2lunch": {
-            "meat": 0,
-            "total": 0,
-            "vegetarian": 0
-        },
-        "day3checkin_used": 0,
-        "day3lunch": {
-            "meat": 0,
-            "total": 0,
-            "vegetarian": 0
-        },
-        "kit_used": 298,
-        "logged": 427,
-        "total": 857,
-        "vipkit": {
-            "total": 10,
-            "used": 0
+        err => {
+          console.error(err);
         }
-      }
-      // apiClient.getDasboard().then(
-      //   res => {
-      //     this.CIData = res.data;
-      //   },
-      //   err => {
-      //     console.error(err);
-      //   }
-      // );
+      );
     }
   },
   mounted() {
