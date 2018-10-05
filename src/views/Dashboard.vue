@@ -232,7 +232,7 @@ export default {
     day2lunch() {
       return {
         meat: {
-          total: this.CIData.day1lunch.meat,
+          total: this.CIData.day2lunch.meat,
           chart: [
             // {
             //   name: "已領取",
@@ -240,12 +240,12 @@ export default {
             // },
             {
               name: "需要",
-              y: this.CIData.day1lunch.meat
+              y: this.CIData.day2lunch.meat
             }
           ]
         },
         vegetarian: {
-          total: this.CIData.day1lunch.vegetarian,
+          total: this.CIData.day2lunch.vegetarian,
           chart: [
             // {
             //   name: "已領取",
@@ -254,7 +254,7 @@ export default {
             {
               name: "需要",
               y:
-                this.CIData.day1lunch.vegetarian
+                this.CIData.day2lunch.vegetarian
             }
           ]
         }
@@ -263,7 +263,7 @@ export default {
     day3lunch() {
       return {
         meat: {
-          total: this.CIData.day1lunch.meat,
+          total: this.CIData.day3lunch.meat,
           chart: [
             // {
             //   name: "已領取",
@@ -271,12 +271,12 @@ export default {
             // },
             {
               name: "需要",
-              y: this.CIData.day1lunch.meat
+              y: this.CIData.day3lunch.meat
             }
           ]
         },
         vegetarian: {
-          total: this.CIData.day1lunch.vegetarian,
+          total: this.CIData.day3lunch.vegetarian,
           chart: [
             // {
             //   name: "已領取",
@@ -285,7 +285,7 @@ export default {
             {
               name: "需要",
               y:
-                this.CIData.day1lunch.vegetarian
+                this.CIData.day3lunch.vegetarian
             }
           ]
         }
