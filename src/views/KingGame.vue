@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import kingApi from '../modal/kingApi.js'
+import kingApi from '../module/kingApi.js'
 export default {
   name: 'KingGame',
   data() {

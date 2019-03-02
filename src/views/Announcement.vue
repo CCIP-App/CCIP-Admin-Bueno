@@ -47,8 +47,8 @@
 </template>
 
 <script>
-import apiClient from '../modal/apiClient'
-import oneSignal from '../modal/onesignal'
+import apiClient from '../module/apiClient'
+import oneSignal from '../module/onesignal'
 export default {
   name: 'Announcement',
   data() {

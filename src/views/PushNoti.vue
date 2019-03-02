@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import oneSignal from '../modal/onesignal'
+import oneSignal from '../module/onesignal'
 export default {
   name: 'PushNoti',
   data() {

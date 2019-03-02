@@ -65,7 +65,7 @@
 </template>
 
 <script>
-import apiClient from "../modal/apiClient";
+import apiClient from "../module/apiClient";
 export default {
   name: "Dashboard",
   data() {

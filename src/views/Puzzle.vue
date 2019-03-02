@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import apiClient from '../modal/apiClient'
+import apiClient from '../module/apiClient'
 import crypto from 'crypto'
 export default {
   name: 'Puzzle',
