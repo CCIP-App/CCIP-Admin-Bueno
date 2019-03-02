@@ -30,18 +30,18 @@ export default {
     return {
       options: [
         {
-          value: 'All',
+          value: 'all',
           text: '全體'
         }, {
-          value: 'Audience',
+          value: 'audience',
           text: '僅會眾'
         },
         {
-          value: 'Staff',
+          value: 'staff',
           text: '僅工作人員'
         },
         {
-          value: 'Speaker',
+          value: 'speaker',
           text: '僅講者'
         }
       ],
@@ -62,14 +62,14 @@ export default {
       this.alert = false
       this.success = false
       let packet = {
-        target: [this.feed.to],
+        target: this.feed.to,
         en: this.feed.msg_en,
         'zh-Hant': this.feed.msg_zh,
         'zh-Hans': this.feed.msg_zh
       }
       if (this.feed.uri.length > 0) packet['uri'] = this.feed.uri
       if (this.feed.msg_en.length > 0 && this.feed.msg_zh.length > 0 && this.feed.to !== 0) {
-        oneSignal.createNotification(packet)
+        oneSignal.createNotificationWithTagFilter(packet)
           .then((res) => {
             this.success = true
           })

@@ -4,6 +4,7 @@
   "baseUrl": "",
   "oneSignal": {
       "app_id": "",
-      "api_key": ""
+      "api_key": "",
+      "event_id": ""
     }
 }
