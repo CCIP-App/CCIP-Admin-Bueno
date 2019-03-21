@@ -31,7 +31,7 @@
 
 <script>
 import apiClient from '../module/apiClient'
-import crypto from 'crypto'
+import sha1 from 'hash.js/lib/hash/sha/1'
 export default {
   name: 'Puzzle',
   data () {
@@ -81,7 +81,7 @@ export default {
       console.log(err)
     },
     sha1Gen (raw) {
-      let hashGen = crypto.createHash('sha1')
+      let hashGen = sha1()
       hashGen.update(raw)
       return hashGen.digest('hex')
     },
