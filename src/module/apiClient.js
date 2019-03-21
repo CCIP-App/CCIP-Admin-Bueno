@@ -20,7 +20,7 @@ export default {
   getDasboard: () => {
     return client.get('dashboard')
   },
-  checkIn: (token) => {
+  checkin: (token) => {
     return client.get('use/checkin?token=' + token + '&StaffQuery=true').then((res) => res.data)
   },
   day1CheckIn: (token) => {
@@ -49,6 +49,9 @@ export default {
   },
   day3lunch: (token) => {
     return client.get('use/day3lunch?token=' + token).then((res) => res.data)
+  },
+  kit: (token) => {
+    return client.get('use/kit?token=' + token).then((res) => res.data)
   },
   vipkit: (token) => {
     return client.get('use/vipkit?token=' + token).then((res) => res.data)

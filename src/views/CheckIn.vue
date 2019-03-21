@@ -133,7 +133,7 @@ export default {
     }
   },
   async mounted () {
-    const { data } = await apiClient.allScenarios('audience')
+    const data = await apiClient.allScenarios('audience')
     this.checkInItems = data
   }
 }

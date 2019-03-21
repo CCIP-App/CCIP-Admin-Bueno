@@ -6,9 +6,9 @@
       v-model="active"
       grow
     >
-      <v-tab :key="0" ripple @click="change">工作人員</v-tab>
-      <v-tab :key="1" ripple @click="change">講者</v-tab>
-      <v-tab :key="2" ripple @click="change">會衆</v-tab>
+      <v-tab :key="0" ripple @click="change(0)">工作人員</v-tab>
+      <v-tab :key="1" ripple @click="change(1)">講者</v-tab>
+      <v-tab :key="2" ripple @click="change(2)">會衆</v-tab>
       <v-tab-item
         v-for="n in 3"
         :key="n"
@@ -32,6 +32,7 @@
                 :items="desserts"
                 class="elevation-1"
                 :loading="loading"
+                :pagination.sync="defaultPageItems"
                 :rows-per-page-items="rowsPerpageItems"
                 :search="search">
                 <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
@@ -63,6 +64,9 @@ export default {
   data () {
     return {
       rowsPerpageItems: [10, 25, 50, { 'text': 'All', 'value': -1 }],
+      defaultPageItems: {
+        rowsPerPage: 50
+      },
       search: '',
       loading: false,
       active: 0,
@@ -109,25 +113,25 @@ export default {
     }
   },
   methods: {
-    getData () {
+    getData (key) {
       let self = this
       this.loading = true
-      apiClient.allScenarios(this.tabName[this.active]).then((res) => {
+      apiClient.allScenarios(this.tabName[key]).then((res) => {
         self.rawHeader = res
-        return apiClient.getAllTypeScenarios(this.tabName[this.active])
+        return apiClient.getAllTypeScenarios(this.tabName[key])
       }).then((res) => {
         self.rawData = res
         self.loading = false
       })
     },
-    change () {
+    change (key) {
       this.rawHeader = []
       this.rawData = []
-      this.getData()
+      this.getData(key)
     }
   },
-  mouted () {
-    this.change()
+  mounted () {
+    this.change(0)
   }
 }
 </script>
