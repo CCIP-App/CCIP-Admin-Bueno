@@ -13,54 +13,64 @@
   </v-navigation-drawer>
 </template>
 <script>
-  export default {
-    name: 'main-side',
-    props: { value: Boolean },
-    data() {
-      return {
-        drawer: null,
-        items: [{
-          title: 'Dashboard',
-          href: '/',
-          avatar: 'dashboard'
-        },
-        {
-          title: 'CheckIn',
-          href: 'checkin',
-          avatar: 'check'
-        },
-        {
-          title: 'Lunch',
-          href: 'lunch',
-          avatar: 'check'
-        },
-        {
-          title: 'Annoucement',
-          href: 'announcement',
-          avatar: 'announcement'
-        },
-        {
-          title: 'PushNotification',
-          href: 'push',
-          avatar: 'notifications'
-        },
-        {
-          title: '知識王',
-          href: 'king',
-          avatar: 'extension'
-        }
-        ]
-      }
-    },
-    watch: {
-      drawer () {
-        this.$emit('input', this.drawer)
+export default {
+  name: 'main-side',
+  props: { value: Boolean },
+  data () {
+    return {
+      drawer: null,
+      items: [{
+        title: '控制版',
+        href: '/',
+        avatar: 'dashboard'
       },
-      value () {
-        this.drawer = this.value
+      {
+        title: '查詢',
+        href: 'status',
+        avatar: 'search'
+      },
+      {
+        title: '所有報到（含午餐）',
+        href: 'checkin',
+        avatar: 'check'
+      },
+      // {
+      //   title: 'Lunch',
+      //   href: 'lunch',
+      //   avatar: 'check'
+      // },
+      {
+        title: '公告',
+        href: 'announcement',
+        avatar: 'announcement'
+      },
+      {
+        title: '推播',
+        href: 'push',
+        avatar: 'notifications'
+      },
+      // {
+      //   title: '知識王',
+      //   href: 'king',
+      //   avatar: 'extension'
+      // },
+      {
+        title: '大地遊戲',
+        href: 'array',
+        avatar: 'extension'
       }
+      ]
+    }
+  },
+  watch: {
+    drawer () {
+      this.$emit('input', this.drawer)
+    },
+    value () {
+      this.drawer = this.value
     }
   }
+}
 </script>
 <style lang="stylus">
   // @import '../stylus/settings/_variables'

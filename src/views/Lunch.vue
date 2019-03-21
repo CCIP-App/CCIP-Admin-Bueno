@@ -50,7 +50,7 @@
 import apiClient from '../module/apiClient'
 export default {
   name: 'Lunch',
-  data() {
+  data () {
     return {
       qrState: true,
       token: '',
@@ -61,7 +61,7 @@ export default {
     }
   },
   watch: {
-    token() {
+    token () {
       if (this.token.length < 32) return
       this.user = {}
       this.alert = this.successCI = false
@@ -92,10 +92,10 @@ export default {
     }
   },
   methods: {
-    OnSuccess(token) {
+    OnSuccess (token) {
       this.token = token
     },
-    getStatus(token) {
+    getStatus (token) {
       apiClient.getStatus(token).then((res) => {
         this.updateUserData(res)
       }).catch((err) => {
@@ -107,7 +107,7 @@ export default {
         this.alert = true
       })
     },
-    updateUserData(data) {
+    updateUserData (data) {
       this.user = {
         user_id: data.user_id,
         first_use: data.first_use ? new Date(data.first_use * 1000).toLocaleString() : null,

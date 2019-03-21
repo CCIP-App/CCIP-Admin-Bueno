@@ -7,22 +7,29 @@
       <v-flex xs12 md7>
         <v-alert dismissible warning v-model="alert" role="alert">{{ alertMessage }}</v-alert>
         <v-card>
-          <v-card-row  class="green darken-1">
-            <v-card-title>
-              <span class="white--text">Player</span>
-            </v-card-title>
-          </v-card-row>
           <v-card-text>
-            <v-card-row>
-              <ul>
-                <li v-for="(player, index) in players" role="puzzle-player-item" :key="index">{{ player.nickname }}：{{ player.clear ? '已完成':'尚未完成' }}</li>
-              </ul>
-            </v-card-row>
+            <p>請工作人員核對玩家手機顯示的連線數，發指定的獎品給玩家，掃描玩家 Qr Code，並按下兌換！<br>注意：玩家只能兌換一次！</p>
+            <ol>
+              <li>三條：折 20</li>
+              <li>五條：刺繡布章</li>
+              <li>七條：鑰匙圈</li>
+              <li>十條以上：大禮包 (鑰匙圈、提袋、刺繡布章) </li>
+            </ol>
+            <ul>
+              <li v-for="(player, index) in players" role="puzzle-player-item" :key="index">{{ player.nickname }}</li>
+            </ul>
           </v-card-text>
-          <v-card-row actions>
-            <v-btn class="lighten-2 white--text mr-2" info v-on:click.native="clearPlayer">Clear All User</v-btn>
-            <v-btn class="lighten-2 white--text" error :loading="revoking" :disabled="revoking" v-on:click.native="revokPlayer">Revoke those of player</v-btn>
-          </v-card-row>
+          <v-card-actions>
+            <v-btn
+              color="blue"
+              flat
+              dark v-on:click.native="clearPlayer">清除使用者</v-btn>
+            <v-btn
+              color="blue"
+              flat
+              dark
+              :loading="revoking" :disabled="revoking" v-on:click.native="revokPlayer">兌換</v-btn>
+          </v-card-actions>
         </v-card>
       </v-flex>
     </v-layout>
@@ -33,7 +40,7 @@
 import apiClient from '../module/apiClient'
 import crypto from 'crypto'
 export default {
-  name: 'Puzzle',
+  name: 'ArrayGame',
   data () {
     return {
       qrState: true,
@@ -62,7 +69,7 @@ export default {
               this.tokens.push(token)
             } else {
               // Show dialog: user is invalid
-              this.alertMessage = 'This player has been revoked.'
+              this.alertMessage = '玩家已經被兌換過了！'
               this.alert = true
             }
           })
@@ -86,7 +93,7 @@ export default {
       return hashGen.digest('hex')
     },
     clearPlayer () {
-      this.$vuetify.toast.create(...['玩家清單已經被清空(⊙ω⊙)', 'bottom'])
+      window.alert('玩家清單已經被清空(⊙ω⊙)')
       this.currentScanToken = ''
       this.players = []
       this.tokens = []
@@ -94,18 +101,17 @@ export default {
       this.alertMessage = ''
     },
     revokPlayer () {
-      var self = this
       if (this.tokens.length === 0) {
-        self.$vuetify.toast.create(...['沒有東西可以註銷，不要亂戳(;´༎ຶД༎ຶ`)', 'bottom'])
+        window.alert('沒有東西可以註銷，不要亂戳(;´༎ຶД༎ຶ`)')
         return
       }
 
-      if (this.players.filter((el) => el.clear).length === 0) {
-        self.$vuetify.toast.create(...['沒有完成大地遊戲的玩家喔！', 'bottom'])
-        return
-      }
-      this.revoking = this.loader = true
-      Promise.all(this.players.filter((el) => el.clear).map((el) => el.token).map((el) => apiClient.revokPlayer(el)))
+      // if (this.players.filter((el) => el.clear).length === 0) {
+      //   window.alert('沒有完成大地遊戲的玩家喔！')
+      //   return
+      // }
+      this.revoking = true
+      Promise.all(this.players.map((el) => el.token).map((el) => apiClient.revokPlayer(el)))
         .then((ress) => {
           ress.forEach((res) => {
             if (res.successful) {

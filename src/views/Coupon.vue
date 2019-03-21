@@ -1,6 +1,6 @@
 <template>
   <div id="Coupon">
-    <v-alert dismissible warning v-model="alert" role="alert" class="mb-3">{{ alertMessage }}</v-alert>
+    <v-alert dismissible type="warning" v-model="alert" role="alert" class="mb-3">{{ alertMessage }}</v-alert>
     <v-layout>
       <v-flex xs12 md5>
         <qrcode-reader class="mr-3 mt-2 mb-3" :enable="qrState" :width="'32vw'" :height="'24vw'" :noResult="true" @OnSuccess="onSuccess" @OnError="onError" />
@@ -36,7 +36,7 @@ import apiClient from '../module/apiClient'
 import crypto from 'crypto'
 export default {
   name: 'Coupon',
-  data() {
+  data () {
     return {
       qrState: true,
       revoking: false,
@@ -50,7 +50,7 @@ export default {
   computed: {
   },
   methods: {
-    onSuccess(token) {
+    onSuccess (token) {
       token = this.sha1Gen(token)
       if (this.token !== token) {
         this.token = token
@@ -64,20 +64,20 @@ export default {
         })
       }
     },
-    onError(err) {
+    onError (err) {
       console.log(err)
     },
-    sha1Gen(raw) {
+    sha1Gen (raw) {
       let hashGen = crypto.createHash('sha1')
       hashGen.update(raw)
       return hashGen.digest('hex')
     },
-    clearUser() {
+    clearUser () {
       this.user = null
       this.token = ''
       this.$vuetify.toast.create(...['已經清除了(⊙ω⊙)', 'bottom'])
     },
-    revokCoupon() {
+    revokCoupon () {
       var self = this
       if (this.user !== null) {
         apiClient.revokeCoupon()
@@ -85,6 +85,7 @@ export default {
             self.$vuetify.toast.create(...['Coupon 已經被註銷囉↖(^ω^)↗', 'bottom'])
           })
           .catch((err) => {
+            console.error(err)
             self.$vuetify.toast.create(...['發生錯誤(╯°□°）╯︵ ┻━┻', 'bottom'])
           })
       } else {
@@ -92,10 +93,10 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted () {
   },
   watch: {
-    user() {
+    user () {
       if (this.couponValid === false) {
         this.$vuetify.toast.create(...['這傢伙不可以折扣(;´༎ຶД༎ຶ`)', 'bottom'])
         this.alertMessage = '這傢伙不可以折扣(;´༎ຶД༎ຶ`)'

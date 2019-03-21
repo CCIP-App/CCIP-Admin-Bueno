@@ -1,7 +1,13 @@
 <template>
   <div id='CheckIn'>
-    <v-alert dismissible warning v-model="alert" role="alert" class="mb-3">{{ alertMessage }}</v-alert>
-    <v-alert dismissible success v-model="successCI" role="alert" class="mb-3">{{ alertMessage }}</v-alert>
+    <v-alert dismissible type="warning" v-model="alert" role="alert" class="mb-3">{{ alertMessage }}</v-alert>
+    <v-alert dismissible type="success" v-model="successCI" role="alert" class="mb-3">{{ alertMessage }}</v-alert>
+    <v-select
+      :items="checkInItems"
+      label="選擇報到方法"
+      solo
+      v-model="nowFunc"
+    ></v-select>
     <v-layout class="mb-3"  row wrap>
       <v-flex xs12 md6>
         <qrcode-reader :enable="qrState" :width="'100%'" :height="'300px'" :noResult="true" @OnSuccess="OnSuccess" />
@@ -50,8 +56,10 @@
 import apiClient from '../module/apiClient'
 export default {
   name: 'CheckIn',
-  data() {
+  data () {
     return {
+      checkInItems: [],
+      nowFunc: '',
       qrState: true,
       token: '',
       alert: false,
@@ -61,7 +69,7 @@ export default {
     }
   },
   watch: {
-    token() {
+    token () {
       if (this.token.length < 32) return
       this.user = {}
       this.alert = this.successCI = false
@@ -69,7 +77,11 @@ export default {
       // let today = (new Date()).getTime()
       // let day1 = Date.parse('2017/08/05')
       // let day2 = Date.parse('2017/08/06')
-      let checkInFunction = apiClient.checkIn
+      if (this.nowFunc === '') {
+        this.alertMessage = '請選擇要報到的方法'
+        this.alert = true
+      }
+      let checkInFunction = apiClient[this.nowFunc]
       checkInFunction(this.token).then((res) => {
         this.updateUserData(res)
         this.successCI = true
@@ -92,10 +104,10 @@ export default {
     }
   },
   methods: {
-    OnSuccess(token) {
+    OnSuccess (token) {
       this.token = token
     },
-    getStatus(token) {
+    getStatus (token) {
       apiClient.getStatus(token).then((res) => {
         this.updateUserData(res)
       }).catch((err) => {
@@ -107,7 +119,7 @@ export default {
         this.alert = true
       })
     },
-    updateUserData(data) {
+    updateUserData (data) {
       this.user = {
         user_id: data.user_id,
         first_use: data.first_use ? new Date(data.first_use * 1000).toLocaleString() : null,
@@ -119,6 +131,10 @@ export default {
         }))
       }
     }
+  },
+  async mounted () {
+    const { data } = await apiClient.allScenarios('audience')
+    this.checkInItems = data
   }
 }
 </script>

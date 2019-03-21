@@ -26,7 +26,7 @@
 import oneSignal from '../module/onesignal'
 export default {
   name: 'PushNoti',
-  data() {
+  data () {
     return {
       options: [
         {
@@ -58,7 +58,7 @@ export default {
     }
   },
   methods: {
-    send() {
+    send () {
       this.alert = false
       this.success = false
       let packet = {
