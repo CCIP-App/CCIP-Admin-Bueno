@@ -25,11 +25,11 @@
                 <table>
                   <thead>
                     <tr>
-                      <th v-for="header in headers" v-text="header"></th>
+                      <th v-for="(header,index) in headers" v-text="header" :key="'header'+index"></th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="(item, index) in announcements">
+                    <tr v-for="(item, index) in announcements" :key="'item'+index">
                       <td>{{ formatDatetime(item.datetime) }}</td>
                       <td>{{ item.msg_zh }}</td>
                       <td>{{ item.msg_en }}</td>
