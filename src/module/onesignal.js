@@ -24,8 +24,8 @@ export default {
       'included_segments': packet.target,
       'contents': {
         'en': packet.en,
-        'zh-Hant': packet.en,
-        'zh-Hans': packet.en
+        'zh-Hant': packet['zh-Hant'],
+        'zh-Hans': packet['zh-Hans']
       },
       'url': packet.uri
     })
@@ -45,8 +45,8 @@ export default {
       'filters': filters,
       'contents': {
         'en': packet.en,
-        'zh-Hant': packet.en,
-        'zh-Hans': packet.en
+        'zh-Hant': packet['zh-Hant'],
+        'zh-Hans': packet['zh-Hans']
       },
       'url': packet.uri
     })
