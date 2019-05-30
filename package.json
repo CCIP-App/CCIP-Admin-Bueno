@@ -11,7 +11,7 @@
   "dependencies": {
     "axios": "^0.15.3",
     "chart.js": "^2.4.0",
-    "highcharts": "^5.0.7",
+    "highcharts": "^6.1.0",
     "vue": "^2.5.3",
     "vue-router": "^2.1.1",
     "vuetify": "^1.0.0"
