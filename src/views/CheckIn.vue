@@ -62,6 +62,7 @@ export default {
       nowFunc: '',
       qrState: true,
       token: '',
+      lastToken: '',
       alert: false,
       successCI: false,
       alertMessage: '',
@@ -69,8 +70,20 @@ export default {
     }
   },
   watch: {
-    token () {
-      // if (this.token.length < 32) return
+    lastToken (newVal, _) {
+      if (newVal.length > 0) {
+        setTimeout(() => {
+          this.lastToken = ''
+        }, 500)
+      }
+    }
+  },
+  methods: {
+    OnSuccess (token) {
+      this.token = token
+
+      if (this.lastToken === this.token) return
+
       this.user = {}
       this.alert = this.successCI = false
 
@@ -97,12 +110,9 @@ export default {
         }
         this.alert = true
         this.getStatus(this.token)
+      }).finally(() => {
+        this.lastToken = this.token
       })
-    }
-  },
-  methods: {
-    OnSuccess (token) {
-      this.token = token
     },
     getStatus (token) {
       apiClient.getStatus(token).then((res) => {
