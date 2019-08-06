@@ -20,44 +20,14 @@ export default {
   getDasboard: () => {
     return client.get('dashboard')
   },
-  checkin: (token) => {
-    return client.get('use/checkin?token=' + token + '&StaffQuery=true').then((res) => res.data)
-  },
-  day1CheckIn: (token) => {
-    return client.get('use/day1checkin?token=' + token + '&StaffQuery=true').then((res) => res.data)
-  },
-  day2CheckIn: (token) => {
-    return client.get('use/day2checkin?token=' + token + '&StaffQuery=true').then((res) => res.data)
-  },
-  day3CheckIn: (token) => {
-    return client.get('use/day3checkin?token=' + token + '&StaffQuery=true').then((res) => res.data)
+  useScenarios: (scenarios, token) => {
+    return client.get(`use/${scenarios}?token=${token}&staffQuery=true`).then((res) => res.data)
   },
   allScenarios: (type) => {
     return client.get('scenarios?type=' + type).then((res) => res.data)
   },
   getAllTypeScenarios: (type) => {
     return client.get('dashboard/' + type).then((res) => res.data)
-  },
-  lunch: (token) => {
-    return client.get('use/lunch?token=' + token).then((res) => res.data)
-  },
-  day1lunch: (token) => {
-    return client.get('use/day1lunch?token=' + token).then((res) => res.data)
-  },
-  day2lunch: (token) => {
-    return client.get('use/day2lunch?token=' + token).then((res) => res.data)
-  },
-  day3lunch: (token) => {
-    return client.get('use/day3lunch?token=' + token).then((res) => res.data)
-  },
-  kit: (token) => {
-    return client.get('use/kit?token=' + token).then((res) => res.data)
-  },
-  vipkit: (token) => {
-    return client.get('use/vipkit?token=' + token).then((res) => res.data)
-  },
-  shirt: (token) => {
-    return client.get('use/shirt?token=' + token).then((res) => res.data)
   },
   getStatus: (token) => {
     return client.get('status?token=' + token).then((res) => res.data)

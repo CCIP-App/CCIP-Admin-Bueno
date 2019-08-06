@@ -70,19 +70,16 @@ export default {
   },
   watch: {
     token () {
-      if (this.token.length < 32) return
+      // if (this.token.length < 32) return
       this.user = {}
       this.alert = this.successCI = false
 
-      // let today = (new Date()).getTime()
-      // let day1 = Date.parse('2017/08/05')
-      // let day2 = Date.parse('2017/08/06')
       if (this.nowFunc === '') {
         this.alertMessage = '請選擇要報到的方法'
         this.alert = true
+        return
       }
-      let checkInFunction = apiClient[this.nowFunc]
-      checkInFunction(this.token).then((res) => {
+      apiClient.useScenarios(this.nowFunc, this.token).then((res) => {
         this.updateUserData(res)
         this.successCI = true
         this.alertMessage = res.user_id + ' 報到成功'
