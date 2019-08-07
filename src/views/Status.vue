@@ -118,7 +118,7 @@ export default {
       this.loading = true
       apiClient.allScenarios(this.tabName[key]).then((res) => {
         self.rawHeader = res
-        return apiClient.getAllTypeScenarios(this.tabName[key])
+        return apiClient.getAllRoleScenarios(this.tabName[key])
       }).then((res) => {
         self.rawData = res
         self.loading = false

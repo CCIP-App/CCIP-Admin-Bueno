@@ -23,11 +23,11 @@ export default {
   useScenarios: (scenarios, token) => {
     return client.get(`use/${scenarios}?token=${token}&staffQuery=true`).then((res) => res.data)
   },
-  allScenarios: (type) => {
-    return client.get('scenarios?type=' + type).then((res) => res.data)
+  allScenarios: (role) => {
+    return client.get('scenarios?role=' + role).then((res) => res.data)
   },
-  getAllTypeScenarios: (type) => {
-    return client.get('dashboard/' + type).then((res) => res.data)
+  getAllRoleScenarios: (role) => {
+    return client.get('dashboard/' + role).then((res) => res.data)
   },
   getStatus: (token) => {
     return client.get('status?token=' + token).then((res) => res.data)

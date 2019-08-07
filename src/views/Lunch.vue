@@ -17,8 +17,8 @@
             <!-- <v-card-row> -->
               <ul v-if="user.user_id" role="userStatus">
                 <li>Nickname: {{ user.user_id }}</li>
-                <li>App Login: {{ user.first_use ? user.first_use : 'Not yet' }}</li>
-                <li>User Type: {{ user.type }}</li>
+                <li>App login: {{ user.first_use ? user.first_use : 'Not yet' }}</li>
+                <li>User role: {{ user.role }}</li>
                 <template v-for="(scenarios, index) in user.scenarios">
                   <li :key="index">
                     {{ scenarios.key + ": " + (scenarios.used ? scenarios.used : 'Not yet') }}
@@ -111,7 +111,7 @@ export default {
       this.user = {
         user_id: data.user_id,
         first_use: data.first_use ? new Date(data.first_use * 1000).toLocaleString() : null,
-        type: data.type,
+        role: data.role,
         scenarios: data.scenarios.map((el) => ({
           key: el.display_text['zh-TW'],
           used: el.used ? new Date(el.used * 1000).toLocaleString() : null,
