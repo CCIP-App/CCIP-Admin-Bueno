@@ -7,10 +7,7 @@
       grow
     >
       <v-tab v-for="tab in tabName" :key="tab" ripple @click="change(tab)">{{ tab }}</v-tab>
-      <v-tab-item
-        v-for="n in 3"
-        :key="n"
-      >
+      <v-tab-item v-for="n in tabName.length" :key="n">
         <v-card flat>
           <v-card-text>
             <v-card>
