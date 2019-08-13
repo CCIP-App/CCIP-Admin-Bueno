@@ -22,11 +22,11 @@
           <v-card-actions>
             <v-btn
               color="blue"
-              flat
+              text
               dark v-on:click.native="clearPlayer">清除使用者</v-btn>
             <v-btn
               color="blue"
-              flat
+              text
               dark
               :loading="revoking" :disabled="revoking" v-on:click.native="revokPlayer">兌換</v-btn>
           </v-card-actions>
