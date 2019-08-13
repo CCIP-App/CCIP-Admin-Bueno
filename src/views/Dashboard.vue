@@ -177,6 +177,9 @@ export default {
     // Overwriting base render method with actual data.
     defaultOption (datas) {
       return {
+        credits: {
+          enabled: false
+        },
         chart: {
           type: 'pie',
           spacing: [0, 0, 0, 0]
