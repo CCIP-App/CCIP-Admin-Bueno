@@ -1,5 +1,6 @@
 var path = require('path')
 var webpack = require('webpack')
+const { VueLoaderPlugin } = require('vue-loader')
 
 module.exports = {
   entry: './src/main.js',
@@ -21,8 +22,6 @@ module.exports = {
         test: /\.vue$/,
         loader: 'vue-loader',
         options: {
-          loaders: {
-          }
           // other vue-loader options go here
         }
       },
@@ -40,11 +39,25 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        loader: ['style-loader', 'css-loader']
+        use: ['vue-style-loader', 'style-loader', 'css-loader']
       },
       {
-        test: /\.styl$/,
-        loader: ['style-loader', 'css-loader', 'stylus-loader']
+        test: /\.s(a|c)ss$/,
+        use: [
+          'vue-style-loader',
+          'style-loader',
+          'css-loader',
+          {
+            loader: 'sass-loader',
+            options: {
+              indentedSyntax: true
+            }
+          }
+        ]
+      },
+      {
+        test: /\.styl(us)?$/,
+        use: ['vue-style-loader', 'style-loader', 'css-loader', 'stylus-loader']
       }
     ]
   },
@@ -55,7 +68,10 @@ module.exports = {
   performance: {
     hints: false
   },
-  devtool: '#eval-source-map'
+  devtool: '#eval-source-map',
+  plugins: [
+    new VueLoaderPlugin()
+  ]
 }
 
 if (process.env.NODE_ENV === 'production') {
@@ -74,6 +90,10 @@ if (process.env.NODE_ENV === 'production') {
       }
     }),
     new webpack.LoaderOptionsPlugin({
+      options: {
+        context: __dirname,
+        mode: 'production'
+      },
       minimize: true
     })
   ])
