@@ -100,7 +100,7 @@ export default {
         }
         self.rawHeader.forEach((ele) => {
           if (element.scenario[ele] === undefined) {
-            data[ele] = 'not exist'
+            data[ele] = 'n/a'
           } else {
             data[ele] = (element.scenario[ele].used === undefined) ? 'not used' : 'used'
           }
