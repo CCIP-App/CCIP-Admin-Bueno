@@ -42,15 +42,15 @@ export default {
       alertMessage: ''
     }
   },
-  mounted() {
+  mounted () {
     let self = this
     apiClient.getRoles().then((res) => {
       self.options = [
-      {
-        value: 'all',
-        text: '全體'
-      }
-    ].concat(res.map((r) => { return { value: r, text: r } }))
+        {
+          value: 'all',
+          text: '全體'
+        }
+      ].concat(res.map((r) => { return { value: r, text: r } }))
     })
   },
   methods: {
