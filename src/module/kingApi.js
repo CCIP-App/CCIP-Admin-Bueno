@@ -4,17 +4,16 @@ const config = {
   timeout: 1000
 }
 
-
 const client = axios.create(config)
 
 export default {
   getUser: (token) => {
-    return client.get('getUser?token='+token)
+    return client.get('getUser?token=' + token)
   },
   getPrizes: () => {
     return client.get('getPrizes')
   },
   convert: (prizeId, token) => {
-    return client.post('convert', { prizeId:prizeId, token:token })
+    return client.post('convert', { prizeId: prizeId, token: token })
   }
 }

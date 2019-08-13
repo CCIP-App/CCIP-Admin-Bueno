@@ -4,7 +4,7 @@ import HighChart from './HighChart.vue'
 import QrcodeReader from './QrcodeReader.vue'
 import Chip from './Chip.vue'
 
-export default{
+export default {
   MainNav,
   MainSide,
   HighChart,

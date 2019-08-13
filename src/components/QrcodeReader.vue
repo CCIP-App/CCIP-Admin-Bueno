@@ -2,9 +2,12 @@
   <div id='QrcodeReader'>
     <center>
       <h2 class="ma-0" v-if=" title != '' ">{{ title }}</h2>
-      <p v-if="subTitle !== '' ">{{ subTitle }}</p>
-      <div v-if="webrtc" id="camsource" :style="{ width: width, height: height}"></div>
-      <input v-else type="file" id="upload" @change="uploadChange">
+      <div v-if="webrtc" id="camsource"></div>
+      <div v-else id="uploadField">
+        <label id="uploadButton" for="upload" />
+        <input type="file" id="upload" @change="uploadChange">
+      </div>
+      <p role="subTitle" v-if="subTitle !== '' ">{{ subTitle }}</p>
       <h6 class="ma-0" v-if=" !noResult ">{{ result }}</h6>
     </center>
   </div>
@@ -33,7 +36,7 @@ export default {
       default: 240 + 'px'
     }
   },
-  data() {
+  data () {
     return {
       result: 'Loading...',
       cam: null,
@@ -42,18 +45,18 @@ export default {
     }
   },
   watch: {
-    enable: function(state) {
+    enable: function (state) {
       var self = this
       self.scanner.setStopped(!state)
     }
   },
-  mounted() {
+  mounted () {
     var self = this
-    window.w69b.qr.decoding.setWorkerUrl('public/barcode.js/w69b.qrcode.decodeworker.min.js')
-    if (navigator.mediaDevices) {
+    window.w69b.qr.decoding.setWorkerUrl(`${process.env.BASE_URL}barcode.js/w69b.qrcode.decodeworker.min.js`)
+    if (navigator.mediaDevices && !window.navigator.userAgent.match(/iPhone|iPad|iPod/i)) {
       self.webrtc = true
       self.scanner = new window.w69b.qr.ui.ContinuousScanner()
-      self.scanner.setDecodedCallback(function(result) {
+      self.scanner.setDecodedCallback(function (result) {
         self.onSuccess(result)
       })
       self.scanner.render(document.getElementById('camsource'))
@@ -62,7 +65,7 @@ export default {
       console.log('Sorry, native web camera streaming (getUserMedia) is not supported by this browser...')
     }
   },
-  beforeDestroy() {
+  beforeDestroy () {
     if (navigator.mediaDevices) {
       var self = this
       self.scanner.setStopped(true)
@@ -70,28 +73,28 @@ export default {
     }
   },
   methods: {
-    onSuccess(result) {
+    onSuccess (result) {
       this.result = result
       this.$emit('OnSuccess', result)
     },
-    uploadChange() {
+    uploadChange () {
       var self = this
       var file = document.getElementById('upload').files[0]
       var imageType = /^image\//
       if (!imageType.test(file.type)) {
         console.log('File type not valid')
       }
-        // Read file
+      // Read file
       var reader = new FileReader()
-      reader.addEventListener('load', function() {
+      reader.addEventListener('load', function () {
         var image = new Image()
-        image.onload = function(imageEvent) {
-            // Resize the image
+        image.onload = function (imageEvent) {
+          // Resize the image
           var decoder = new window.w69b.qr.decoding.Decoder()
-          decoder.decode(image).then(function(result) {
-              // succesfully decoded QR Code.
+          decoder.decode(image).then(function (result) {
+            // succesfully decoded QR Code.
             self.onSuccess(result.text)
-          }, function() {
+          }, function () {
             self.$emit('OnError', 'no qr code found')
           })
         }
@@ -104,4 +107,37 @@ export default {
 </script>
 
 <style lang="stylus">
+  #camsource
+    background: #c9a474
+    border: 2px solid #c9a474
+    border-radius: 15px
+    padding: 10px
+    width: 80vw
+    height: 60vw
+    max-width: 320px
+    max-height: 240px
+
+  #uploadField
+    max-width: 300px
+    @media screen and (max-width: 454px) // must bigger than 454px for two column
+      max-width: 150px
+
+  #uploadButton
+    cursor: pointer
+    z-index: 1
+    display: block
+    margin: auto
+    min-height: 300px
+    @media screen and (max-width: 454px) // must bigger than 454px for two column
+      min-height: 150px
+    background: url('../assets/uploadfile.png')
+    background-size: cover
+    background-repeat: no-repeat
+    background-position: center
+
+  #upload
+    display: none
+
+  [role="subTitle"]
+    margin-bottom: 3rem
 </style>
