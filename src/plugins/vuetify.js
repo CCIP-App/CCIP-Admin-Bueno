@@ -8,13 +8,17 @@ Vue.use(Vuetify)
 
 export default new Vuetify({
   theme: {
-    primary: '#3F7D41',
-    secondary: colors.grey.darken3,
-    accent: colors.blue.accent1,
-    info: colors.blue.base,
-    warning: colors.amber.base,
-    error: colors.red.base,
-    success: colors.green.base
+    themes: {
+      light: {
+        primary: '#3F7D41',
+        secondary: colors.grey.darken3,
+        accent: colors.blue.accent1,
+        info: colors.blue.base,
+        warning: colors.amber.base,
+        error: colors.red.base,
+        success: colors.green.base
+      }
+    }
   },
   options: {
     customProperties: true
