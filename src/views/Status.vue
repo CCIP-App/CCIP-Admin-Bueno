@@ -27,8 +27,8 @@
                 :items="desserts"
                 class="elevation-1"
                 :loading="loading"
-                :pagination.sync="defaultPageItems"
-                :rows-per-page-items="rowsPerpageItems"
+                :items-per-page.sync="defaultPageItems.rowsPerPage"
+                :footer-props="rowsPerpageItems"
                 :search="search">
                 <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
                 <template slot="items" slot-scope="props">
@@ -58,7 +58,9 @@ export default {
   name: 'Status',
   data () {
     return {
-      rowsPerpageItems: [10, 25, 50, { 'text': 'All', 'value': -1 }],
+      rowsPerpageItems: {
+        itemsPerPageOptions: [10, 25, 50, { 'text': 'All', 'value': -1 }]
+      },
       defaultPageItems: {
         rowsPerPage: 50
       },

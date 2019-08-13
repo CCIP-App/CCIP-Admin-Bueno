@@ -1,11 +1,12 @@
 <template>
   <header>
-    <v-toolbar app fixed dark color="primary" :clipped-left="$vuetify.breakpoint.mdAndUp">
+    <v-app-bar app fixed dark color="primary" :clipped-left="$vuetify.breakpoint.mdAndUp">
+      <v-app-bar-nav-icon @click.stop="$emit('sidebar')"></v-app-bar-nav-icon>
       <v-toolbar-title>
-        <v-toolbar-side-icon @click.stop="$emit('sidebar')"></v-toolbar-side-icon>
         <span class="hidden-sm-and-down">OPass Admin</span>
       </v-toolbar-title>
-    </v-toolbar>
+      <v-spacer></v-spacer>
+    </v-app-bar>
   </header>
 </template>
 

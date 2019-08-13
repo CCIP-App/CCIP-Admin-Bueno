@@ -4,7 +4,9 @@ import 'vuetify/dist/vuetify.min.css'
 import zhHant from 'vuetify/es5/locale/zh-Hant'
 import colors from 'vuetify/es5/util/colors'
 
-Vue.use(Vuetify, {
+Vue.use(Vuetify)
+
+export default new Vuetify({
   theme: {
     primary: '#3F7D41',
     secondary: colors.grey.darken3,
@@ -17,7 +19,9 @@ Vue.use(Vuetify, {
   options: {
     customProperties: true
   },
-  iconfont: 'md',
+  icons: {
+    iconfont: 'mdiSvg' // 'mdi' || 'mdiSvg' || 'md' || 'fa' || 'fa4'
+  },
   lang: {
     locales: { zhHant },
     current: 'zh-Hant'
