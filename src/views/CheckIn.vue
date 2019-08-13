@@ -92,7 +92,7 @@ export default {
         this.alert = true
         return
       }
-      apiClient.useScenarios(this.nowFunc, this.token).then((res) => {
+      apiClient.useScenarios(this.nowFunc.split('-').pop().trim(), this.token).then((res) => {
         this.updateUserData(res)
         this.successCI = true
         this.alertMessage = res.user_id + ' 報到成功'
@@ -140,7 +140,14 @@ export default {
     }
   },
   async mounted () {
-    const data = await apiClient.allScenarios('audience')
+    const data = (await Promise.all(
+      (await apiClient.getRoles()).map(async (role) => {
+        return {
+          role: role,
+          scenarios: await apiClient.allScenarios(role)
+        }
+      })
+    )).map((r) => r.scenarios.map((s) => `${r.role} - ${s}`)).flat()
     this.checkInItems = data
   }
 }
