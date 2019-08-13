@@ -31,13 +31,10 @@ export default {
     })
   },
   createNotificationWithTagFilter: (packet) => {
-    let filters = [
-      { 'field': 'tag', 'key': 'event_id', 'relation': '=', 'value': oneSignalConfig.event_id }
-    ]
+    let filters = []
 
     if (packet.target !== 'all') {
-      filters.push({ 'operator': 'AND' })
-      filters.push({ 'field': 'tag', 'key': 'type', 'relation': '=', 'value': packet.target })
+      filters.push({ 'field': 'tag', 'key': `${oneSignalConfig.event_id}${packet.target}`, 'relation': 'exists' })
     }
 
     return client.post('notifications', {

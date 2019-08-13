@@ -23,28 +23,13 @@
 </template>
 
 <script>
+import apiClient from '../module/apiClient'
 import oneSignal from '../module/onesignal'
 export default {
   name: 'PushNoti',
   data () {
     return {
-      options: [
-        {
-          value: 'all',
-          text: '全體'
-        }, {
-          value: 'audience',
-          text: '僅會眾'
-        },
-        {
-          value: 'staff',
-          text: '僅工作人員'
-        },
-        {
-          value: 'speaker',
-          text: '僅講者'
-        }
-      ],
+      options: [],
       feed: {
         to: 0,
         msg_en: '',
@@ -56,6 +41,17 @@ export default {
       success: false,
       alertMessage: ''
     }
+  },
+  mounted() {
+    let self = this
+    apiClient.getRoles().then((res) => {
+      self.options = [
+      {
+        value: 'all',
+        text: '全體'
+      }
+    ].concat(res.map((r) => { return { value: r, text: r } }))
+    })
   },
   methods: {
     send () {
