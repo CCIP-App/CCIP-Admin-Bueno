@@ -6,9 +6,7 @@
       v-model="active"
       grow
     >
-      <v-tab :key="0" ripple @click="change(0)">工作人員</v-tab>
-      <v-tab :key="1" ripple @click="change(1)">講者</v-tab>
-      <v-tab :key="2" ripple @click="change(2)">會衆</v-tab>
+      <v-tab v-for="tab in tabName" :key="tab" ripple @click="change(tab)">{{ tab }}</v-tab>
       <v-tab-item
         v-for="n in 3"
         :key="n"
@@ -70,7 +68,7 @@ export default {
       search: '',
       loading: false,
       active: 0,
-      tabName: ['staff', 'speaker', 'audience'],
+      tabName: [],
       rawHeader: [],
       rawData: []
       // qrState: true,
@@ -116,9 +114,9 @@ export default {
     getData (key) {
       let self = this
       this.loading = true
-      apiClient.allScenarios(this.tabName[key]).then((res) => {
+      apiClient.allScenarios(key).then((res) => {
         self.rawHeader = res
-        return apiClient.getAllRoleScenarios(this.tabName[key])
+        return apiClient.getAllRoleScenarios(key)
       }).then((res) => {
         self.rawData = res
         self.loading = false
@@ -131,7 +129,13 @@ export default {
     }
   },
   mounted () {
-    this.change(0)
+    let self = this
+    apiClient.getRoles().then((res) => {
+      self.tabName = res
+      if (self.tabName.length > 0) {
+        self.change(self.tabName[0])
+      }
+    })
   }
 }
 </script>

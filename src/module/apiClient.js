@@ -26,6 +26,9 @@ export default {
   allScenarios: (role) => {
     return client.get('scenarios?role=' + role).then((res) => res.data)
   },
+  getRoles: () => {
+    return client.get('roles').then((res) => res.data)
+  },
   getAllRoleScenarios: (role) => {
     return client.get('dashboard/' + role).then((res) => res.data)
   },
