@@ -65,10 +65,10 @@
 </template>
 
 <script>
-import apiClient from "../modal/apiClient";
+import apiClient from '../module/apiClient'
 export default {
-  name: "Dashboard",
-  data() {
+  name: 'Dashboard',
+  data () {
     return {
       CIData: {
         logged: 0,
@@ -88,41 +88,41 @@ export default {
         }
       },
       countDown: 30
-    };
+    }
   },
   computed: {
-    appLogged() {
-      return this.CIData.logged;
+    appLogged () {
+      return this.CIData.logged
     },
-    totalUser() {
-      return this.CIData.total;
+    totalUser () {
+      return this.CIData.total
     },
-    appPrecnetage() {
-      return Math.round(this.appLogged / this.totalUser * 100);
+    appPrecnetage () {
+      return Math.round(this.appLogged / this.totalUser * 100)
     },
-    attendees() {
+    attendees () {
       return [
         {
-          name: "已報到",
+          name: '已報到',
           y: this.CIData.checkin_used
         },
         {
-          name: "未報到",
+          name: '未報到',
           y: this.CIData.total - this.CIData.checkin_used
         }
-      ];
+      ]
     },
-    lunch() {
+    lunch () {
       return {
         meat: {
           total: this.CIData.lunch.meat,
           chart: [
             {
-              name: "已領取",
+              name: '已領取',
               y: this.CIData.lunch.meat_used
             },
             {
-              name: "未領取",
+              name: '未領取',
               y: this.CIData.lunch.meat - this.CIData.lunch.meat_used
             }
           ]
@@ -131,28 +131,28 @@ export default {
           total: this.CIData.lunch.vegetarian,
           chart: [
             {
-              name: "已領取",
+              name: '已領取',
               y: this.CIData.lunch.vegetarian_used
             },
             {
-              name: "未領取",
+              name: '未領取',
               y:
                 this.CIData.lunch.vegetarian - this.CIData.lunch.vegetarian_used
             }
           ]
         }
-      };
+      }
     },
-    kit() {
+    kit () {
       return {
         normal: {
           chart: [
             {
-              name: "已領取",
+              name: '已領取',
               y: this.CIData.kit_used
             },
             {
-              name: "未領取",
+              name: '未領取',
               y: this.totalUser - this.CIData.kit_used
             }
           ]
@@ -161,28 +161,28 @@ export default {
           total: this.CIData.vipkit.total,
           chart: [
             {
-              name: "已領取",
+              name: '已領取',
               y: this.CIData.vipkit.used
             },
             {
-              name: "未領取",
+              name: '未領取',
               y: this.CIData.vipkit.total - this.CIData.vipkit.used
             }
           ]
         }
-      };
+      }
     }
   },
   methods: {
     // Overwriting base render method with actual data.
-    defaultOption(datas) {
+    defaultOption (datas) {
       return {
         chart: {
-          type: "pie",
+          type: 'pie',
           spacing: [0, 0, 0, 0]
         },
         title: {
-          text: ""
+          text: ''
         },
         plotOptions: {
           series: {
@@ -196,41 +196,41 @@ export default {
         },
 
         tooltip: {
-          headerFormat: "",
+          headerFormat: '',
           pointFormat:
             '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b><br/>'
         },
         series: [
           {
-            name: "Brands",
+            name: 'Brands',
             colorByPoint: true,
             data: datas
           }
         ]
-      };
+      }
     },
-    refresh() {
-      this.countDown = 30;
+    refresh () {
+      this.countDown = 30
       apiClient.getDasboard().then(
         res => {
-          this.CIData = res.data;
+          this.CIData = res.data
         },
         err => {
-          console.error(err);
+          console.error(err)
         }
-      );
+      )
     }
   },
-  mounted() {
-    this.refresh();
+  mounted () {
+    this.refresh()
     setInterval(() => {
-      this.countDown -= 1;
+      this.countDown -= 1
       if (this.countDown === 0) {
-        this.refresh();
+        this.refresh()
       }
-    }, 1000);
+    }, 1000)
   }
-};
+}
 </script>
 
 <style lang="stylus">

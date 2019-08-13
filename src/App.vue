@@ -1,9 +1,9 @@
 <template>
   <v-app>
-    
+
     <main-side v-model="drawer"></main-side>
     <main-nav v-on:sidebar="drawer = !drawer"></main-nav>
-    
+
     <main>
       <v-content>
         <v-container fluid>
@@ -17,16 +17,16 @@
 </template>
 
 <script>
-  export default {
-    data () {
-      return {
-        drawer: true
-      }
-    },
-
-    mounted () {
+export default {
+  data () {
+    return {
+      drawer: true
     }
+  },
+
+  mounted () {
   }
+}
 </script>
 
 <style lang="stylus">

@@ -17,8 +17,8 @@
             <!-- <v-card-row> -->
               <ul v-if="user.user_id" role="userStatus">
                 <li>Nickname: {{ user.user_id }}</li>
-                <li>App Login: {{ user.first_use ? user.first_use : 'Not yet' }}</li>
-                <li>User Type: {{ user.type }}</li>
+                <li>App login: {{ user.first_use ? user.first_use : 'Not yet' }}</li>
+                <li>User role: {{ user.role }}</li>
                 <template v-for="(scenarios, index) in user.scenarios">
                   <li :key="index">
                     {{ scenarios.key + ": " + (scenarios.used ? scenarios.used : 'Not yet') }}
@@ -47,10 +47,10 @@
 </template>
 
 <script>
-import apiClient from '../modal/apiClient'
+import apiClient from '../module/apiClient'
 export default {
   name: 'Lunch',
-  data() {
+  data () {
     return {
       qrState: true,
       token: '',
@@ -61,7 +61,7 @@ export default {
     }
   },
   watch: {
-    token() {
+    token () {
       if (this.token.length < 32) return
       this.user = {}
       this.alert = this.successCI = false
@@ -92,10 +92,10 @@ export default {
     }
   },
   methods: {
-    OnSuccess(token) {
+    OnSuccess (token) {
       this.token = token
     },
-    getStatus(token) {
+    getStatus (token) {
       apiClient.getStatus(token).then((res) => {
         this.updateUserData(res)
       }).catch((err) => {
@@ -107,11 +107,11 @@ export default {
         this.alert = true
       })
     },
-    updateUserData(data) {
+    updateUserData (data) {
       this.user = {
         user_id: data.user_id,
         first_use: data.first_use ? new Date(data.first_use * 1000).toLocaleString() : null,
-        type: data.type,
+        role: data.role,
         scenarios: data.scenarios.map((el) => ({
           key: el.display_text['zh-TW'],
           used: el.used ? new Date(el.used * 1000).toLocaleString() : null,

@@ -1,7 +1,13 @@
 <template>
   <div id='CheckIn'>
-    <v-alert dismissible warning v-model="alert" role="alert" class="mb-3">{{ alertMessage }}</v-alert>
-    <v-alert dismissible success v-model="successCI" role="alert" class="mb-3">{{ alertMessage }}</v-alert>
+    <v-alert dismissible type="warning" v-model="alert" role="alert" class="mb-3">{{ alertMessage }}</v-alert>
+    <v-alert dismissible type="success" v-model="successCI" role="alert" class="mb-3">{{ alertMessage }}</v-alert>
+    <v-select
+      :items="checkInItems"
+      label="選擇報到方法"
+      solo
+      v-model="nowFunc"
+    ></v-select>
     <v-layout class="mb-3"  row wrap>
       <v-flex xs12 md6>
         <qrcode-reader :enable="qrState" :width="'100%'" :height="'300px'" :noResult="true" @OnSuccess="OnSuccess" />
@@ -17,8 +23,8 @@
             <!-- <v-card-row> -->
               <ul v-if="user.user_id" role="userStatus">
                 <li>Nickname: {{ user.user_id }}</li>
-                <li>App Login: {{ user.first_use ? user.first_use : 'Not yet' }}</li>
-                <li>User Type: {{ user.type }}</li>
+                <li>App login: {{ user.first_use ? user.first_use : 'Not yet' }}</li>
+                <li>User role: {{ user.role }}</li>
                 <template v-for="(scenarios, index) in user.scenarios">
                   <li :key="index">
                     {{ scenarios.key + ": " + (scenarios.used ? scenarios.used : 'Not yet') }}
@@ -47,13 +53,16 @@
 </template>
 
 <script>
-import apiClient from '../modal/apiClient'
+import apiClient from '../module/apiClient'
 export default {
   name: 'CheckIn',
-  data() {
+  data () {
     return {
+      checkInItems: [],
+      nowFunc: '',
       qrState: true,
       token: '',
+      lastToken: '',
       alert: false,
       successCI: false,
       alertMessage: '',
@@ -61,16 +70,29 @@ export default {
     }
   },
   watch: {
-    token() {
-      if (this.token.length < 32) return
+    lastToken (newVal, _) {
+      if (newVal.length > 0) {
+        setTimeout(() => {
+          this.lastToken = ''
+        }, 500)
+      }
+    }
+  },
+  methods: {
+    OnSuccess (token) {
+      this.token = token
+
+      if (this.lastToken === this.token) return
+
       this.user = {}
       this.alert = this.successCI = false
 
-      // let today = (new Date()).getTime()
-      // let day1 = Date.parse('2017/08/05')
-      // let day2 = Date.parse('2017/08/06')
-      let checkInFunction = apiClient.checkIn
-      checkInFunction(this.token).then((res) => {
+      if (this.nowFunc === '') {
+        this.alertMessage = '請選擇要報到的方法'
+        this.alert = true
+        return
+      }
+      apiClient.useScenarios(this.nowFunc, this.token).then((res) => {
         this.updateUserData(res)
         this.successCI = true
         this.alertMessage = res.user_id + ' 報到成功'
@@ -88,14 +110,11 @@ export default {
         }
         this.alert = true
         this.getStatus(this.token)
+      }).finally(() => {
+        this.lastToken = this.token
       })
-    }
-  },
-  methods: {
-    OnSuccess(token) {
-      this.token = token
     },
-    getStatus(token) {
+    getStatus (token) {
       apiClient.getStatus(token).then((res) => {
         this.updateUserData(res)
       }).catch((err) => {
@@ -107,11 +126,11 @@ export default {
         this.alert = true
       })
     },
-    updateUserData(data) {
+    updateUserData (data) {
       this.user = {
         user_id: data.user_id,
         first_use: data.first_use ? new Date(data.first_use * 1000).toLocaleString() : null,
-        type: data.type,
+        role: data.role,
         scenarios: data.scenarios.map((el) => ({
           key: el.display_text['zh-TW'],
           used: el.used ? new Date(el.used * 1000).toLocaleString() : null,
@@ -119,6 +138,10 @@ export default {
         }))
       }
     }
+  },
+  async mounted () {
+    const data = await apiClient.allScenarios('audience')
+    this.checkInItems = data
   }
 }
 </script>

@@ -15,7 +15,7 @@
         </v-flex>
       </v-layout>
       <br>
-      <v-alert dismissible warning v-model="alert" role="alert">{{ alertMessage }}</v-alert>
+      <v-alert dismissible type="warning" v-model="alert" role="alert">{{ alertMessage }}</v-alert>
       <v-layout>
         <v-flex xs12 md12 style="margin: 0 auto;">
           <v-card style="margin: 0 auto;">
@@ -25,11 +25,11 @@
                 <table>
                   <thead>
                     <tr>
-                      <th v-for="header in headers" v-text="header"></th>
+                      <th v-for="(header,index) in headers" v-text="header" :key="'header'+index"></th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="(item, index) in announcements">
+                    <tr v-for="(item, index) in announcements" :key="'item'+index">
                       <td>{{ formatDatetime(item.datetime) }}</td>
                       <td>{{ item.msg_zh }}</td>
                       <td>{{ item.msg_en }}</td>
@@ -47,11 +47,11 @@
 </template>
 
 <script>
-import apiClient from '../modal/apiClient'
-import oneSignal from '../modal/onesignal'
+import apiClient from '../module/apiClient'
+
 export default {
   name: 'Announcement',
-  data() {
+  data () {
     return {
       newAnnounce: {
         msg_en: '',
@@ -65,7 +65,7 @@ export default {
     }
   },
   methods: {
-    send() {
+    send () {
       this.disabled = true
       this.alert = false
       if (this.newAnnounce.msg_en.length > 0) {
@@ -95,12 +95,12 @@ export default {
         this.alertMessage = '至少需輸入英文'
       }
     },
-    formatDatetime(time) {
+    formatDatetime (time) {
       let datetime = new Date(time * 1000)
       return this.leftpad(datetime.getMonth() + 1, 2) + '/' + this.leftpad(datetime.getDate(), 2) + ' ' +
           this.leftpad(datetime.getHours(), 2) + ':' + this.leftpad(datetime.getMinutes(), 2)
     },
-    leftpad(number, targetLength) {
+    leftpad (number, targetLength) {
       var output = number + ''
       while (output.length < targetLength) {
         output = '0' + output
@@ -108,7 +108,7 @@ export default {
       return output
     }
   },
-  mounted() {
+  mounted () {
     apiClient.getAnnouncement()
       .then((Announcements) => {
         this.announcements = Announcements

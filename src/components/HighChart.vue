@@ -12,26 +12,26 @@ export default {
       type: Object
     }
   },
-  data() {
+  data () {
     return {
       chart: null,
       oldValue: ''
     }
   },
   watch: {
-    options: function(value) {
+    options: function (value) {
       if (this.oldValue !== JSON.stringify(value)) {
         this.chart.update(value, true)
         this.oldValue = JSON.stringify(value)
-      } 
+      }
       return value
     }
   },
-  mounted() {
+  mounted () {
     this.chart = Highcharts.chart(this.$el, this.options)
     this.oldValue = JSON.stringify(this.options)
   },
-  beforeDestroy() {
+  beforeDestroy () {
     this.chart.destroy()
   }
 }

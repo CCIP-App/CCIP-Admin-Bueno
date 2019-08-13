@@ -20,17 +20,14 @@ export default {
   getDasboard: () => {
     return client.get('dashboard')
   },
-  checkIn: (token) => {
-    return client.get('use/checkin?token=' + token + '&StaffQuery=true').then((res) => res.data)
+  useScenarios: (scenarios, token) => {
+    return client.get(`use/${scenarios}?token=${token}&staffQuery=true`).then((res) => res.data)
   },
-  day1CheckIn: (token) => {
-    return client.get('use/day1checkin?token=' + token + '&StaffQuery=true').then((res) => res.data)
+  allScenarios: (role) => {
+    return client.get('scenarios?role=' + role).then((res) => res.data)
   },
-  day2CheckIn: (token) => {
-    return client.get('use/day2checkin?token=' + token + '&StaffQuery=true').then((res) => res.data)
-  },
-  lunch: (token) => {
-    return client.get('use/lunch?token=' + token).then((res) => res.data)
+  getAllRoleScenarios: (role) => {
+    return client.get('dashboard/' + role).then((res) => res.data)
   },
   getStatus: (token) => {
     return client.get('status?token=' + token).then((res) => res.data)
@@ -42,7 +39,7 @@ export default {
     return publicClient.get('event/puzzle?token=' + pubToken).then((res) => res.data)
   },
   revokPlayer: (token) => {
-    return client.get('event/puzzle/revoke?token=' + token).then((res) => ({token: token, successful: res.data.status === 'OK'}))
+    return client.get('event/puzzle/revoke?token=' + token).then((res) => ({ token: token, successful: res.data.status === 'OK' }))
   },
   addAnnouncement: (announcement) => {
     let params = new URLSearchParams()
