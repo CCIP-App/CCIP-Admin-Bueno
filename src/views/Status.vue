@@ -14,6 +14,11 @@
               <v-card-title>
                 結果
                 <v-spacer></v-spacer>
+                <v-switch
+                  v-model="displayAllAttr"
+                  :label="`顯示全部欄位資料: ${displayAllAttr ? '開' : '關'}`"
+                ></v-switch>
+                <v-spacer></v-spacer>
                 <v-text-field
                   v-model="search"
                   append-icon="search"
@@ -35,7 +40,10 @@
                   <td
                     v-for="(value, key) in props.item"
                     :key="key+value"
-                    :class="[{['text-xs-right']: key!=='name'},{['not-exist']: value==='not exist'},{['used']: value==='used'}]"> {{ value }}</td>
+                    :class="[{['text-xs-right']: key!=='name'},{['not-exist']: value==='not exist'},{['used']: value==='used'}]"
+                  >
+                    {{ value }}
+                  </td>
                   <!-- <td>{{ props.item.name }}</td>
                   <td class="text-xs-right">{{ props.item.calories }}</td>
                   <td class="text-xs-right">{{ props.item.fat }}</td>
@@ -69,7 +77,8 @@ export default {
       active: 0,
       tabName: [],
       rawHeader: [],
-      rawData: []
+      rawData: [],
+      displayAllAttr: false
       // qrState: true,
       // token: "",
       // alert: false,
@@ -102,6 +111,11 @@ export default {
             data[ele] = 'n/a'
           } else {
             data[ele] = (element.scenario[ele].used === undefined) ? 'not used' : 'used'
+            if (this.displayAllAttr) {
+              if (element.scenario[ele].attr !== undefined && Object.keys(element.scenario[ele].attr).length > 0) {
+                data[ele] += ' ' + JSON.stringify(element.scenario[ele].attr)
+              }
+            }
           }
         })
         data['attr'] = JSON.stringify(element.attr)
