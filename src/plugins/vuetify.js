@@ -28,6 +28,6 @@ export default new Vuetify({
   },
   lang: {
     locales: { zhHant },
-    current: 'zh-Hant'
+    current: 'zhHant'
   }
 })
