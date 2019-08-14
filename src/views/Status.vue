@@ -6,7 +6,7 @@
       v-model="active"
       grow
     >
-      <v-tab v-for="tab in tabName" :key="tab" ripple @click="change(tab)">{{ tab }}</v-tab>
+      <v-tab v-for="(tab, n) in tabName" :key="n" ripple @click="change(tab)">{{ tab }}</v-tab>
       <v-tab-item v-for="n in tabName.length" :key="n">
         <v-card flat>
           <v-card-text>
@@ -36,20 +36,19 @@
                 :footer-props="rowsPerpageItems"
                 :search="search">
                 <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
-                <template slot="items" slot-scope="props">
-                  <td
-                    v-for="(value, key) in props.item"
-                    :key="key+value"
-                    :class="[{['text-xs-right']: key!=='name'},{['not-exist']: value==='not exist'},{['used']: value==='used'}]"
-                  >
-                    {{ value }}
-                  </td>
-                  <!-- <td>{{ props.item.name }}</td>
-                  <td class="text-xs-right">{{ props.item.calories }}</td>
-                  <td class="text-xs-right">{{ props.item.fat }}</td>
-                  <td class="text-xs-right">{{ props.item.carbs }}</td>
-                  <td class="text-xs-right">{{ props.item.protein }}</td>
-                  <td class="text-xs-right">{{ props.item.iron }}</td> -->
+                <template v-slot:item="{ item }">
+                  <tr>
+                    <td
+                      v-for="(value, key) in item"
+                      :class="[{'text-xs-right': key!=='name'},{'not-exist': value.trim()==='n/a'},{'used': value.trim().match(/^used/i) !== null}]"
+                      :key="item.name+key+value">{{ value }}</td>
+                    <!-- <td>{{ props.item.name }}</td>
+                    <td class="text-xs-right">{{ props.item.calories }}</td>
+                    <td class="text-xs-right">{{ props.item.fat }}</td>
+                    <td class="text-xs-right">{{ props.item.carbs }}</td>
+                    <td class="text-xs-right">{{ props.item.protein }}</td>
+                    <td class="text-xs-right">{{ props.item.iron }}</td> -->
+                  </tr>
                 </template>
               </v-data-table>
             </v-card>
@@ -158,9 +157,9 @@ export default {
   font-size: 1.2rem;
 }
 .not-exist {
-  background-color black
+  background-color: black
 }
 .used {
-  background-color green
+  background-color: green
 }
 </style>
