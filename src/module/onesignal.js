@@ -1,5 +1,6 @@
 import axios from 'axios'
 import configs from '../../config.json'
+import apiClient from './apiClient'
 
 const oneSignalConfig = {
   app_id: configs.oneSignal.app_id,
@@ -30,10 +31,19 @@ export default {
       'url': packet.uri
     })
   },
-  createNotificationWithTagFilter: (packet) => {
+  createNotificationWithTagFilter: async (packet) => {
     let filters = []
 
-    if (packet.target !== 'all') {
+    if (packet.target === 'all') {
+      await apiClient.getRoles().then((roles) => {
+        roles.map((role) => {
+          if (filters.length > 0) {
+            filters.push({ 'operator': 'OR' })
+          }
+          filters.push({ 'field': 'tag', 'key': `${oneSignalConfig.event_id}${role}`, 'relation': 'exists' })
+        })
+      })
+    } else {
       filters.push({ 'field': 'tag', 'key': `${oneSignalConfig.event_id}${packet.target}`, 'relation': 'exists' })
     }
 
