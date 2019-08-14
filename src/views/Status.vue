@@ -16,6 +16,7 @@
                 <v-spacer></v-spacer>
                 <v-switch
                   v-model="displayAllAttr"
+                  color="primary"
                   :label="`顯示全部欄位資料: ${displayAllAttr ? '開' : '關'}`"
                 ></v-switch>
                 <v-spacer></v-spacer>
@@ -35,7 +36,7 @@
                 :items-per-page.sync="defaultPageItems.rowsPerPage"
                 :footer-props="rowsPerpageItems"
                 :search="search">
-                <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
+                <v-progress-linear slot="progress" color="primary" indeterminate></v-progress-linear>
                 <template v-slot:item="{ item }">
                   <tr>
                     <td

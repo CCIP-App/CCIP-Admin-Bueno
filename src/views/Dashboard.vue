@@ -6,7 +6,7 @@
           <v-card>
             <v-card-text role="refreshCountDown">
               <span class="text-xs-center">{{ countDown }} 秒後 Refresh 統計資料</span>
-              <v-btn primary dark @click.native="refresh">Refresh Now</v-btn>
+              <v-btn color="primary" dark @click.native="refresh">Refresh Now</v-btn>
             </v-card-text>
           </v-card>
         </v-flex>
