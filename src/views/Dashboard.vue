@@ -7,6 +7,12 @@
             <v-card-text role="refreshCountDown">
               <span class="text-xs-center">{{ countDown }} 秒後 Refresh 統計資料</span>
               <v-btn color="primary" dark @click.native="refresh">Refresh Now</v-btn>
+              <v-select
+                :items="roles"
+                label="Roles"
+                solo
+                v-model="selectedRole"
+              ></v-select>
             </v-card-text>
           </v-card>
         </v-flex>
@@ -14,51 +20,21 @@
           <v-card>
             <v-card-text>
               <h4 class="ma-0 text-xs-left">App 使用率</h4>
-              <p class="text-xs-center ma-0 mt-4">{{ appLogged + " / " + totalUser + " - " + appPrecnetage + "%"}}</p>
+              <p class="text-xs-center ma-0 mt-4">{{ appLogged + " / " + appTotal + " - " + appPrecnetage + "%"}}</p>
               <v-progress-linear v-model="appPrecnetage" class="ma-0 mb-4"></v-progress-linear>
             </v-card-text>
           </v-card>
         </v-flex>
-        <v-flex xs12 md6 xl4 class="mb-3">
-          <v-card>
-            <v-card-text>
-              <h4 class="ma-0 text-xs-left">即時報到率</h4>
-              <high-chart :options="defaultOption(attendees)" style="display: flex"></high-chart>
-            </v-card-text>
-          </v-card>
-        </v-flex>
-        <v-flex xs12 md6 xl4 class="mb-3" v-if="lunch.meat.total > 0">
-          <v-card>
-            <v-card-text>
-              <h4 class="ma-0 text-xs-left">午餐(葷)已報到 {{ lunch.meat.total }}</h4>
-              <high-chart :options="defaultOption(lunch.meat.chart)" style="display: flex"></high-chart>
-            </v-card-text>
-          </v-card>
-        </v-flex>
-        <v-flex xs12 md6 xl4 class="mb-3" v-if="lunch.vegetarian.total > 0">
-          <v-card>
-            <v-card-text>
-              <h4 class="ma-0 text-xs-left">午餐(素)已報到 {{ lunch.vegetarian.total }}</h4>
-              <high-chart :options="defaultOption(lunch.vegetarian.chart)" style="display: flex"></high-chart>
-            </v-card-text>
-          </v-card>
-        </v-flex>
-        <v-flex xs12 md6 xl4 class="mb-3">
-          <v-card>
-            <v-card-text>
-              <h4 class="ma-0 text-xs-left">迎賓袋領取 {{ totalUser }}</h4>
-              <high-chart :options="defaultOption(kit.normal.chart)" style="display: flex"></high-chart>
-            </v-card-text>
-          </v-card>
-        </v-flex>
-        <v-flex xs12 md6 xl4 class="mb-3">
-          <v-card>
-            <v-card-text>
-              <h4 class="ma-0 text-xs-left">個人贊助領取 {{ kit.vip.total }}</h4>
-              <high-chart :options="defaultOption(kit.vip.chart)" style="display: flex"></high-chart>
-            </v-card-text>
-          </v-card>
-        </v-flex>
+        <template v-for="(data, n) in series.series">
+          <v-flex :key="n" xs12 md6 xl4 class="mb-3">
+            <v-card>
+              <v-card-text>
+                <h4 class="ma-0 text-xs-left">Used for: {{ data.scenario }} {{ data.used }} / {{ series.total }}</h4>
+                <high-chart :options="chartOption(data.chart)" style="display: flex"></high-chart>
+              </v-card-text>
+            </v-card>
+          </v-flex>
+        </template>
       </v-layout>
     </v-container>
   </div>
@@ -70,112 +46,60 @@ export default {
   name: 'Dashboard',
   data () {
     return {
-      CIData: {
-        logged: 0,
-        total: 0,
-        checkin_used: 0,
-        lunch: {
-          meat: 0,
-          meat_used: 0,
-          total: 0,
-          vegetarian: 0,
-          vegetarian_used: 0
-        },
-        kit_used: 0,
-        vipkit: {
-          total: 3,
-          used: 0
-        }
-      },
-      countDown: 30
+      countDown: 30,
+      roles: [],
+      selectedRole: "",
+      datas: []
     }
   },
   computed: {
     appLogged () {
-      return this.CIData.logged
+      let logged = this.datas.map((d) => d.logged)
+      return logged.length > 0 ? logged.reduce((a, b) => a + b) : 0
     },
-    totalUser () {
-      return this.CIData.total
+    appTotal () {
+      let total = this.datas.map((d) => d.total)
+      return total.length > 0 ? total.reduce((a, b) => a + b) : 0
     },
     appPrecnetage () {
-      return Math.round(this.appLogged / this.totalUser * 100)
+      return Math.round(this.appLogged / this.appTotal * 100)
     },
-    attendees () {
-      return [
-        {
-          name: '已報到',
-          y: this.CIData.checkin_used
-        },
-        {
-          name: '未報到',
-          y: this.CIData.total - this.CIData.checkin_used
-        }
-      ]
-    },
-    lunch () {
-      return {
-        meat: {
-          total: this.CIData.lunch.meat,
-          chart: [
-            {
-              name: '已領取',
-              y: this.CIData.lunch.meat_used
-            },
-            {
-              name: '未領取',
-              y: this.CIData.lunch.meat - this.CIData.lunch.meat_used
+    series () {
+      let roles = this.datas.filter((d) => d.role === this.selectedRole)
+      let role = roles.length > 0 ? roles[0] : null
+      if (role !== null) {
+        return {
+          series: role.scenarios.map((scenario) => {
+            return {
+              chart: [
+                {
+                  name: '已用',
+                  y: scenario.used
+                },
+                {
+                  name: '未用',
+                  y: role.total - scenario.enabled
+                },
+                {
+                  name: '能用未用',
+                  y: scenario.enabled - scenario.used
+                }
+              ],
+              used: scenario.used,
+              enabled: scenario.enabled,
+              scenario: scenario.scenario
             }
-          ]
-        },
-        vegetarian: {
-          total: this.CIData.lunch.vegetarian,
-          chart: [
-            {
-              name: '已領取',
-              y: this.CIData.lunch.vegetarian_used
-            },
-            {
-              name: '未領取',
-              y:
-                this.CIData.lunch.vegetarian - this.CIData.lunch.vegetarian_used
-            }
-          ]
+          }),
+          total: role.total,
+          role: this.selectedRole
         }
       }
-    },
-    kit () {
-      return {
-        normal: {
-          chart: [
-            {
-              name: '已領取',
-              y: this.CIData.kit_used
-            },
-            {
-              name: '未領取',
-              y: this.totalUser - this.CIData.kit_used
-            }
-          ]
-        },
-        vip: {
-          total: this.CIData.vipkit.total,
-          chart: [
-            {
-              name: '已領取',
-              y: this.CIData.vipkit.used
-            },
-            {
-              name: '未領取',
-              y: this.CIData.vipkit.total - this.CIData.vipkit.used
-            }
-          ]
-        }
-      }
+      return {}
     }
   },
   methods: {
     // Overwriting base render method with actual data.
-    defaultOption (datas) {
+    chartOption (datas) {
       return {
         credits: {
           enabled: false
@@ -216,7 +140,7 @@ export default {
       this.countDown = 30
       apiClient.getDasboard().then(
         res => {
-          this.CIData = res.data
+          this.datas = res.data
         },
         err => {
           console.error(err)
@@ -225,13 +149,20 @@ export default {
     }
   },
   mounted () {
-    this.refresh()
-    setInterval(() => {
-      this.countDown -= 1
-      if (this.countDown === 0) {
-        this.refresh()
+    let self = this
+    apiClient.getRoles().then((roles) => {
+      self.roles = roles
+      if (self.roles.length > 0) {
+        self.selectedRole = self.roles[0]
       }
-    }, 1000)
+      self.refresh()
+      setInterval(() => {
+        self.countDown -= 1
+        if (self.countDown === 0) {
+          self.refresh()
+        }
+      }, 1000)
+    })
   }
 }
 </script>
