@@ -16,22 +16,26 @@
             </v-card-text>
           </v-card>
         </v-flex>
-        <v-flex xs12 class="mb-3">
+        <v-flex xs12 md6 xl4 class="mb-3">
           <v-card>
             <v-card-text>
               <h4 class="ma-0 text-xs-left">App 使用率</h4>
               <p class="text-xs-center ma-0 mt-4">{{ appLogged }} / {{ appTotal }} - {{ percentage(this.appLogged, this.appTotal) }}% ({{ selectedRole }} total of: {{ rolePercentage }}%)</p>
               <v-progress-linear stream :buffer-value="percentage(this.appLogged, this.appTotal)" :value="rolePercentage" class="ma-0 mb-4"></v-progress-linear>
             </v-card-text>
-            <template v-for="(data, n) in checkins">
-              <v-card-text :key="n">
+          </v-card>
+        </v-flex>
+        <template v-for="(data, n) in checkins">
+          <v-flex :key="n" xs12 md6 xl4 class="mb-3">
+            <v-card>
+              <v-card-text>
                 <h4 class="ma-0 text-xs-left">{{ data.scenario }} 報到率</h4>
                 <p class="text-xs-center ma-0 mt-4">{{ data.used }} / {{ data.enabled }} - {{ percentage(data.used, data.enabled) }}%</p>
                 <v-progress-linear stream :buffer-value="percentage(data.used, data.enabled)" :value="percentage(data.used, data.enabled)" class="ma-0 mb-4"></v-progress-linear>
               </v-card-text>
-            </template>
-          </v-card>
-        </v-flex>
+            </v-card>
+          </v-flex>
+        </template>
         <template v-for="(data, n) in series.series">
           <v-flex :key="n" xs12 md6 xl4 class="mb-3">
             <v-card>
