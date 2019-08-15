@@ -26,7 +26,7 @@
           </v-card>
         </v-flex>
         <template v-for="(data, n) in checkins">
-          <v-flex :key="n" xs12 md6 xl4 class="mb-3">
+          <v-flex :key="'checkins'+data.scenario+n" xs12 md6 xl4 class="mb-3">
             <v-card>
               <v-card-text>
                 <h4 class="ma-0 text-xs-left">{{ data.scenario }} 報到率</h4>
@@ -37,7 +37,7 @@
           </v-flex>
         </template>
         <template v-for="(data, n) in series.series">
-          <v-flex :key="n" xs12 md6 xl4 class="mb-3">
+          <v-flex :key="'charts'+data.scenario+n" xs12 md6 xl4 class="mb-3">
             <v-card>
               <v-card-text>
                 <h4 class="ma-0 text-xs-left">Used for: {{ data.scenario }} {{ data.used }} / {{ series.total }}</h4>
