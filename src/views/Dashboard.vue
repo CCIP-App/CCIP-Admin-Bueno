@@ -19,7 +19,7 @@
             </v-card-text>
           </v-card>
         </v-flex>
-        <v-flex xs12 md12 class="mb-3">
+        <v-flex xs12 md6 xl4 class="mb-3">
           <v-card>
             <v-card-text>
               <h4 class="ma-0 text-xs-left">即時報到率</h4>
@@ -27,7 +27,7 @@
             </v-card-text>
           </v-card>
         </v-flex>
-        <v-flex xs12 md6 xl4 class="mb-3">
+        <v-flex xs12 md6 xl4 class="mb-3" v-if="lunch.meat.total > 0">
           <v-card>
             <v-card-text>
               <h4 class="ma-0 text-xs-left">午餐(葷)已報到 {{ lunch.meat.total }}</h4>
@@ -35,7 +35,7 @@
             </v-card-text>
           </v-card>
         </v-flex>
-        <v-flex xs12 md6 xl4 class="mb-3">
+        <v-flex xs12 md6 xl4 class="mb-3" v-if="lunch.vegetarian.total > 0">
           <v-card>
             <v-card-text>
               <h4 class="ma-0 text-xs-left">午餐(素)已報到 {{ lunch.vegetarian.total }}</h4>
