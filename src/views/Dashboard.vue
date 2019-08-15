@@ -20,9 +20,16 @@
           <v-card>
             <v-card-text>
               <h4 class="ma-0 text-xs-left">App 使用率</h4>
-              <p class="text-xs-center ma-0 mt-4">{{ appLogged }} / {{ appTotal }} - {{ appPercentage }}% ({{ selectedRole }} total of: {{ rolePercentage }}%)</p>
-              <v-progress-linear stream :buffer-value="appPercentage" :value="rolePercentage" class="ma-0 mb-4"></v-progress-linear>
+              <p class="text-xs-center ma-0 mt-4">{{ appLogged }} / {{ appTotal }} - {{ percentage(this.appLogged, this.appTotal) }}% ({{ selectedRole }} total of: {{ rolePercentage }}%)</p>
+              <v-progress-linear stream :buffer-value="percentage(this.appLogged, this.appTotal)" :value="rolePercentage" class="ma-0 mb-4"></v-progress-linear>
             </v-card-text>
+            <template v-for="(data, n) in checkins">
+              <v-card-text :key="n">
+                <h4 class="ma-0 text-xs-left">{{ data.scenario }} 報到率</h4>
+                <p class="text-xs-center ma-0 mt-4">{{ data.used }} / {{ data.enabled }} - {{ percentage(data.used, data.enabled) }}%</p>
+                <v-progress-linear stream :buffer-value="percentage(data.used, data.enabled)" :value="percentage(data.used, data.enabled)" class="ma-0 mb-4"></v-progress-linear>
+              </v-card-text>
+            </template>
           </v-card>
         </v-flex>
         <template v-for="(data, n) in series.series">
@@ -61,9 +68,6 @@ export default {
       let total = this.datas.map((d) => d.total)
       return total.length > 0 ? total.reduce((a, b) => a + b) : 0
     },
-    appPercentage () {
-      return (Math.round(this.appLogged / this.appTotal * 1000) / 10) || 0
-    },
     rolePercentage () {
       return (Math.round((this.appLogged * (this.series.logged / this.series.total)) / this.appTotal * 1000) / 10) || 0
     },
@@ -99,9 +103,30 @@ export default {
         }
       }
       return {}
+    },
+    checkins () {
+      let checkins = this.datas.map((data) => data.scenarios).map((scenarios) => scenarios.filter((scenario) => scenario.scenario.match(/^day(.+)checkin$/))).flat()
+      let days = [...new Set(checkins.map((checkin) => checkin.scenario).sort())]
+      let allDays = days.map((day) => {
+        let checkin = checkins.filter((checkin) => checkin.scenario === day)
+        if (checkin.length > 0) {
+          let data = checkin.reduce((a, b) => {
+            a.enabled += b.enabled
+            a.used += b.used
+            return a
+          })
+          return data
+        } else {
+          return {}
+        }
+      })
+      return allDays
     }
   },
   methods: {
+    percentage (used, total) {
+      return (Math.round(used / total * 1000) / 10) || 0
+    },
     // Overwriting base render method with actual data.
     chartOption (datas) {
       return {
