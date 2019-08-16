@@ -20,7 +20,7 @@
           <v-card>
             <v-card-text>
               <h4 class="ma-0 text-xs-left">App 使用率</h4>
-              <p class="text-xs-center ma-0 mt-4">{{ appLogged }} / {{ appTotal }} - {{ percentage(this.appLogged, this.appTotal) }}% ({{ selectedRole }} total of: {{ rolePercentage }}%)</p>
+              <p class="text-xs-center ma-0 mt-4">{{ appLogged }} / {{ appTotal }} - {{ percentage(this.appLogged, this.appTotal) }}% ({{ selectedRole }}: {{ this.series.logged }} / {{ this.series.total }} - {{ rolePercentage }}%)</p>
               <v-progress-linear stream :buffer-value="percentage(this.appLogged, this.appTotal)" :value="rolePercentage" class="ma-0 mb-4"></v-progress-linear>
             </v-card-text>
           </v-card>
@@ -73,7 +73,7 @@ export default {
       return total.length > 0 ? total.reduce((a, b) => a + b) : 0
     },
     rolePercentage () {
-      return (Math.round((this.appLogged * (this.series.logged / this.series.total)) / this.appTotal * 1000) / 10) || 0
+      return Math.round((this.series.logged / this.series.total) * 10000) / 100 || 0
     },
     series () {
       let roles = this.datas.filter((d) => d.role === this.selectedRole)
