@@ -59,5 +59,8 @@ export default {
   },
   getBoothList: () => {
     return publicClient('/event/puzzle/deliverers').then((res) => res.data)
+  },
+  getPuzzleConfig: () => {
+    return axios.get(configs.puzzleConfig).then((res) => res.data)
   }
 }

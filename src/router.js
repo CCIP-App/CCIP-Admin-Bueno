@@ -25,7 +25,8 @@ export default new Router({
     // { path: '/lunch', component: Lunch },
     { path: '/announcement', component: Announcement },
     { path: '/push', component: PushNoti },
+    { path: '/puzzle', component: Puzzle }
     // { path: '/king', component: KingGame }
-    { path: '/array', component: ArrayGame }
+    // { path: '/array', component: ArrayGame }
   ]
 })

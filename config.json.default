@@ -3,8 +3,9 @@
   "password": "",
   "baseUrl": "",
   "oneSignal": {
-      "app_id": "",
-      "api_key": "",
-      "event_id": ""
-    }
+    "app_id": "",
+    "api_key": "",
+    "event_id": ""
+  },
+  "puzzleConfig": ""
 }
