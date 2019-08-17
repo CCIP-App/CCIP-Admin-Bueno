@@ -10,7 +10,7 @@
     ></v-select>
     <v-layout class="mb-3"  row wrap>
       <v-flex xs12 md6>
-        <qrcode-reader :enable="qrState" :width="'100%'" :height="'300px'" :noResult="true" @OnSuccess="OnSuccess" />
+        <qrcode-reader :enable="qrState" :width="'100%'" :height="'300px'" :noResult="true" @OnSuccess="OnQRCodeScanSuccess" />
       </v-flex>
       <v-flex xs12 md6>
         <v-card>
@@ -42,10 +42,10 @@
     <v-card class="mb-3">
       <v-card-title>手動輸入 Token</v-card-title>
       <v-card-text>
-        <v-text-field label="Token" v-model="token"></v-text-field>
+        <v-text-field label="Token" v-model="token" @keyup="useTokenByKeyUp"></v-text-field>
       </v-card-text>
       <v-card-actions>
-        <v-btn class="mr-2" color="primary" v-on:click.native="checkIn">手動 checkIn</v-btn>
+        <v-btn class="mr-2" color="primary" v-on:click.native="useToken">手動 checkIn</v-btn>
       </v-card-actions>
     </v-card>
   </div>
@@ -78,9 +78,12 @@ export default {
     }
   },
   methods: {
-    OnSuccess (token) {
-      this.token = token
-
+    useTokenByKeyUp (event) {
+      if (event.key.toLowerCase() == "enter") {
+        this.useToken()
+      }
+    },
+    useToken () {
       if (this.lastToken === this.token) return
 
       this.user = {}
@@ -113,6 +116,10 @@ export default {
         this.lastToken = this.token
       })
     },
+    OnQRCodeScanSuccess (token) {
+      this.token = token
+      this.useToken()
+    },
     getStatus (token) {
       apiClient.getStatus(token).then((res) => {
         this.updateUserData(res)
@@ -136,9 +143,6 @@ export default {
           attr: el.attr
         }))
       }
-    },
-    checkIn () {
-      this.OnSuccess(this.token)
     }
   },
   async mounted () {
