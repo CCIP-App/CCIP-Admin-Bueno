@@ -48,6 +48,9 @@
       <v-card-text>
         <v-text-field label="Token" v-model="token"></v-text-field>
       </v-card-text>
+      <v-card-actions>
+        <v-btn class="mr-2" color="primary" v-on:click.native="checkIn">手動 checkIn</v-btn>
+      </v-card-actions>
     </v-card>
   </div>
 </template>
@@ -137,6 +140,9 @@ export default {
           attr: el.attr
         }))
       }
+    },
+    checkIn () {
+      this.OnSuccess(this.token)
     }
   },
   async mounted () {
