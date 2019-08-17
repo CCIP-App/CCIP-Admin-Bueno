@@ -53,7 +53,7 @@ export default {
   mounted () {
     var self = this
     window.w69b.qr.decoding.setWorkerUrl(`${process.env.BASE_URL}barcode.js/w69b.qrcode.decodeworker.min.js`)
-    if (navigator.mediaDevices && !window.navigator.userAgent.match(/iPhone|iPad|iPod/i)) {
+    if (navigator.mediaDevices) {
       self.webrtc = true
       self.scanner = new window.w69b.qr.ui.ContinuousScanner()
       self.scanner.setDecodedCallback(function (result) {
