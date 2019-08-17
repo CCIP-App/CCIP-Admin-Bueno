@@ -40,11 +40,7 @@
       </v-flex>
     </v-layout>
     <v-card class="mb-3">
-      <!-- <v-card-row class="green darken-1"> -->
-        <v-card-title>
-        <span class="white--text">手動輸入 KKTIX Token </span>
-        </v-card-title>
-      <!-- </v-card-row> -->
+      <v-card-title>手動輸入 Token</v-card-title>
       <v-card-text>
         <v-text-field label="Token" v-model="token"></v-text-field>
       </v-card-text>
