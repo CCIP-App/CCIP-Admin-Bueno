@@ -118,9 +118,11 @@ export default {
         let checkin = checkins.filter((checkin) => checkin.scenario === day)
         if (checkin.length > 0) {
           let data = checkin.reduce((a, b) => {
-            a.enabled += b.enabled
-            a.used += b.used
-            return a
+            return {
+              enabled: a.enabled + b.enabled,
+              used: a.used + b.used,
+              scenario: day,
+            }
           })
           return data
         } else {
