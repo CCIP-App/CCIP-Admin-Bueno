@@ -40,7 +40,7 @@
           <v-flex :key="'charts'+data.scenario+n" xs12 md6 xl4 class="mb-3">
             <v-card>
               <v-card-text>
-                <h4 class="ma-0 text-xs-left">Used for: {{ data.scenario }} {{ data.used }} / {{ series.total }}</h4>
+                <h4 class="ma-0 text-xs-left">Used for {{ data.scenario }}: Used {{ data.used }} / Enabled {{ data.enabled }} / Total {{ series.total }}</h4>
                 <high-chart :options="chartOption(data.chart)" style="display: flex"></high-chart>
               </v-card-text>
             </v-card>
