@@ -68,15 +68,6 @@ export default {
       user: {}
     }
   },
-  watch: {
-    lastToken (newVal, _) {
-      if (newVal.length > 0) {
-        setTimeout(() => {
-          this.lastToken = ''
-        }, 500)
-      }
-    }
-  },
   methods: {
     useTokenByKeyUp (event) {
       if (event.key.toLowerCase() == "enter") {
@@ -85,6 +76,7 @@ export default {
     },
     useToken () {
       if (this.lastToken === this.token) return
+      this.lastToken = this.token
 
       this.user = {}
       this.alert = this.successCI = false
@@ -112,8 +104,6 @@ export default {
         }
         this.alert = true
         this.getStatus(this.token)
-      }).finally(() => {
-        this.lastToken = this.token
       })
     },
     OnQRCodeScanSuccess (token) {
