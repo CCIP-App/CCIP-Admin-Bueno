@@ -70,7 +70,7 @@ export default {
   },
   methods: {
     useTokenByKeyUp (event) {
-      if (event.key.toLowerCase() == "enter") {
+      if (event.key.toLowerCase() === 'enter') {
         this.useToken()
       }
     },

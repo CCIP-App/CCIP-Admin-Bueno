@@ -121,7 +121,7 @@ export default {
             return {
               enabled: a.enabled + b.enabled,
               used: a.used + b.used,
-              scenario: day,
+              scenario: day
             }
           })
           return data
