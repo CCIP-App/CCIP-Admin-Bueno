@@ -53,6 +53,7 @@
 
 <script>
 import apiClient from '../module/apiClient'
+import { clearTimeout } from 'timers'
 export default {
   name: 'CheckIn',
   data () {
@@ -65,7 +66,21 @@ export default {
       alert: false,
       successCI: false,
       alertMessage: '',
-      user: {}
+      user: {},
+      lastTokenClearTimer: null
+    }
+  },
+  watch: {
+    lastToken (newVal, _) {
+      if (newVal.length > 0) {
+        if (this.lastTokenClearTimer !== null) {
+          clearTimeout(this.lastTokenClearTimer)
+        }
+        this.lastTokenClearTimer = setTimeout(() => {
+          this.token = ''
+          this.lastToken = ''
+        }, 1000)
+      }
     }
   },
   methods: {
@@ -75,7 +90,7 @@ export default {
       }
     },
     useToken () {
-      if (this.lastToken === this.token) return
+      if (this.lastToken === this.token && (this.lastToken + this.token).length > 0) return
       this.lastToken = this.token
 
       this.user = {}
