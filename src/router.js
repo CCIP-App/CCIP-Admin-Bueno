@@ -12,7 +12,7 @@ import Puzzle from '@/views/Puzzle.vue'
 import Coupon from '@/views/Coupon.vue'
 import Lunch from '@/views/Lunch.vue'
 import KingGame from '@/views/KingGame.vue'
-import ArrayGame from '@/views/ArrayGame.vue'
+import Bingo from '@/views/Bingo.vue'
 
 Vue.use(Router)
 
@@ -25,7 +25,8 @@ export default new Router({
     // { path: '/lunch', component: Lunch },
     { path: '/announcement', component: Announcement },
     { path: '/push', component: PushNoti },
-    { path: '/puzzle', component: Puzzle }
+    { path: '/puzzle', component: Puzzle },
+    { path: '/bingo', component: Bingo }
     // { path: '/king', component: KingGame }
     // { path: '/array', component: ArrayGame }
   ]

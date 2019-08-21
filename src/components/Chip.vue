@@ -1,11 +1,6 @@
 <template>
-  <div role="chip">
-    <v-card role="chip-card">
-      <v-card-text class="cardContent">
-        <p class="spinner ma-0">{{ displayName }}</p>
-      </v-card-text>
-    </v-card>
-    <v-chip role="chip-count" class="primary white--text">{{ count }}</v-chip>
+  <div role="chip" :class="{ active: isActive }">
+    <img role="logo" :src="logourl" :alt="displayName">
   </div>
 </template>
 
@@ -17,36 +12,36 @@ export default {
       type: String,
       default: ''
     },
-    count: {
-      type: Number,
-      default: 0
+    logoUri: {
+      type: String,
+      default: ''
+    },
+    isActive: {
+      type: Boolean,
+      default: false
     }
   },
-  mounted () {
+  computed: {
+    logourl () {
+      return this.logoUri
+    }
   }
 }
 </script>
 
 <style lang="stylus">
-  .spinner
-    text-align: center
-    color: black
-    font-size: 1.5rem
-
-  .cardContent
-    margin: 0 auto
-
-  [role="chip-card"]
-    width: 220px
-    max-height: 60px
-  [role="chip"]
-    margin: 1em
-
-  [role="chip-count"]
-    margin-top: -1em
-    margin-right: -0.5em
-    z-index: 9999
-    font-size: 2rem
-    position: relative
-    float: right
+[role="chip"]
+  position relative
+.active
+  &:before
+    content: ''
+    position absolute
+    top 0px
+    left 0px
+    bottom 0px
+    right 0px
+    background-image url('../assets/OPASS-pass-stamp.png')
+    background-size contain
+    background-repeat no-repeat
+    background-position center
 </style>

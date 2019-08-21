@@ -56,7 +56,7 @@ export default {
       // },
       {
         title: '大地遊戲',
-        href: 'puzzle',
+        href: 'bingo',
         avatar: 'extension'
       }
       ]
