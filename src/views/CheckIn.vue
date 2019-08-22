@@ -76,24 +76,15 @@ export default {
       successCI: false,
       alertMessage: '',
       user: {},
-      lastTokenClearTimer: null,
       scenario: ''
     }
   },
   watch: {
-    lastToken (newVal, _) {
-      if (newVal.length > 0) {
-        if (this.lastTokenClearTimer !== null) {
-          clearTimeout(this.lastTokenClearTimer)
-        }
-        this.lastTokenClearTimer = setTimeout(() => {
-          this.token = ''
-          this.lastToken = ''
-        }, 1000)
-      }
-    },
     nowFunc (newFunc, _) {
       this.scenario = this.nowFunc.split('-').pop().trim()
+      this.user = {}
+      this.token = ''
+      this.lastToken = ''
     }
   },
   methods: {
@@ -103,17 +94,24 @@ export default {
       }
     },
     useToken () {
-      if (this.lastToken === this.token && (this.lastToken + this.token).length > 0) return
-      this.lastToken = this.token
-
-      this.user = {}
-      this.alert = this.successCI = false
+      if (this.lastToken === this.token && (this.lastToken + this.token).length > 0) {
+        if (this.nowFunc.length > 0) {
+          this.alertMessage = '你重複掃太久了，請移開 QR Code'
+          this.alert = true
+        }
+        return
+      }
 
       if (this.nowFunc === '') {
         this.alertMessage = '請選擇要報到的方法'
         this.alert = true
         return
       }
+      this.lastToken = this.token
+
+      this.user = {}
+      this.alert = this.successCI = false
+
       apiClient.useScenarios(this.scenario, this.token).then((res) => {
         this.updateUserData(res)
         this.successCI = true
