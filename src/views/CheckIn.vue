@@ -8,8 +8,8 @@
       solo
       v-model="nowFunc"
     ></v-select>
-    <v-layout class="mb-3"  row wrap>
-      <v-flex xs12 md6>
+    <v-layout class="mb-3" row wrap>
+      <v-flex xs12 md4>
         <qrcode-reader :enable="qrState" :width="'100%'" :height="'300px'" :noResult="true" @OnSuccess="OnQRCodeScanSuccess" />
       </v-flex>
       <v-flex xs12 md6>
@@ -22,16 +22,19 @@
           <v-card-text>
             <!-- <v-card-row> -->
               <ul v-if="user.user_id" role="userStatus">
-                <li>Nickname: {{ user.user_id }}</li>
-                <li>App login: {{ user.first_use ? user.first_use : 'Not yet' }}</li>
-                <li>User role: {{ user.role }}</li>
-                <template v-for="(scenarios, index) in user.scenarios">
+                <li>Nickname: <span class="user_info">{{ user.user_id }}</span></li>
+                <li>App login: <span class="user_info">{{ user.first_use ? user.first_use : 'Not yet' }}</span></li>
+                <li>User role: <span class="user_info">{{ user.role }}</span></li>
+                <template v-for="(scenarios, index) in sortScenarios(this.scenario, user.scenarios)">
                   <li :key="index">
-                    {{ scenarios.key + ": " + (scenarios.used ? scenarios.used : 'Not yet') }}
+                    {{ scenarios.key }}: <span class="user_info">{{ (scenarios.used ? scenarios.used : 'Not yet') }}</span>
                     <ul v-if="Object.keys(scenarios.attr).length > 0">
-                      <li v-for="(key, index) in Object.keys(scenarios.attr)" :key="index">{{ key + ": " + scenarios.attr[key] }}</li>
+                      <li v-for="(key, index) in Object.keys(scenarios.attr)" :key="index">
+                        {{ key }}: <span class="user_info">{{ scenarios.attr[key] }}</span>
+                      </li>
                     </ul>
                   </li>
+                  <hr v-if="index === 0" :key="'hr_'+index" class="datahr" >
                 </template>
               </ul>
             <!-- </v-card-row> -->
@@ -53,7 +56,6 @@
 
 <script>
 import apiClient from '../module/apiClient'
-import { clearTimeout } from 'timers'
 export default {
   name: 'CheckIn',
   data () {
@@ -67,7 +69,8 @@ export default {
       successCI: false,
       alertMessage: '',
       user: {},
-      lastTokenClearTimer: null
+      lastTokenClearTimer: null,
+      scenario: ''
     }
   },
   watch: {
@@ -81,6 +84,9 @@ export default {
           this.lastToken = ''
         }, 1000)
       }
+    },
+    nowFunc (newFunc, _) {
+      this.scenario = this.nowFunc.split('-').pop().trim()
     }
   },
   methods: {
@@ -101,7 +107,7 @@ export default {
         this.alert = true
         return
       }
-      apiClient.useScenarios(this.nowFunc.split('-').pop().trim(), this.token).then((res) => {
+      apiClient.useScenarios(this.scenario, this.token).then((res) => {
         this.updateUserData(res)
         this.successCI = true
         this.alertMessage = res.user_id + ' 報到成功'
@@ -143,28 +149,51 @@ export default {
         first_use: data.first_use ? new Date(data.first_use * 1000).toLocaleString() : null,
         role: data.role,
         scenarios: data.scenarios.map((el) => ({
+          _raw: el,
+          id: el.id,
+          order: el.order,
           key: el.display_text['zh-TW'],
           used: el.used ? new Date(el.used * 1000).toLocaleString() : null,
           attr: el.attr
         }))
       }
+    },
+    sortScenarios (scenario, scenarios) {
+      let first = scenarios.filter((s) => s.id === scenario)
+      let nonFirst = scenarios.filter((s) => s.id !== scenario)
+      let sorted = first.concat(nonFirst)
+      return sorted
     }
   },
-  async mounted () {
-    const data = (await Promise.all(
-      (await apiClient.getRoles()).map(async (role) => {
-        return {
-          role: role,
-          scenarios: await apiClient.allScenarios(role)
-        }
-      })
-    )).map((r) => r.scenarios.map((s) => `${r.role} - ${s}`)).flat()
-    this.checkInItems = data
+  mounted () {
+    (async () => {
+      const data = (await Promise.all(
+        (await apiClient.getRoles()).map(async (role) => {
+          return {
+            role: role,
+            scenarios: await apiClient.allScenarios(role)
+          }
+        })
+      )).map((r) => r.scenarios.map((s) => `${r.role} - ${s}`)).flat()
+      this.checkInItems = data
+    })()
   }
 }
 </script>
 
 <style lang="stylus">
-  [role="userStatus"]
-    font-size: 1.2rem
+  [role="userStatus"] {
+    font-size: 1.2rem;
+
+    & .user_info {
+      color: #4d256f;
+      font-weight: bold;
+    }
+
+    & .datahr {
+      border: solid black 2px;
+      margin-top: 10px;
+      margin-bottom: 15px;
+    }
+  }
 </style>
