@@ -95,10 +95,10 @@ export default {
     },
     useToken () {
       if (this.lastToken === this.token && (this.lastToken + this.token).length > 0) {
-        if (this.nowFunc.length > 0) {
-          this.alertMessage = '你重複掃太久了，請移開 QR Code'
-          this.alert = true
-        }
+        // if (this.nowFunc.length > 0) {
+        //   this.alertMessage = '你重複掃太久了，請移開 QR Code'
+        //   this.alert = true
+        // }
         return
       }
 
