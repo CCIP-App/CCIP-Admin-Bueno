@@ -3,7 +3,7 @@
     <v-app-bar app fixed dark color="primary" :clipped-left="$vuetify.breakpoint.mdAndUp">
       <v-app-bar-nav-icon @click.stop="$emit('sidebar')"></v-app-bar-nav-icon>
       <v-toolbar-title>
-        <span class="hidden-sm-and-down">OPass Admin - {{ event_name }}</span>
+        <span>OPass Admin - {{ event_name }}</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
     </v-app-bar>
