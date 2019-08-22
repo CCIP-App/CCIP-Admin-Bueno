@@ -5,7 +5,7 @@ import apiClient from './apiClient'
 const oneSignalConfig = {
   app_id: configs.oneSignal.app_id,
   api_key: configs.oneSignal.api_key,
-  event_id: configs.oneSignal.event_id
+  event_id: configs.event_id
 }
 
 const axiosConfig = {

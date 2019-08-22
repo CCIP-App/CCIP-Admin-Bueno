@@ -2,10 +2,10 @@
   "username": "",
   "password": "",
   "baseUrl": "",
+  "event_id": "",
   "oneSignal": {
     "app_id": "",
-    "api_key": "",
-    "event_id": ""
+    "api_key": ""
   },
   "puzzleConfig": ""
 }
