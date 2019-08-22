@@ -201,4 +201,8 @@ export default {
       margin-bottom: 15px;
     }
   }
+
+  .v-select .v-text-field__details {
+    display: none;
+  }
 </style>
