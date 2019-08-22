@@ -16,7 +16,7 @@
         <v-card>
           <v-card-text>
             <ul v-if="user.user_id" role="userStatus">
-              <li>Nickname(Role): <span class="user_info">{{ user.user_id }} ({{ user.role }})</span></li>
+              <li>Nickname: <span class="user_info">{{ user.user_id }}</span></li>
               <li>App login: <span class="user_info">{{ user.first_use ? user.first_use : 'Not yet' }}</span></li>
               <template v-for="(scenarios, index) in sortScenarios(this.scenario, user.scenarios)">
                 <li :key="index">
