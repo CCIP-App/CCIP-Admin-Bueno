@@ -1,7 +1,22 @@
 <template>
   <div id='CheckIn'>
-    <v-alert dismissible type="warning" v-model="alert" prominent role="alert" class="pa-3">{{ alertMessage }}</v-alert>
-    <v-alert dismissible type="success" v-model="successCI" role="alert" class="pa-3">{{ alertMessage }}</v-alert>
+    <v-snackbar
+      v-model="alert"
+      color="primary"
+      :multi-line="true"
+      :timeout="5000"
+      :top="true"
+    >
+      <v-alert type="warning" v-model="alert" prominent role="alert" class="pa-3">{{ alertMessage }}</v-alert>
+      <v-alert type="success" v-model="successCI" role="alert" class="pa-3">{{ alertMessage }}</v-alert>
+      <v-btn
+        dark
+        text
+        @click="alert = false"
+      >
+        Close
+      </v-btn>
+    </v-snackbar>
     <v-select
       :items="checkInItems"
       label="選擇報到方法"
