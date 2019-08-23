@@ -16,8 +16,9 @@
           <v-card>
             <v-card-title>Player</v-card-title>
             <v-card-text>
-              <p>{{ player.nickname }}</p>
-              <SquareGrid v-show="player.token !== ''" style="width: 100%" :booths="shuffledBoothList" :userStamps="stamps" :showAnchor="true" />
+              <h2>{{ player.nickname }}</h2><br>
+              <h2 v-show="player.token !== ''">{{ `已達成 ${countBingos} 連線` }}</h2>
+              <SquareGrid v-show="player.token !== ''" style="width: 80%" :booths="shuffledBoothList" :userStamps="stamps" :showAnchor="true" />
             </v-card-text>
             <v-card-actions>
               <v-btn class="mr-2" color="primary" v-on:click.native="clearPlayer">Clear User</v-btn>
@@ -47,6 +48,7 @@ import apiClient from '../module/apiClient'
 import sha1 from 'hash.js/lib/hash/sha/1'
 import bingoShuffler from '@/utils/shuffledBingo.js'
 import SquareGrid from '@/components/SquareGrid.vue'
+import _ from 'lodash'
 
 export default {
   name: 'Bingo',
@@ -93,6 +95,50 @@ export default {
         }))
       )
       return shuffled
+    },
+    countBingos () {
+      const itemNum = this.shuffledBoothList.length
+      const edgeL = Math.ceil(Math.sqrt(itemNum, 2))
+      let bingosIndex = []
+      // Horizontal
+      const horizontal = _.chunk(
+        Array(itemNum)
+          .fill(0)
+          .map((_, i) => i),
+        edgeL
+      )
+      bingosIndex = bingosIndex.concat(horizontal)
+      // Vertical
+      const vertical = Array(edgeL)
+        .fill(Array(edgeL).fill(0))
+        .map((row, rowI) => row.map((_, colI) => colI * edgeL + rowI))
+      bingosIndex = bingosIndex.concat(vertical)
+      // Diagonal
+      const RTLB = Array(edgeL)
+        .fill(0)
+        .map((_, i) => i + i * edgeL)
+      const LTRB = Array(edgeL)
+        .fill(0)
+        .map((_, i) => (i + 1) * (edgeL - 1))
+      bingosIndex = bingosIndex.concat([RTLB], [LTRB])
+      const lines = bingosIndex.map(bingoLine =>
+        bingoLine.map(index => ({
+          slug: this.shuffledBoothList[index].slug,
+          isBonus: this.shuffledBoothList[index].isBonus
+        }))
+      )
+      const userDeliverers = this.stamps.map(deliverer => deliverer.deliverer)
+      return lines.filter(line =>
+        line.reduce(
+          (pv, stamp) =>
+            (userDeliverers.findIndex(
+              userDeliver => userDeliver === stamp.slug
+            ) > -1 ||
+              stamp.isBonus) &&
+            pv,
+          true
+        )
+      ).length
     }
   },
   methods: {
