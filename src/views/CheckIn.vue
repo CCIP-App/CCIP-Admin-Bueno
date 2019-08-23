@@ -35,7 +35,9 @@
               <li>App login: <span class="user_info">{{ user.first_use ? user.first_use : 'Not yet' }}</span></li>
               <template v-for="(scenarios, index) in sortScenarios(this.scenario, user.scenarios)">
                 <li :key="index">
-                  {{ scenarios.key }}: <span class="user_info">{{ (scenarios.used ? scenarios.used : 'Not yet') }}</span>
+                  {{ scenarios.key }}:
+                  <span class="user_info disabled" v-if="scenarios.disabled">{{ scenarios.disabled }}</span>
+                  <span class="user_info" v-if="!scenarios.disabled">{{ (scenarios.used ? scenarios.used : 'Not yet') }}</span>
                   <ul v-if="Object.keys(scenarios.attr).length > 0">
                     <li v-for="(key, index) in Object.keys(scenarios.attr)" :key="index">
                       {{ key }}: <span class="user_info">{{ scenarios.attr[key] }}</span>
@@ -193,6 +195,10 @@ export default {
     & .user_info {
       color: #4d256f;
       font-weight: bold;
+
+      &.disabled {
+        color: orange;
+      }
     }
 
     & .datahr {
