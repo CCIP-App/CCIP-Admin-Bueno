@@ -159,6 +159,7 @@ export default {
           _raw: el,
           id: el.id,
           order: el.order,
+          disabled: el.disabled,
           key: el.display_text['zh-TW'],
           used: el.used ? new Date(el.used * 1000).toLocaleString() : null,
           attr: el.attr
