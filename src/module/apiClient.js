@@ -21,7 +21,7 @@ export default {
     return client.get('dashboard')
   },
   useScenarios: (scenarios, token) => {
-    return client.get(`use/${scenarios}?token=${token}&staffQuery=true`).then((res) => res.data)
+    return client.get(`use/${scenarios}?token=${token}&StaffQuery=true`).then((res) => res.data)
   },
   allScenarios: (role) => {
     return client.get('scenarios?role=' + role).then((res) => res.data)
