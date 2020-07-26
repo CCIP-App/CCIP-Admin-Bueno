@@ -6,6 +6,7 @@
           <v-card style="margin: 0 auto;">
             <v-card-text class=" text-xs-center">
               <h5 class="ma-0">新增大會公告</h5>
+              <v-select v-bind:items="options" placeholder="選擇對象" v-model.number="newAnnounce.role" :disabled="disabled"></v-select>
               <v-text-field type="text" placeholder="Msg(zh)" v-model="newAnnounce.msg_zh" :disabled="disabled"></v-text-field>
               <v-text-field type="text" placeholder="Msg(en)" v-model="newAnnounce.msg_en" :disabled="disabled"></v-text-field>
               <v-text-field type="text" placeholder="URI(option)" v-model="newAnnounce.uri" :disabled="disabled"></v-text-field>
@@ -31,6 +32,7 @@
                   <tbody>
                     <tr v-for="(item, index) in announcements" :key="'item'+index">
                       <td>{{ formatDatetime(item.datetime) }}</td>
+                      <td>{{ item.role.join(', ') }}</td>
                       <td>{{ item.msg_zh }}</td>
                       <td>{{ item.msg_en }}</td>
                       <td>{{ item.uri }}</td>
@@ -53,12 +55,15 @@ export default {
   name: 'Announcement',
   data () {
     return {
+      options: [],
       newAnnounce: {
+        role: '',
+        msg_zh: '',
         msg_en: '',
         uri: ''
       },
       disabled: false,
-      headers: ['公告時間', '訊息', '網址'],
+      headers: ['公告時間', '發送對象', '中文訊息', '英文訊息', '網址'],
       announcements: [],
       alert: false,
       alertMessage: ''
@@ -75,8 +80,9 @@ export default {
               this.newAnnounce.datetime = new Date().getTime() / 1000
               this.announcements.unshift(this.newAnnounce)
               this.newAnnounce = {
-                msg_en: '',
+                role: '',
                 msg_zh: '',
+                msg_en: '',
                 uri: ''
               }
             }
@@ -109,6 +115,16 @@ export default {
     }
   },
   mounted () {
+    let self = this
+    apiClient.getRoles().then((res) => {
+      self.options = [
+        {
+          value: '',
+          text: '全體'
+        }
+      ].concat(res.map((r) => { return { value: [r], text: r } }))
+      self.options[0].value = self.options.slice(1).map(o => o.value).flat()
+    })
     apiClient.getAnnouncement()
       .then((Announcements) => {
         this.announcements = Announcements
