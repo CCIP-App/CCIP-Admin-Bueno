@@ -1,5 +1,5 @@
 <template>
-  <div id='PushNoti'>
+  <div id='PushNotification'>
     <v-container fluid>
       <v-layout>
         <v-flex xs12 md12 style="margin: 0 auto;">
@@ -26,7 +26,7 @@
 import apiClient from '../module/apiClient'
 import oneSignal from '../module/onesignal'
 export default {
-  name: 'PushNoti',
+  name: 'PushNotification',
   data () {
     return {
       options: [],

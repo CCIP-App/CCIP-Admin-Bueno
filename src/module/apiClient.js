@@ -38,7 +38,10 @@ export default {
   getNickname: (token) => {
     return client.get('landing?token=' + token).then((res) => res.data.nickname)
   },
-  getPuzzle: (pubToken) => {
+  getReward: (pubToken) => {
+    return publicClient.get('event/puzzle?token=' + pubToken).then((res) => res.data)
+  },
+  getBingo: (pubToken) => {
     return publicClient.get('event/puzzle?token=' + pubToken).then((res) => res.data)
   },
   revokPlayer: (token) => {
@@ -61,7 +64,10 @@ export default {
   getBoothList: () => {
     return publicClient('/event/puzzle/deliverers').then((res) => res.data)
   },
-  getPuzzleConfig: () => {
-    return axios.get(configs.puzzleConfig).then((res) => res.data)
+  getRewardConfig: () => {
+    return axios.get(configs.rewardConfig).then((res) => res.data)
+  },
+  getBingoConfig: () => {
+    return axios.get(configs.bingoConfig).then((res) => res.data)
   }
 }

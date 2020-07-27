@@ -1,5 +1,5 @@
 <template>
-  <div id="Bingo">
+  <div id="BingoGame">
     <v-container>
       <v-row no-gutters>
         <v-col
@@ -15,10 +15,10 @@
           <v-alert dismissible warning v-model="alert" role="alert">{{ alertMessage }}</v-alert>
           <v-card>
             <v-card-title>Player</v-card-title>
-            <v-card-text>
+            <v-card-text v-show="player.token !== ''">
               <h2>{{ player.nickname }}</h2><br>
-              <h2 v-show="player.token !== ''">{{ `已達成 ${countBingos} 連線` }}</h2>
-              <SquareGrid v-show="player.token !== ''" style="width: 80%" :booths="shuffledBoothList" :userStamps="stamps" :showAnchor="true" />
+              <h2>{{ `已達成 ${countBingos} 連線` }}</h2>
+              <SquareGrid style="width: 80%" :booths="shuffledBoothList" :userStamps="stamps" :showAnchor="true" />
             </v-card-text>
             <v-card-actions>
               <v-btn class="mr-2" color="primary" v-on:click.native="clearPlayer">Clear User</v-btn>
@@ -51,7 +51,7 @@ import SquareGrid from '@/components/SquareGrid.vue'
 import _ from 'lodash'
 
 export default {
-  name: 'Bingo',
+  name: 'BingoGame',
   components: {
     SquareGrid
   },
@@ -68,7 +68,7 @@ export default {
       currentScanToken: '',
       revoking: false,
       boothList: [],
-      puzzleConfig: {
+      bingoConfig: {
         booths: [],
         confName: '',
         bingoPattern: '',
@@ -85,11 +85,11 @@ export default {
   },
   computed: {
     shuffledBoothList () {
-      if (this.puzzleConfig.booths.length === 0) return []
+      if (this.bingoConfig.booths.length === 0) return []
 
-      const shuffled = bingoShuffler(this.puzzleConfig.bingoPattern)(
+      const shuffled = bingoShuffler(this.bingoConfig.bingoPattern)(
         this.player.token || '',
-        this.puzzleConfig.booths.map(booth => ({
+        this.bingoConfig.booths.map(booth => ({
           ...booth,
           displayText: booth.displayText['zh-TW']
         }))
@@ -146,7 +146,7 @@ export default {
       if (this.currentScanToken !== token) {
         this.currentScanToken = token
         this.alert = false
-        apiClient.getPuzzle(this.sha1Gen(token))
+        apiClient.getBingo(this.sha1Gen(token))
           .then((res) => {
             if (!res.valid) {
               this.player = {
@@ -216,22 +216,22 @@ export default {
         this.boothList = res
       })
     },
-    loadPuzzleConfig () {
-      apiClient.getPuzzleConfig().then((res) => {
-        this.puzzleConfig = res
+    loadBingoConfig () {
+      apiClient.getBingoConfig().then((res) => {
+        this.bingoConfig = res
       })
     }
   },
   mounted () {
     this.loadBoothList()
-    this.loadPuzzleConfig()
+    this.loadBingoConfig()
   }
 }
 </script>
 
 <style lang="stylus">
-  #Bingo
-    [role="puzzle-player-item"]
+  #BingoGame
+    [role="bingo-player-item"]
       font-size: 2rem
       margin 5px
     [role="alert"]

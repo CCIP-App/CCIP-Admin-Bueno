@@ -55,8 +55,13 @@ export default {
       //   avatar: 'extension'
       // },
       {
-        title: '大地遊戲',
+        title: 'Bingo Game',
         href: 'bingo',
+        avatar: 'extension'
+      },
+      {
+        title: 'Reward Game',
+        href: 'reward',
         avatar: 'extension'
       }
       ]

@@ -1,5 +1,5 @@
 <template>
-  <div id="Puzzle">
+  <div id="RewardGame">
     <v-container>
       <v-row no-gutters>
         <v-col
@@ -15,9 +15,9 @@
           <v-alert dismissible warning v-model="alert" role="alert">{{ alertMessage }}</v-alert>
           <v-card>
             <v-card-title>Player</v-card-title>
-            <v-card-text>
+            <v-card-text v-show="players.length > 0">
               <ul>
-                <li v-for="(player, index) in players" role="puzzle-player-item" :key="index">{{ player.nickname }}：  {{ player.score }}</li>
+                <li v-for="(player, index) in players" role="reward-player-item" :key="index">{{ player.nickname }}：  {{ player.score }}</li>
               </ul>
             </v-card-text>
             <v-card-actions>
@@ -47,7 +47,7 @@
 import apiClient from '../module/apiClient'
 import sha1 from 'hash.js/lib/hash/sha/1'
 export default {
-  name: 'Puzzle',
+  name: 'RewardGame',
   data () {
     return {
       qrState: true,
@@ -58,7 +58,7 @@ export default {
       currentProcessToken: '',
       revoking: false,
       boothList: [],
-      puzzleConfig: {
+      rewardConfig: {
         booths: [],
         confName: '',
         bingoPattern: '',
@@ -78,14 +78,14 @@ export default {
       if (this.currentScanToken !== token) {
         this.currentScanToken = token
         this.alert = false
-        apiClient.getPuzzle(this.sha1Gen(token))
+        apiClient.getReward(this.sha1Gen(token))
           .then((res) => {
             if (!res.valid) {
-              const bonusScore = this.puzzleConfig.booths
+              const bonusScore = this.rewardConfig.booths
                 .filter(booth => booth.isBonus)
                 .reduce((gotPoint, booth) => gotPoint + booth.point, 0)
               const userScore = res.deliverers.reduce((gotPoint, stamp) => {
-                const deliverer = this.puzzleConfig.booths.find(
+                const deliverer = this.rewardConfig.booths.find(
                   booth => booth.slug === stamp.deliverer && !booth.isBonus
                 )
                 return deliverer && deliverer.point
@@ -167,22 +167,22 @@ export default {
         this.boothList = res
       })
     },
-    loadPuzzleConfig () {
-      apiClient.getPuzzleConfig().then((res) => {
-        this.puzzleConfig = res
+    loadRewardConfig () {
+      apiClient.getRewardConfig().then((res) => {
+        this.rewardConfig = res
       })
     }
   },
   mounted () {
     this.loadBoothList()
-    this.loadPuzzleConfig()
+    this.loadRewardConfig()
   }
 }
 </script>
 
 <style lang="stylus">
-  #Puzzle
-    [role="puzzle-player-item"]
+  #RewardGame
+    [role="reward-player-item"]
       font-size: 2rem
       margin 5px
     [role="alert"]
