@@ -102,7 +102,7 @@ export default {
       }
     },
     formatDatetime (time) {
-      let datetime = new Date(time * 1000)
+      const datetime = new Date(time * 1000)
       return this.leftpad(datetime.getMonth() + 1, 2) + '/' + this.leftpad(datetime.getDate(), 2) + ' ' +
           this.leftpad(datetime.getHours(), 2) + ':' + this.leftpad(datetime.getMinutes(), 2)
     },
@@ -115,7 +115,7 @@ export default {
     }
   },
   mounted () {
-    let self = this
+    const self = this
     apiClient.getRoles().then((res) => {
       self.options = [
         {

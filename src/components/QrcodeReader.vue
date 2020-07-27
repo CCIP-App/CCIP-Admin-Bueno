@@ -51,6 +51,7 @@ export default {
     }
   },
   mounted () {
+    const cam = document.getElementById('camsource')
     var self = this
     window.w69b.qr.decoding.setWorkerUrl(`${process.env.BASE_URL}barcode.js/w69b.qrcode.decodeworker.min.js`)
     if (navigator.mediaDevices) {
@@ -59,7 +60,7 @@ export default {
       self.scanner.setDecodedCallback(function (result) {
         self.onSuccess(result)
       })
-      self.scanner.render(document.getElementById('camsource'))
+      self.scanner.render(cam)
     } else {
       self.webrtc = false
       console.log('Sorry, native web camera streaming (getUserMedia) is not supported by this browser...')

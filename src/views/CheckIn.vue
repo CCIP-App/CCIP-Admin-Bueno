@@ -167,9 +167,9 @@ export default {
       }
     },
     sortScenarios (scenario, scenarios) {
-      let first = scenarios.filter((s) => s.id === scenario)
-      let nonFirst = scenarios.filter((s) => s.id !== scenario)
-      let sorted = first.concat(nonFirst)
+      const first = scenarios.filter((s) => s.id === scenario)
+      const nonFirst = scenarios.filter((s) => s.id !== scenario)
+      const sorted = first.concat(nonFirst)
       return sorted
     }
   },

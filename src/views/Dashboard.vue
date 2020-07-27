@@ -65,11 +65,11 @@ export default {
   },
   computed: {
     appLogged () {
-      let logged = this.datas.map((d) => d.logged)
+      const logged = this.datas.map((d) => d.logged)
       return logged.length > 0 ? logged.reduce((a, b) => a + b) : 0
     },
     appTotal () {
-      let total = this.datas.map((d) => d.total)
+      const total = this.datas.map((d) => d.total)
       return total.length > 0 ? total.reduce((a, b) => a + b) : 0
     },
     appPercentage () {
@@ -79,8 +79,8 @@ export default {
       return Math.round((this.series.logged / this.series.total) * 10000) / 100 || 0
     },
     series () {
-      let roles = this.datas.filter((d) => d.role === this.selectedRole)
-      let role = roles.length > 0 ? roles[0] : null
+      const roles = this.datas.filter((d) => d.role === this.selectedRole)
+      const role = roles.length > 0 ? roles[0] : null
       if (role !== null) {
         return {
           series: role.scenarios.map((scenario) => {
@@ -112,12 +112,12 @@ export default {
       return {}
     },
     checkins () {
-      let checkins = this.datas.map((data) => data.scenarios).map((scenarios) => scenarios.filter((scenario) => scenario.scenario.match(/^day(.+)checkin$/))).flat()
-      let days = [...new Set(checkins.map((checkin) => checkin.scenario).sort())]
-      let allDays = days.map((day) => {
-        let checkin = checkins.filter((checkin) => checkin.scenario === day)
+      const checkins = this.datas.map((data) => data.scenarios).map((scenarios) => scenarios.filter((scenario) => scenario.scenario.match(/^day(.+)checkin$/))).flat()
+      const days = [...new Set(checkins.map((checkin) => checkin.scenario).sort())]
+      const allDays = days.map((day) => {
+        const checkin = checkins.filter((checkin) => checkin.scenario === day)
         if (checkin.length > 0) {
-          let data = checkin.reduce((a, b) => {
+          const data = checkin.reduce((a, b) => {
             return {
               enabled: a.enabled + b.enabled,
               used: a.used + b.used,
@@ -187,7 +187,7 @@ export default {
     }
   },
   mounted () {
-    let self = this
+    const self = this
     apiClient.getRoles().then((roles) => {
       self.roles = roles
       if (self.roles.length > 0) {

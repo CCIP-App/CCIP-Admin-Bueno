@@ -43,7 +43,7 @@ export default {
     }
   },
   mounted () {
-    let self = this
+    const self = this
     apiClient.getRoles().then((res) => {
       self.options = [
         {
@@ -57,13 +57,13 @@ export default {
     send () {
       this.alert = false
       this.success = false
-      let packet = {
+      const packet = {
         target: this.feed.to,
         en: this.feed.msg_en,
         'zh-Hant': this.feed.msg_zh,
         'zh-Hans': this.feed.msg_zh
       }
-      if (this.feed.uri.length > 0) packet['uri'] = this.feed.uri
+      if (this.feed.uri.length > 0) packet.uri = this.feed.uri
       if (this.feed.msg_en.length > 0 && this.feed.msg_zh.length > 0 && this.feed.to !== 0) {
         oneSignal.createNotificationWithTagFilter(packet)
           .then((res) => {

@@ -123,7 +123,7 @@ export default {
       console.log(err)
     },
     sha1Gen (raw) {
-      let hashGen = sha1()
+      const hashGen = sha1()
       hashGen.update(raw)
       return hashGen.digest('hex')
     },

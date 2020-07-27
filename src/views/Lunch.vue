@@ -69,7 +69,7 @@ export default {
       // let today = (new Date()).getTime()
       // let day1 = Date.parse('2017/08/05')
       // let day2 = Date.parse('2017/08/06')
-      let checkInFunction = apiClient.lunch
+      const checkInFunction = apiClient.lunch
       checkInFunction(this.token).then((res) => {
         this.updateUserData(res)
         this.successCI = true

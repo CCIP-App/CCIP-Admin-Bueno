@@ -21,41 +21,41 @@ const client = axios.create(axiosConfig)
 export default {
   createNotification: (packet) => {
     return client.post('notifications', {
-      'app_id': oneSignalConfig.app_id,
-      'included_segments': packet.target,
-      'contents': {
-        'en': packet.en,
+      app_id: oneSignalConfig.app_id,
+      included_segments: packet.target,
+      contents: {
+        en: packet.en,
         'zh-Hant': packet['zh-Hant'],
         'zh-Hans': packet['zh-Hans']
       },
-      'url': packet.uri
+      url: packet.uri
     })
   },
   createNotificationWithTagFilter: async (packet) => {
-    let filters = []
+    const filters = []
 
     if (packet.target === 'all') {
       await apiClient.getRoles().then((roles) => {
         roles.map((role) => {
           if (filters.length > 0) {
-            filters.push({ 'operator': 'OR' })
+            filters.push({ operator: 'OR' })
           }
-          filters.push({ 'field': 'tag', 'key': `${oneSignalConfig.event_id}${role}`, 'relation': 'exists' })
+          filters.push({ field: 'tag', key: `${oneSignalConfig.event_id}${role}`, relation: 'exists' })
         })
       })
     } else {
-      filters.push({ 'field': 'tag', 'key': `${oneSignalConfig.event_id}${packet.target}`, 'relation': 'exists' })
+      filters.push({ field: 'tag', key: `${oneSignalConfig.event_id}${packet.target}`, relation: 'exists' })
     }
 
     return client.post('notifications', {
-      'app_id': oneSignalConfig.app_id,
-      'filters': filters,
-      'contents': {
-        'en': packet.en,
+      app_id: oneSignalConfig.app_id,
+      filters: filters,
+      contents: {
+        en: packet.en,
         'zh-Hant': packet['zh-Hant'],
         'zh-Hans': packet['zh-Hans']
       },
-      'url': packet.uri
+      url: packet.uri
     })
   }
 }

@@ -67,7 +67,7 @@ export default {
   data () {
     return {
       rowsPerpageItems: {
-        itemsPerPageOptions: [10, 25, 50, { 'text': 'All', 'value': -1 }]
+        itemsPerPageOptions: [10, 25, 50, { text: 'All', value: -1 }]
       },
       defaultPageItems: {
         rowsPerPage: 50
@@ -89,7 +89,7 @@ export default {
   },
   computed: {
     headers: function () {
-      let list = [{ text: 'name', value: 'name' }]
+      const list = [{ text: 'name', value: 'name' }]
       this.rawHeader.forEach((element) => {
         list.push({
           text: element,
@@ -100,11 +100,11 @@ export default {
       return list
     },
     desserts: function () {
-      let self = this
+      const self = this
       return this.rawData.map((element) => {
-        let data = {
+        const data = {
           // name: element.attr.title + ' ' + element['user_id'],
-          name: element['user_id']
+          name: element.user_id
         }
         self.rawHeader.forEach((ele) => {
           if (element.scenario[ele] === undefined) {
@@ -118,14 +118,14 @@ export default {
             }
           }
         })
-        data['attr'] = JSON.stringify(element.attr)
+        data.attr = JSON.stringify(element.attr)
         return data
       })
     }
   },
   methods: {
     getData (key) {
-      let self = this
+      const self = this
       this.loading = true
       apiClient.allScenarios(key).then((res) => {
         self.rawHeader = res
@@ -142,7 +142,7 @@ export default {
     }
   },
   mounted () {
-    let self = this
+    const self = this
     apiClient.getRoles().then((res) => {
       self.tabName = res
       if (self.tabName.length > 0) {

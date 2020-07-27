@@ -48,7 +48,7 @@ export default {
     return client.get('event/puzzle/revoke?token=' + token).then((res) => ({ token: token, successful: res.data.status === 'OK' }))
   },
   addAnnouncement: (announcement) => {
-    let params = new URLSearchParams()
+    const params = new URLSearchParams()
     announcement.role.forEach(r => params.append('role[]', r))
     params.append('msg_zh', announcement.msg_zh)
     params.append('msg_en', announcement.msg_en)

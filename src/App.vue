@@ -5,13 +5,13 @@
     <main-nav v-on:sidebar="drawer = !drawer"></main-nav>
 
     <main>
-      <v-content>
+      <v-main>
         <v-container fluid>
           <transition name="slide" mode="out-in">
             <router-view></router-view>
           </transition>
         </v-container>
-      </v-content>
+      </v-main>
     </main>
   </v-app>
 </template>

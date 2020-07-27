@@ -21,7 +21,7 @@ export default {
     }
   },
   async mounted () {
-    let eventInfo = await portalApi.getCurrentEvent()
+    const eventInfo = await portalApi.getCurrentEvent()
     this.event_name = eventInfo.event_id
   }
 }
