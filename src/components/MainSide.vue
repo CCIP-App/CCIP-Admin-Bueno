@@ -20,7 +20,7 @@ export default {
     return {
       drawer: null,
       items: [{
-        title: '控制版',
+        title: '控制板',
         href: '/',
         avatar: 'dashboard'
       },

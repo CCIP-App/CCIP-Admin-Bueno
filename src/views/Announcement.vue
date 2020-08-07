@@ -9,7 +9,7 @@
               <v-select v-bind:items="options" placeholder="選擇對象" v-model.number="newAnnounce.role" :disabled="disabled"></v-select>
               <v-text-field type="text" placeholder="Msg(zh)" v-model="newAnnounce.msg_zh" :disabled="disabled"></v-text-field>
               <v-text-field type="text" placeholder="Msg(en)" v-model="newAnnounce.msg_en" :disabled="disabled"></v-text-field>
-              <v-text-field type="text" placeholder="URI(option)" v-model="newAnnounce.uri" :disabled="disabled"></v-text-field>
+              <v-text-field type="text" placeholder="URI(optional)" v-model="newAnnounce.uri" :disabled="disabled"></v-text-field>
               <v-btn ripple info @click.native="send" :disabled="disabled" :loading="disabled">Send!</v-btn>
             </v-card-text>
           </v-card>
