@@ -86,9 +86,8 @@ export default {
   computed: {
     shuffledBoothList () {
       if (this.puzzleConfig.booths.length === 0) return []
-
       const shuffled = bingoShuffler(this.puzzleConfig.bingoPattern)(
-        this.player.token || '',
+        this.sha1Gen(this.player.token) || '',
         this.puzzleConfig.booths.map(booth => ({
           ...booth,
           displayText: booth.displayText['zh-TW']
@@ -179,7 +178,7 @@ export default {
       console.log(err)
     },
     sha1Gen (raw) {
-      let hashGen = sha1()
+      const hashGen = sha1()
       hashGen.update(raw)
       return hashGen.digest('hex')
     },
