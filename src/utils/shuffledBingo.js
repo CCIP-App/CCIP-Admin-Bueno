@@ -9,7 +9,7 @@ function md5Hash (token) {
 function generateSeed (md5hash) {
   const validChar = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f']
 
-  const seed = md5hash
+  let seed = md5hash
     .toLowerCase()
     .split('')
     .filter((char, pos, arr) => arr.indexOf(char) === pos)
@@ -37,7 +37,7 @@ export default function shuffledBingo (patterns) {
 
     const shuffledBooth = Object.keys(boothSet).reduce((set, key) => {
       const validSeed = seed.filter(s => s < boothSet[key].length)
-      set[key] = boothSet[key].map((_, pos, arr) => arr[validSeed[pos]])
+      set[key] = boothSet[key].map((_, pos, arr) => arr[validSeed[pos % validSeed.length]])
       return set
     }, {})
 
