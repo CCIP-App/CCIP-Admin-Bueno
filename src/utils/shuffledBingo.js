@@ -37,7 +37,7 @@ export default function shuffledBingo (patterns) {
 
     const shuffledBooth = Object.keys(boothSet).reduce((set, key) => {
       const validSeed = seed.filter(s => s < boothSet[key].length)
-      set[key] = boothSet[key].map((_, pos, arr) => arr[validSeed[pos]])
+      set[key] = boothSet[key].map((_, pos, arr) => arr[validSeed[pos % validSeed.length]])
       return set
     }, {})
 
