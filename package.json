@@ -9,7 +9,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "hash.js": "^1.1.7",
     "highcharts": "^8.1.2",
     "vue": "^2.6.11",
