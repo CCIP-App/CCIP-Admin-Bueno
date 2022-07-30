@@ -2,18 +2,26 @@
   <div id='QrcodeReader'>
     <center>
       <h2 class="ma-0" v-if=" title != '' ">{{ title }}</h2>
-      <div v-if="webrtc" id="camsource"></div>
-      <div v-else id="uploadField">
-        <label id="uploadButton" for="upload" />
-        <input type="file" id="upload" @change="uploadChange">
-      </div>
       <p role="subTitle" v-if="subTitle !== '' ">{{ subTitle }}</p>
+      <div v-if="!isWebRTCSupported">
+        <p>連 iOS 都支援 WebRTC 了，您是不是該換裝置了呢？</p>
+      </div>
+      <template v-else>
+        <div v-show="enable">
+          <video ref="preview" :width="previewWidth" autoplay playsinline></video>
+        </div>
+        <div v-show="!enable">
+        <button id="enableButton" class="OpenCamera" @click="startScanner"></button>
+      </div>
+      </template>
       <h6 class="ma-0" v-if=" !noResult ">{{ result }}</h6>
     </center>
   </div>
 </template>
 
 <script>
+import QrScanner from 'qr-scanner'
+
 export default {
   name: 'QrcodeReader',
   props: {
@@ -41,36 +49,25 @@ export default {
       result: 'Loading...',
       cam: null,
       webrtc: true,
-      scanner: null
+      scanner: null,
+      previewWidth: null
     }
   },
   watch: {
     enable: function (state) {
-      var self = this
-      self.scanner.setStopped(!state)
+      // var self = this
+      // self.scanner.setStopped(!state)````
     }
   },
   mounted () {
-    const cam = document.getElementById('camsource')
-    var self = this
-    window.w69b.qr.decoding.setWorkerUrl(`${process.env.BASE_URL}barcode.js/w69b.qrcode.decodeworker.min.js`)
-    if (navigator.mediaDevices) {
-      self.webrtc = true
-      self.scanner = new window.w69b.qr.ui.ContinuousScanner()
-      self.scanner.setDecodedCallback(function (result) {
-        self.onSuccess(result)
-      })
-      self.scanner.render(cam)
-    } else {
-      self.webrtc = false
-      console.log('Sorry, native web camera streaming (getUserMedia) is not supported by this browser...')
-    }
+    this.startScanner()
   },
   beforeDestroy () {
-    if (navigator.mediaDevices) {
-      var self = this
-      self.scanner.setStopped(true)
-      self.scanner.dispose()
+    this.disableScanner()
+  },
+  computed: {
+    isWebRTCSupported () {
+      return !!navigator.mediaDevices
     }
   },
   methods: {
@@ -78,67 +75,58 @@ export default {
       this.result = result
       this.$emit('OnSuccess', result)
     },
-    uploadChange () {
-      var self = this
-      var file = document.getElementById('upload').files[0]
-      var imageType = /^image\//
-      if (!imageType.test(file.type)) {
-        console.log('File type not valid')
+    startScanner () {
+      if (this.isWebRTCSupported) {
+        this.enable = true
+        QrScanner.WORKER_PATH = 'js/qr-scanner-worker.min.js'
+        this.scanner = new QrScanner(this.$refs.preview, this.onSuccess)
+        this.scanner.setInversionMode('both')
+        this.setPreviewSize()
+        this.scanner.start()
       }
-      // Read file
-      var reader = new FileReader()
-      reader.addEventListener('load', function () {
-        var image = new Image()
-        image.onload = function (imageEvent) {
-          // Resize the image
-          var decoder = new window.w69b.qr.decoding.Decoder()
-          decoder.decode(image).then(function (result) {
-            // succesfully decoded QR Code.
-            self.onSuccess(result.text)
-          }, function () {
-            self.$emit('OnError', 'no qr code found')
-          })
+    },
+    setPreviewSize () {
+      const width = window.innerWidth
+      const height = window.innerHeight
+      const aspect = width / height
+      if (width > height) {
+        if (width >= 1280) {
+          this.previewWidth = (Math.min(Math.round((height - 420) * aspect), 1280)) + 'px'
+        } else {
+          this.previewWidth = (this.width || Math.round(width * 0.8)) + 'px'
         }
-        image.src = this.result
-      }.bind(reader), false)
-      reader.readAsDataURL(file)
+      } else {
+        if (width <= 576) {
+          this.previewWidth = (Math.round(height * 0.8 * aspect)) + 'px'
+        } else {
+          this.previewWidth = (Math.round(height * 0.4 * aspect)) + 'px'
+        }
+      }
+    },
+    disableScanner () {
+      if (this.scanner) {
+        this.enable = false
+        this.scanner.destroy()
+        this.scanner = null
+      }
     }
   }
 }
 </script>
 
 <style lang="stylus">
-  #camsource
-    background: #c9a474
-    border: 2px solid #c9a474
-    border-radius: 15px
-    padding: 10px
-    width: 80vw
-    height: 60vw
-    max-width: 320px
-    max-height: 240px
-
-  #uploadField
-    max-width: 300px
-    @media screen and (max-width: 454px) // must bigger than 454px for two column
-      max-width: 150px
-
-  #uploadButton
-    cursor: pointer
-    z-index: 1
-    display: block
-    margin: auto
-    min-height: 300px
+  .OpenCamera
     @media screen and (max-width: 454px) // must bigger than 454px for two column
       min-height: 150px
-    background: url('../assets/uploadfile.png')
     background-size: cover
     background-repeat: no-repeat
     background-position: center
-
-  #upload
-    display: none
-
+  #enableButton
+    min-height: 250px
+    max-height: 50vw
+    min-width: 250px
+    max-width: 50vw
+    border: none
   [role="subTitle"]
     margin-bottom: 3rem
 </style>
