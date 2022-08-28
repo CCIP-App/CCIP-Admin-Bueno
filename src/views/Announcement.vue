@@ -1,49 +1,47 @@
 <template>
   <div id='Announcement'>
     <v-container fluid>
-      <v-layout>
-        <v-flex xs12 md12 style="margin: 0 auto;">
+      <v-row>
+        <v-col :xs="12" :md="12" style="margin: 0 auto;">
           <v-card style="margin: 0 auto;">
             <v-card-text class=" text-xs-center">
               <h5 class="ma-0">新增大會公告</h5>
-              <v-select v-bind:items="options" placeholder="選擇對象" v-model.number="newAnnounce.role" :disabled="disabled"></v-select>
+              <v-select :items="options" placeholder="選擇對象" v-model.number="newAnnounce.role" :disabled="disabled"></v-select>
               <v-text-field type="text" placeholder="Msg(zh)" v-model="newAnnounce.msg_zh" :disabled="disabled"></v-text-field>
               <v-text-field type="text" placeholder="Msg(en)" v-model="newAnnounce.msg_en" :disabled="disabled"></v-text-field>
               <v-text-field type="text" placeholder="URI(optional)" v-model="newAnnounce.uri" :disabled="disabled"></v-text-field>
-              <v-btn ripple info @click.native="send" :disabled="disabled" :loading="disabled">Send!</v-btn>
+              <v-btn ripple info @click="send" :disabled="disabled" :loading="disabled">Send!</v-btn>
             </v-card-text>
           </v-card>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
       <br>
       <v-alert dismissible type="warning" v-model="alert" role="alert">{{ alertMessage }}</v-alert>
-      <v-layout>
-        <v-flex xs12 md12 style="margin: 0 auto;">
+      <v-row>
+        <v-col :xs="12" :md="12" style="margin: 0 auto;">
           <v-card style="margin: 0 auto;">
             <v-card-text class=" text-xs-center">
               <h5 class="ma-0">大會公告歷程</h5>
-              <v-table-overflow v-if="announcements.length!=0">
-                <table>
-                  <thead>
-                    <tr>
-                      <th v-for="(header,index) in headers" v-text="header" :key="'header'+index"></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="(item, index) in announcements" :key="'item'+index">
-                      <td>{{ formatDatetime(item.datetime) }}</td>
-                      <td>{{ item.role.join(', ') }}</td>
-                      <td>{{ item.msg_zh }}</td>
-                      <td>{{ item.msg_en }}</td>
-                      <td>{{ item.uri }}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </v-table-overflow>
+              <v-table v-if="announcements.length!=0">
+                <thead>
+                  <tr>
+                    <th v-for="(header,index) in headers" v-text="header" :key="'header'+index"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(item, index) in announcements" :key="'item'+index">
+                    <td>{{ formatDatetime(item.datetime) }}</td>
+                    <td>{{ item.role?.join(', ') ?? '' }}</td>
+                    <td>{{ item.msg_zh }}</td>
+                    <td>{{ item.msg_en }}</td>
+                    <td>{{ item.uri }}</td>
+                  </tr>
+                </tbody>
+              </v-table>
             </v-card-text>
           </v-card>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-container>
   </div>
 </template>
@@ -107,7 +105,7 @@ export default {
           this.leftpad(datetime.getHours(), 2) + ':' + this.leftpad(datetime.getMinutes(), 2)
     },
     leftpad (number, targetLength) {
-      var output = number + ''
+      let output = number + ''
       while (output.length < targetLength) {
         output = '0' + output
       }
@@ -120,9 +118,9 @@ export default {
       self.options = [
         {
           value: '',
-          text: '全體'
+          title: '全體'
         }
-      ].concat(res.map((r) => { return { value: [r], text: r } }))
+      ].concat(res.map((r) => { return { value: [r], title: r } }))
       self.options[0].value = self.options.slice(1).map(o => o.value).flat()
     })
     apiClient.getAnnouncement()
@@ -136,7 +134,3 @@ export default {
 }
 
 </script>
-
-<style scoped>
-
-</style>

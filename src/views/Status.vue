@@ -6,8 +6,10 @@
       v-model="active"
       grow
     >
-      <v-tab v-for="(tab, n) in tabName" :key="n" ripple @click="change(tab)">{{ tab }}</v-tab>
-      <v-tab-item v-for="n in tabName.length" :key="n">
+      <v-tab v-for="tab in tabName" :key="tab" :value="tab" ripple @click="change(tab)">{{ tab }}</v-tab>
+    </v-tabs>
+    <v-window v-model="active">
+      <v-window-item v-for="tab in tabName" :key="tab" :value="tab">
         <v-card flat>
           <v-card-text>
             <v-card>
@@ -28,35 +30,26 @@
                   hide-details
                 ></v-text-field>
               </v-card-title>
-              <v-data-table
-                :headers="headers"
-                :items="desserts"
-                class="elevation-1"
-                :loading="loading"
-                :items-per-page.sync="defaultPageItems.rowsPerPage"
-                :footer-props="rowsPerpageItems"
-                :search="search">
-                <v-progress-linear slot="progress" color="primary" indeterminate></v-progress-linear>
-                <template v-slot:item="{ item }">
+              <v-table>
+                <thead>
                   <tr>
+                    <th v-for="header in headers" :key="header.value">{{ header.text }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="item in desserts"  :key="item">
                     <td
                       v-for="(value, key) in item"
                       :class="[{'text-xs-right': key!=='name'},{'not-exist': value.trim()==='n/a'},{'used': value.trim().match(/^used/i) !== null}]"
                       :key="item.name+key+value">{{ value }}</td>
-                    <!-- <td>{{ props.item.name }}</td>
-                    <td class="text-xs-right">{{ props.item.calories }}</td>
-                    <td class="text-xs-right">{{ props.item.fat }}</td>
-                    <td class="text-xs-right">{{ props.item.carbs }}</td>
-                    <td class="text-xs-right">{{ props.item.protein }}</td>
-                    <td class="text-xs-right">{{ props.item.iron }}</td> -->
                   </tr>
-                </template>
-              </v-data-table>
+                </tbody>
+              </v-table>
             </v-card>
           </v-card-text>
         </v-card>
-      </v-tab-item>
-    </v-tabs>
+      </v-window-item>
+    </v-window>
   </div>
 </template>
 
@@ -66,15 +59,9 @@ export default {
   name: 'Status',
   data () {
     return {
-      rowsPerpageItems: {
-        itemsPerPageOptions: [10, 25, 50, { text: 'All', value: -1 }]
-      },
-      defaultPageItems: {
-        rowsPerPage: 50
-      },
       search: '',
       loading: false,
-      active: 0,
+      active: null,
       tabName: [],
       rawHeader: [],
       rawData: [],
@@ -101,26 +88,28 @@ export default {
     },
     desserts: function () {
       const self = this
-      return this.rawData.map((element) => {
-        const data = {
-          // name: element.attr.title + ' ' + element['user_id'],
-          name: element.user_id
-        }
-        self.rawHeader.forEach((ele) => {
-          if (element.scenario[ele] === undefined) {
-            data[ele] = 'n/a'
-          } else {
-            data[ele] = (element.scenario[ele].used === undefined) ? 'not used' : 'used'
-            if (this.displayAllAttr) {
-              if (element.scenario[ele].attr !== undefined && Object.keys(element.scenario[ele].attr).length > 0) {
-                data[ele] += ' ' + JSON.stringify(element.scenario[ele].attr)
+      return this.rawData
+        .map((element) => {
+          const data = {
+            // name: element.attr.title + ' ' + element['user_id'],
+            name: element.user_id
+          }
+          self.rawHeader.forEach((ele) => {
+            if (element.scenario[ele] === undefined) {
+              data[ele] = 'n/a'
+            } else {
+              data[ele] = (element.scenario[ele].used === undefined) ? 'not used' : 'used'
+              if (this.displayAllAttr) {
+                if (element.scenario[ele].attr !== undefined && Object.keys(element.scenario[ele].attr).length > 0) {
+                  data[ele] += ' ' + JSON.stringify(element.scenario[ele].attr)
+                }
               }
             }
-          }
+          })
+          data.attr = JSON.stringify(element.attr)
+          return data
         })
-        data.attr = JSON.stringify(element.attr)
-        return data
-      })
+        .filter((data) => !self.search ? true : data.name.includes(self.search))
     }
   },
   methods: {
@@ -145,6 +134,7 @@ export default {
     const self = this
     apiClient.getRoles().then((res) => {
       self.tabName = res
+      self.active = res[0]
       if (self.tabName.length > 0) {
         self.change(self.tabName[0])
       }
@@ -153,14 +143,14 @@ export default {
 }
 </script>
 
-<style lang="stylus">
+<style lang="scss">
 [role='userStatus'] {
   font-size: 1.2rem;
 }
 .not-exist {
-  background-color: black
+  background-color: black;
 }
 .used {
-  background-color: green
+  background-color: green;
 }
 </style>

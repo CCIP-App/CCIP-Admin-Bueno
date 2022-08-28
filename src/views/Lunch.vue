@@ -2,11 +2,11 @@
   <div id='Lunch'>
     <v-alert dismissible warning v-model="alert" role="alert" class="mb-3">{{ alertMessage }}</v-alert>
     <v-alert dismissible success v-model="successCI" role="alert" class="mb-3">{{ alertMessage }}</v-alert>
-    <v-layout row wrap>
-      <v-flex xs12 md6>
+    <v-row row wrap>
+      <v-col :xs="12" :md="6">
         <qrcode-reader :enable="qrState" :width="'100%'" :height="'300px'" :noResult="true" @OnSuccess="OnSuccess" />
-      </v-flex>
-      <v-flex xs12 md6>
+      </v-col>
+      <v-col :xs="12" :md="6">
         <v-card>
           <!-- <v-card-row class="green darken-1"> -->
             <v-card-title>
@@ -19,8 +19,8 @@
                 <li>Nickname: {{ user.user_id }}</li>
                 <li>App login: {{ user.first_use ? user.first_use : 'Not yet' }}</li>
                 <li>User role: {{ user.role }}</li>
-                <template v-for="(scenarios, index) in user.scenarios">
-                  <li :key="index">
+                <template v-for="(scenarios, index) in user.scenarios" :key="index">
+                  <li>
                     {{ scenarios.key + ": " + (scenarios.used ? scenarios.used : 'Not yet') }}
                     <ul v-if="Object.keys(scenarios.attr).length > 0">
                       <li v-for="(key, index) in Object.keys(scenarios.attr)" :key="index">{{ key + ": " + scenarios.attr[key] }}</li>
@@ -31,8 +31,8 @@
             <!-- </v-card-row> -->
           </v-card-text>
         </v-card>
-      </v-flex>
-    </v-layout>
+      </v-col>
+    </v-row>
     <v-card class="mb-3">
       <!-- <v-card-row class="green darken-1"> -->
         <v-card-title>
@@ -123,7 +123,8 @@ export default {
 }
 </script>
 
-<style lang="stylus">
-  [role="userStatus"]
-    font-size: 1.2rem
+<style lang="scss">
+[role="userStatus"] {
+  font-size: 1.2rem;
+}
 </style>

@@ -1,6 +1,6 @@
 <template>
   <header>
-    <v-app-bar app fixed dark color="primary" :clipped-left="$vuetify.breakpoint.mdAndUp">
+    <v-app-bar dark fixed color="primary">
       <v-app-bar-nav-icon @click.stop="$emit('sidebar')"></v-app-bar-nav-icon>
       <v-toolbar-title>
         <span>OPass Admin - {{ event_name }}</span>
@@ -26,6 +26,3 @@ export default {
   }
 }
 </script>
-<style lang="stylus" scoped>
-
-</style>

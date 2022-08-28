@@ -36,7 +36,7 @@ export default {
 
     if (packet.target === 'all') {
       await apiClient.getRoles().then((roles) => {
-        roles.map((role) => {
+        roles.forEach((role) => {
           if (filters.length > 0) {
             filters.push({ operator: 'OR' })
           }

@@ -47,31 +47,35 @@ export default {
 }
 </script>
 
-<style lang="stylus">
-[role='squareGrid']
-  display: grid
-  margin: 1rem auto
-  grid-template-rows: repeat(var(--edgeLength), auto)
-  grid-template-columns: repeat(var(--edgeLength), auto)
-  justify-content: center
-  align-content: center
-  [role='chip']
-    border: 1px dashed rgba(0, 0, 0, 0.4)
-    line-height: 1
-    background: #fff
-    display: flex
-    align-items: center
-    width: 100%
-    height: 100%
-    img
-      display: inline-block
-      margin: auto
-      padding: 3px
-      max-width: 100%
-      max-height: 100%
-  [role="stampImg"]
-    width: calc((100% / var(--edgeLength)) / 2 * 1.5)
-    height: calc((100% / var(--edgeLength)) / 2 * 1.5)
-    z-index: 999
-    display: none
+<style lang="scss">
+[role='squareGrid'] {
+  display: grid;
+  margin: 1rem auto;
+  grid-template-rows: repeat(var(--edgeLength), auto);
+  grid-template-columns: repeat(var(--edgeLength), auto);
+  justify-content: center;
+  align-content: center;
+  [role='chip'] {
+    border: 1px dashed rgba(0, 0, 0, 0.4);
+    line-height: 1;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    img {
+      display: inline-block;
+      margin: auto;
+      padding: 3px;
+      max-width: 100%;
+      max-height: 100%;
+    }
+  }
+  [role="stampImg"] {
+    width: calc((100% / var(--edgeLength)) / 2 * 1.5);
+    height: calc((100% / var(--edgeLength)) / 2 * 1.5);
+    z-index: 999;
+    display: none;
+  }
+}
 </style>

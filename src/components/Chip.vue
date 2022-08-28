@@ -29,19 +29,22 @@ export default {
 }
 </script>
 
-<style lang="stylus" scoped>
-[role="chip"]
-  position relative
-.active
-  &:before
-    content: ''
-    position absolute
-    top 0px
-    left 0px
-    bottom 0px
-    right 0px
-    background-image url('../assets/OPASS-pass-stamp.png')
-    background-size contain
-    background-repeat no-repeat
-    background-position center
+<style lang="scss" scoped>
+[role="chip"] {
+  position: relative;
+}
+.active {
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    bottom: 0px;
+    right: 0px;
+    background-image: url('../assets/OPASS-pass-stamp.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+  };
+}
 </style>

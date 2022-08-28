@@ -1,12 +1,12 @@
 <template>
   <div id="KingGame">
-    <v-layout
+    <v-row
       row
       wrap
     >
-      <v-flex
-        xs12
-        md6
+      <v-col
+        :xs="12"
+        :md="6"
       >
         <qrcode-reader
           :enable="qrState"
@@ -16,10 +16,10 @@
           @OnSuccess="onSuccess"
           @OnError="onError"
         />
-      </v-flex>
-      <v-flex
-        xs12
-        md6
+      </v-col>
+      <v-col
+        :xs="12"
+        :md="6"
       >
         <v-alert
           dismissible
@@ -49,12 +49,12 @@
             </ul>
           </v-card-text>
         </v-card>
-      </v-flex>
-      <v-flex
-        xs12
-        md12
+      </v-col>
+      <v-col
+        :xs="12"
+        :md="12"
       >
-        <v-data-table
+        <!-- <v-data-table
           :headers="headers"
           :items="prizes"
           hide-actions
@@ -76,9 +76,9 @@
               >兌換</v-btn>
             </td>
           </template>
-        </v-data-table>
-      </v-flex>
-    </v-layout>
+        </v-data-table> -->
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -184,7 +184,8 @@ export default {
 }
 </script>
 
-<style lang="stylus">
-[role='userStatus']
-  font-size 1.2rem
+<style lang="scss">
+[role='userStatus'] {
+  font-size: 1.2rem;
+}
 </style>

@@ -23,18 +23,18 @@
       solo
       v-model="nowFunc"
     ></v-select>
-    <v-layout class="mb-3" row wrap>
-      <v-flex xs12 md4>
+    <v-row class="mb-3" row wrap>
+      <v-col :xs="12" :md="4">
         <qrcode-reader :enable="qrState" :width="'100%'" :height="'300px'" :noResult="true" @OnSuccess="OnQRCodeScanSuccess" />
-      </v-flex>
-      <v-flex xs12 md6>
+      </v-col>
+      <v-col :xs="12" :md="6">
         <v-card>
           <v-card-text>
             <ul v-if="user.user_id" role="userStatus">
               <li>Nickname: <span class="user_info">{{ user.user_id }}</span></li>
               <li>App login: <span class="user_info">{{ user.first_use ? user.first_use : 'Not yet' }}</span></li>
-              <template v-for="(scenarios, index) in sortScenarios(this.scenario, user.scenarios)">
-                <li :key="index">
+              <template v-for="(scenarios, index) in sortScenarios(this.scenario, user.scenarios)" :key="index">
+                <li>
                   {{ scenarios.key }}:
                   <span class="user_info disabled" v-if="scenarios.disabled">{{ scenarios.disabled }}</span>
                   <span class="user_info" v-if="!scenarios.disabled">{{ (scenarios.used ? scenarios.used : 'Not yet') }}</span>
@@ -49,15 +49,15 @@
             </ul>
           </v-card-text>
         </v-card>
-      </v-flex>
-    </v-layout>
+      </v-col>
+    </v-row>
     <v-card class="mb-3">
       <v-card-title>手動輸入 Token</v-card-title>
       <v-card-text>
         <v-text-field label="Token" v-model="token" @keyup="useTokenByKeyUp"></v-text-field>
       </v-card-text>
       <v-card-actions>
-        <v-btn class="mr-2" color="primary" v-on:click.native="useToken">手動 checkIn</v-btn>
+        <v-btn class="mr-2" color="primary" @click="useToken">手動 checkIn</v-btn>
       </v-card-actions>
     </v-card>
   </div>
@@ -189,27 +189,27 @@ export default {
 }
 </script>
 
-<style lang="stylus">
-  [role="userStatus"] {
-    font-size: 1.2rem;
+<style lang="scss">
+[role="userStatus"] {
+  font-size: 1.2rem;
 
-    & .user_info {
-      color: #4d256f;
-      font-weight: bold;
+  & .user_info {
+    color: #4d256f;
+    font-weight: bold;
 
-      &.disabled {
-        color: orange;
-      }
-    }
-
-    & .datahr {
-      border: solid black 2px;
-      margin-top: 10px;
-      margin-bottom: 15px;
+    &.disabled {
+      color: orange;
     }
   }
 
-  .v-select .v-text-field__details {
-    display: none;
+  & .datahr {
+    border: solid black 2px;
+    margin-top: 10px;
+    margin-bottom: 15px;
   }
+}
+
+.v-select .v-text-field__details {
+  display: none;
+}
 </style>

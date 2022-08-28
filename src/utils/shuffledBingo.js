@@ -1,7 +1,7 @@
 import crypto from 'crypto'
 
 function md5Hash (token) {
-  var md5 = crypto.createHash('md5')
+  const md5 = crypto.createHash('md5')
   md5.update(token)
   return md5.digest('hex')
 }

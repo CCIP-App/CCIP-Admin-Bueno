@@ -21,8 +21,8 @@
               </ul>
             </v-card-text>
             <v-card-actions>
-              <v-btn class="mr-2" color="primary" v-on:click.native="clearPlayer">Clear All User</v-btn>
-              <v-btn color="error" :loading="revoking" :disabled="revoking" v-on:click.native="revokPlayer">Revoke those of player</v-btn>
+              <v-btn class="mr-2" color="primary" @click="clearPlayer">Clear All User</v-btn>
+              <v-btn color="error" :loading="revoking" :disabled="revoking" @click="revokPlayer">Revoke those of player</v-btn>
             </v-card-actions>
           </v-card>
         </v-col>
@@ -180,20 +180,25 @@ export default {
 }
 </script>
 
-<style lang="stylus">
-  #RewardGame
-    [role="reward-player-item"]
-      font-size: 2rem
-      margin 5px
-    [role="alert"]
-      font-size: 1.5rem
-      padding: 0.7em
-    [role="refresh"]
-      display: block
-      text-align: center
-    [role="Tab"]
-      box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
-
-    .tabs__item
-      transition: 0s
+<style lang="scss">
+#RewardGame {
+  [role="reward-player-item"] {
+    font-size: 2rem;
+    margin: 5px;
+  }
+  [role="alert"] {
+    font-size: 1.5rem;
+    padding: 0.7em;
+  }
+  [role="refresh"] {
+    display: block;
+    text-align: center;
+  }
+  [role="Tab"] {
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+  }
+  .tabs__item {
+    transition: 0s
+  }
+}
 </style>

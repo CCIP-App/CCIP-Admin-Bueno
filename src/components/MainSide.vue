@@ -1,13 +1,14 @@
 <template>
-  <v-navigation-drawer :clipped="$vuetify.breakpoint.mdAndUp" fixed app v-model="drawer" v-bind:items="items">
-    <v-list dense>
-      <v-list-item v-for="item in items" :key="item.title" :href="item.target && item.href" :to="!item.target ? item.href : null" router ripple>
-        <v-list-item-action>
-          <v-icon>{{ item.avatar }}</v-icon>
-        </v-list-item-action>
-        <v-list-item-content>
-          <v-list-item-title>{{ item.title }}</v-list-item-title>
-        </v-list-item-content>
+  <v-navigation-drawer fixed temporary v-model="drawer">
+    <v-list density="compact" nav>
+      <v-list-item
+        v-for="item in items"
+        :key="item.title"
+        :href="item.target && item.href"
+        :to="!item.target ? item.href : null" router ripple
+        :title="item.title"
+        :prepend-icon="item.avatar"
+      >
       </v-list-item>
     </v-list>
   </v-navigation-drawer>
@@ -77,43 +78,3 @@ export default {
   }
 }
 </script>
-<style lang="stylus">
-  // @import '../stylus/settings/_variables'
-
-  // .sidebar
-  //   background-color: #fff
-
-  //   &__links
-  //     margin: 0rem
-  //     display: flex
-  //     justify-content: center
-  //     align-items: center
-
-  //     a
-  //       text-align: center
-  //       text-decoration: none
-  //       margin: 0 0rem
-
-  //       img
-  //         height: 25px
-
-  //       i
-  //         padding: 0
-
-  // .list
-  //   margin: 0 0rem !important
-
-  //   .list__tile
-  //     color: $grey.darken-3
-
-  //   .icon
-  //     color: $grey.darken-3 !important
-
-  // .sidebar
-  //   position: fixed;
-  //   top: 4rem
-  //   left: 0px
-  //   z-index: 5
-  //   @media screen and (min-width: $grid-breakpoints.sm)
-  //     min-width:230px
-</style>

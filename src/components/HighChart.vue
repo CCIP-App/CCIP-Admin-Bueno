@@ -31,12 +31,8 @@ export default {
     this.chart = Highcharts.chart(this.$el, this.options)
     this.oldValue = JSON.stringify(this.options)
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.chart.destroy()
   }
 }
 </script>
-
-<style>
-
-</style>

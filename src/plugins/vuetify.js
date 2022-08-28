@@ -1,22 +1,22 @@
-import Vue from 'vue'
-import Vuetify from 'vuetify'
-import 'vuetify/dist/vuetify.min.css'
-import zhHant from 'vuetify/es5/locale/zh-Hant'
-import colors from 'vuetify/es5/util/colors'
+import { createVuetify } from 'vuetify'
+import { zhHant } from 'vuetify/locale'
+import colors from 'vuetify/lib/util/colors'
+import 'vuetify/styles'
+import 'material-design-icons-iconfont/dist/material-design-icons.css'
+import { aliases, md } from 'vuetify/iconsets/md'
 
-Vue.use(Vuetify)
-
-export default new Vuetify({
+export default createVuetify({
   theme: {
+    defaultTheme: 'ccip',
     themes: {
-      light: {
+      ccip: {
         primary: '#4d256f',
         secondary: colors.grey.darken3,
         accent: colors.blue.accent1,
         info: colors.blue.base,
         warning: colors.amber.base,
         error: colors.red.base,
-        success: colors.green.base
+        success: colors.greenbase
       }
     }
   },
@@ -24,7 +24,11 @@ export default new Vuetify({
     customProperties: true
   },
   icons: {
-    iconfont: 'mdiSvg' // 'mdi' || 'mdiSvg' || 'md' || 'fa' || 'fa4'
+    defaultSet: 'md',
+    aliases,
+    sets: {
+      md
+    }
   },
   lang: {
     locales: { zhHant },

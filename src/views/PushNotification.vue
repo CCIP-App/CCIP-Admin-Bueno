@@ -2,7 +2,7 @@
   <div id='PushNotification'>
     <v-container fluid>
       <v-layout>
-        <v-flex xs12 md12 style="margin: 0 auto;">
+        <v-col :xs="12" :md="12" style="margin: 0 auto;">
           <v-card style="margin: 0 auto;">
             <v-card-text class=" text-xs-center">
               <h5 class="ma-0">新增推播通知</h5>
@@ -10,10 +10,10 @@
               <v-text-field type="text" placeholder="Msg(zh)" v-model="feed.msg_zh" :disabled="disabled"></v-text-field>
               <v-text-field type="text" placeholder="Msg(en)" v-model="feed.msg_en" :disabled="disabled"></v-text-field>
               <v-text-field type="text" placeholder="URI(optional)" v-model="feed.uri" :disabled="disabled"></v-text-field>
-              <v-btn ripple info @click.native="send" :disabled="disabled" :loading="disabled">Send!</v-btn>
+              <v-btn ripple info @click="send" :disabled="disabled" :loading="disabled">Send!</v-btn>
             </v-card-text>
           </v-card>
-        </v-flex>
+        </v-col>
       </v-layout>
       <v-alert dismissible warning v-model="alert" role="alert">{{ alertMessage }}</v-alert>
       <v-alert dismissible success v-model="success" role="alert">推播成功</v-alert>
@@ -48,9 +48,9 @@ export default {
       self.options = [
         {
           value: 'all',
-          text: '全體'
+          title: '全體'
         }
-      ].concat(res.map((r) => { return { value: r, text: r } }))
+      ].concat(res.map((r) => { return { value: r, title: r } }))
     })
   },
   methods: {
@@ -83,7 +83,3 @@ export default {
 }
 
 </script>
-
-<style scoped>
-
-</style>

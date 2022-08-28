@@ -1,12 +1,12 @@
 <template>
   <div id='Dashboard'>
     <v-container fluid>
-      <v-layout row wrap>
-        <v-flex xs12 class="mb-3">
+      <v-row row wrap>
+        <v-col :xs="12" class="mb-3">
           <v-card>
             <v-card-text role="refreshCountDown">
               <span class="text-xs-center">{{ countDown }} 秒後 Refresh 統計資料</span>
-              <v-btn color="primary" dark @click.native="refresh">Refresh Now</v-btn>
+              <v-btn color="primary" dark @click="refresh">Refresh Now</v-btn>
               <v-select
                 :items="roles"
                 label="Roles"
@@ -15,8 +15,8 @@
               ></v-select>
             </v-card-text>
           </v-card>
-        </v-flex>
-        <v-flex xs12 md6 xl4 class="mb-3">
+        </v-col>
+        <v-col :xs="12" :md="6" :xl="4" class="mb-3">
           <v-card>
             <v-card-text>
               <h4 class="ma-0 text-xs-left">App 使用率</h4>
@@ -24,9 +24,9 @@
               <v-progress-linear stream :buffer-value="Math.max(appPercentage, rolePercentage)" :value="Math.min(appPercentage, rolePercentage)" class="ma-0 mb-4"></v-progress-linear>
             </v-card-text>
           </v-card>
-        </v-flex>
-        <template v-for="(data, n) in checkins">
-          <v-flex :key="'checkins'+data.scenario+n" xs12 md6 xl4 class="mb-3">
+        </v-col>
+        <template v-for="(data, n) in checkins" :key="'checkins'+data.scenario+n">
+          <v-col :xs="12" :md="6" :xl="4" class="mb-3">
             <v-card>
               <v-card-text>
                 <h4 class="ma-0 text-xs-left">{{ data.scenario }} 報到率</h4>
@@ -34,19 +34,19 @@
                 <v-progress-linear stream :buffer-value="percentage(data.used, data.enabled)" :value="percentage(data.used, data.enabled)" class="ma-0 mb-4"></v-progress-linear>
               </v-card-text>
             </v-card>
-          </v-flex>
+          </v-col>
         </template>
-        <template v-for="(data, n) in series.series">
-          <v-flex :key="'charts'+data.scenario+n" xs12 md6 xl4 class="mb-3">
+        <template v-for="(data, n) in series.series" :key="'charts'+data.scenario+n">
+          <v-col :xs="12" :md="6" :xl="4" class="mb-3">
             <v-card>
               <v-card-text>
                 <h4 class="ma-0 text-xs-left">Used for {{ data.scenario }}: Used {{ data.used }} / Enabled {{ data.enabled }} / Total {{ series.total }}</h4>
                 <high-chart :options="chartOption(data.chart)" style="display: flex"></high-chart>
               </v-card-text>
             </v-card>
-          </v-flex>
+          </v-col>
         </template>
-      </v-layout>
+      </v-row>
     </v-container>
   </div>
 </template>
@@ -205,7 +205,7 @@ export default {
 }
 </script>
 
-<style lang="stylus">
+<style lang="scss">
 [role='refreshCountDown'] {
   font-size: 1.5rem;
   text-align: center;

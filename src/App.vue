@@ -1,6 +1,5 @@
 <template>
   <v-app>
-
     <main-side v-model="drawer"></main-side>
     <main-nav v-on:sidebar="drawer = !drawer"></main-nav>
 
@@ -28,7 +27,3 @@ export default {
   }
 }
 </script>
-
-<style lang="stylus">
-
-</style>

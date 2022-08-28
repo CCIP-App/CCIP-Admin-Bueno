@@ -1,11 +1,11 @@
 <template>
   <div id="Coupon">
     <v-alert dismissible type="warning" v-model="alert" role="alert" class="mb-3">{{ alertMessage }}</v-alert>
-    <v-layout>
-      <v-flex xs12 md5>
+    <v-row>
+      <v-col :xs="12" :md="5">
         <qrcode-reader class="mr-3 mt-2 mb-3" :enable="qrState" :width="'32vw'" :height="'24vw'" :noResult="true" @OnSuccess="onSuccess" @OnError="onError" />
-      </v-flex>
-      <v-flex xs12 md7>
+      </v-col>
+      <v-col :xs="12" :md="7">
         <v-card>
           <v-card-row  class="green darken-1">
             <v-card-title>
@@ -22,12 +22,12 @@
             </template>
           </v-card-text>
           <v-card-row actions>
-            <v-btn class="lighten-2 white--text mr-2" info v-on:click.native="clearUser">Clear User</v-btn>
-            <v-btn class="lighten-2 white--text" error :loading="revoking" :disabled="revoking" v-on:click.native="revokCoupon">Revoke Coupon</v-btn>
+            <v-btn class="lighten-2 white--text mr-2" info @click="clearUser">Clear User</v-btn>
+            <v-btn class="lighten-2 white--text" error :loading="revoking" :disabled="revoking" @click="revokCoupon">Revoke Coupon</v-btn>
           </v-card-row>
         </v-card>
-      </v-flex>
-    </v-layout>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -78,7 +78,7 @@ export default {
       this.$vuetify.toast.create(...['已經清除了(⊙ω⊙)', 'bottom'])
     },
     revokCoupon () {
-      var self = this
+      const self = this
       if (this.user !== null) {
         apiClient.revokeCoupon()
           .then(() => {
@@ -107,16 +107,20 @@ export default {
 }
 </script>
 
-<style lang="stylus">
-  [role="chips"]
-    flex-wrap: wrap;
-    display: flex;
-  [role="puzzle-player-item"]
-    font-size: 2rem
-  [role="alert"]
-    font-size: 1.5rem
-    padding: 0.7em
-  [role="refresh"]
-    display: block
-    text-align: center
+<style lang="scss">
+[role="chips"] {
+  flex-wrap: wrap;
+  display: flex;
+}
+[role="puzzle-player-item"] {
+  font-size: 2rem;
+}
+[role="alert"] {
+  font-size: 1.5rem;
+  padding: 0.7em;
+}
+[role="refresh"] {
+  display: block;
+  text-align: center;
+}
 </style>

@@ -46,14 +46,14 @@ export default {
   },
   watch: {
     enable: function (state) {
-      var self = this
+      const self = this
       self.scanner.setStopped(!state)
     }
   },
   mounted () {
     const cam = document.getElementById('camsource')
-    var self = this
-    window.w69b.qr.decoding.setWorkerUrl(`${process.env.BASE_URL}barcode.js/w69b.qrcode.decodeworker.min.js`)
+    const self = this
+    window.w69b.qr.decoding.setWorkerUrl(`${import.meta.env.BASE_URL}barcode.js/w69b.qrcode.decodeworker.min.js`)
     if (navigator.mediaDevices) {
       self.webrtc = true
       self.scanner = new window.w69b.qr.ui.ContinuousScanner()
@@ -66,9 +66,9 @@ export default {
       console.log('Sorry, native web camera streaming (getUserMedia) is not supported by this browser...')
     }
   },
-  beforeDestroy () {
+  beforeUnmount () {
     if (navigator.mediaDevices) {
-      var self = this
+      const self = this
       self.scanner.setStopped(true)
       self.scanner.dispose()
     }
@@ -79,19 +79,19 @@ export default {
       this.$emit('OnSuccess', result)
     },
     uploadChange () {
-      var self = this
-      var file = document.getElementById('upload').files[0]
-      var imageType = /^image\//
+      const self = this
+      const file = document.getElementById('upload').files[0]
+      const imageType = /^image\//
       if (!imageType.test(file.type)) {
         console.log('File type not valid')
       }
       // Read file
-      var reader = new FileReader()
+      const reader = new FileReader()
       reader.addEventListener('load', function () {
-        var image = new Image()
+        const image = new Image()
         image.onload = function (imageEvent) {
           // Resize the image
-          var decoder = new window.w69b.qr.decoding.Decoder()
+          const decoder = new window.w69b.qr.decoding.Decoder()
           decoder.decode(image).then(function (result) {
             // succesfully decoded QR Code.
             self.onSuccess(result.text)
@@ -107,38 +107,45 @@ export default {
 }
 </script>
 
-<style lang="stylus">
-  #camsource
-    background: #c9a474
-    border: 2px solid #c9a474
-    border-radius: 15px
-    padding: 10px
-    width: 80vw
-    height: 60vw
-    max-width: 320px
-    max-height: 240px
+<style lang="scss">
+#camsource {
+  background: #c9a474;
+  border: 2px solid #c9a474;
+  border-radius: 15px;
+  padding: 10px;
+  width: 80vw;
+  height: 60vw;
+  max-width: 320px;
+  max-height: 240px;
+}
 
-  #uploadField
-    max-width: 300px
-    @media screen and (max-width: 454px) // must bigger than 454px for two column
-      max-width: 150px
+#uploadField {
+  max-width: 300px;
+  @media screen and (max-width: 454px) {
+    max-width: 150px;
+  }
+}
 
-  #uploadButton
-    cursor: pointer
-    z-index: 1
-    display: block
-    margin: auto
-    min-height: 300px
-    @media screen and (max-width: 454px) // must bigger than 454px for two column
-      min-height: 150px
-    background: url('../assets/uploadfile.png')
-    background-size: cover
-    background-repeat: no-repeat
-    background-position: center
+#uploadButton {
+  cursor: pointer;
+  z-index: 1;
+  display: block;
+  margin: auto;
+  min-height: 300px;
+  @media screen and (max-width: 454px) {
+    min-height: 150px;
+  }
+  background: url('../assets/uploadfile.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
 
-  #upload
-    display: none
+#upload {
+  display: none;
+}
 
-  [role="subTitle"]
-    margin-bottom: 3rem
+[role="subTitle"] {
+  margin-bottom: 3rem;
+}
 </style>
