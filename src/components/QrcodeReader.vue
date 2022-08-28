@@ -14,6 +14,9 @@
 </template>
 
 <script>
+import { w69b } from 'barcode.js'
+import w69bDecodeworker from 'barcode.js/w69b.qrcode.decodeworker.min.js?url'
+
 export default {
   name: 'QrcodeReader',
   props: {
@@ -53,10 +56,10 @@ export default {
   mounted () {
     const cam = document.getElementById('camsource')
     const self = this
-    window.w69b.qr.decoding.setWorkerUrl(`${import.meta.env.BASE_URL}barcode.js/w69b.qrcode.decodeworker.min.js`)
+    w69b.qr.decoding.setWorkerUrl(w69bDecodeworker)
     if (navigator.mediaDevices) {
       self.webrtc = true
-      self.scanner = new window.w69b.qr.ui.ContinuousScanner()
+      self.scanner = new w69b.qr.ui.ContinuousScanner()
       self.scanner.setDecodedCallback(function (result) {
         self.onSuccess(result)
       })

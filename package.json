@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "axios": "^0.27.2",
+    "barcode.js": "^0.1.24",
     "hash.js": "^1.1.7",
     "highcharts": "^9.0.0",
     "material-design-icons-iconfont": "^6.7.0",
