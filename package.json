@@ -12,7 +12,6 @@
     "axios": "^0.21.1",
     "hash.js": "^1.1.7",
     "highcharts": "^9.0.0",
-    "qr-scanner": "^1.4.1",
     "vue": "^2.6.11",
     "vue-router": "^3.3.4",
     "vuetify": "^2.3.6"
