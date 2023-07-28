@@ -60,6 +60,7 @@ export default {
     if (navigator.mediaDevices) {
       self.webrtc = true
       self.scanner = new w69b.qr.ui.ContinuousScanner()
+      self.scanner.fg.Hb.setAttribute('playsinline', 'true')
       self.scanner.setDecodedCallback(function (result) {
         self.onSuccess(result)
       })
