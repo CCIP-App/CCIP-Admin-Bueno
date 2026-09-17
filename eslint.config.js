@@ -42,7 +42,7 @@ export default [
     }
   },
   {
-    files: ['src/**/*.{js,vue}'],
+    files: ['src/**/*.{js,vue}', 'tests/smoke.mjs'],
     languageOptions: { globals: globals.browser }
   }
 ]
