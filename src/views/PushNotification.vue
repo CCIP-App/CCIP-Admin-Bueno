@@ -2,21 +2,21 @@
   <div id='PushNotification'>
     <v-container fluid>
       <v-layout>
-        <v-col :xs="12" :md="12" style="margin: 0 auto;">
+        <v-col cols="12" :md="12" style="margin: 0 auto;">
           <v-card style="margin: 0 auto;">
-            <v-card-text class=" text-xs-center">
+            <v-card-text class=" text-center">
               <h5 class="ma-0">新增推播通知</h5>
               <v-select v-bind:items="options" placeholder="選擇對象" v-model.number="feed.to" :disabled="disabled"></v-select>
               <v-text-field type="text" placeholder="Msg(zh)" v-model="feed.msg_zh" :disabled="disabled"></v-text-field>
               <v-text-field type="text" placeholder="Msg(en)" v-model="feed.msg_en" :disabled="disabled"></v-text-field>
               <v-text-field type="text" placeholder="URI(optional)" v-model="feed.uri" :disabled="disabled"></v-text-field>
-              <v-btn ripple info @click="send" :disabled="disabled" :loading="disabled">Send!</v-btn>
+              <v-btn ripple color="info" @click="send" :disabled="disabled" :loading="disabled">Send!</v-btn>
             </v-card-text>
           </v-card>
         </v-col>
       </v-layout>
-      <v-alert dismissible warning v-model="alert" role="alert">{{ alertMessage }}</v-alert>
-      <v-alert dismissible success v-model="success" role="alert">推播成功</v-alert>
+      <v-alert closable type="warning" v-model="alert" role="alert">{{ alertMessage }}</v-alert>
+      <v-alert closable type="success" v-model="success" role="alert">推播成功</v-alert>
 
     </v-container>
   </div>

@@ -1,155 +1,237 @@
 <template>
-  <div id='QrcodeReader'>
-    <center>
-      <h2 class="ma-0" v-if=" title != '' ">{{ title }}</h2>
-      <div v-if="webrtc" id="camsource"></div>
-      <div v-else id="uploadField">
-        <label id="uploadButton" for="upload" />
-        <input type="file" id="upload" @change="uploadChange">
+  <div class="qrcode-reader">
+    <h2 v-if="title" class="ma-0">{{ title }}</h2>
+    <template v-if="cameraSupported">
+      <div class="camera" :data-state="scanState" :style="{ width, height }">
+        <video ref="video" autoplay muted playsinline />
+        <svg v-if="enable && outline" :viewBox="`0 0 ${frameWidth} ${frameHeight}`" aria-hidden="true">
+          <polygon :points="outline" />
+        </svg>
       </div>
-      <p role="subTitle" v-if="subTitle !== '' ">{{ subTitle }}</p>
-      <h6 class="ma-0" v-if=" !noResult ">{{ result }}</h6>
-    </center>
+      <p class="scan-status" role="status">{{ statusText }}</p>
+      <button v-if="cameraState === 'error'" type="button" @click="startCamera">重新啟用相機</button>
+    </template>
+    <label v-else>
+      上傳 QR Code 圖片
+      <input type="file" accept="image/*" :disabled="!enable" @change="uploadChange">
+    </label>
+    <p v-if="subTitle">{{ subTitle }}</p>
+    <p v-if="errorMessage" role="alert">{{ errorMessage }}</p>
+    <p v-if="!noResult">{{ result }}</p>
   </div>
 </template>
 
 <script>
-import { w69b } from 'barcode.js'
-import w69bDecodeworker from 'barcode.js/w69b.qrcode.decodeworker.min.js?url'
+import { prepareZXingModule, readBarcodes } from 'zxing-wasm/reader'
+import wasmUrl from 'zxing-wasm/reader/zxing_reader.wasm?url'
+
+// Keep decoding available without a third-party CDN at event venues.
+prepareZXingModule({
+  overrides: {
+    locateFile: (path, prefix) => path.endsWith('.wasm') ? wasmUrl : prefix + path
+  }
+})
+const readerOptions = { formats: ['QRCode'], textMode: 'Plain', returnErrors: true }
 
 export default {
   name: 'QrcodeReader',
   props: {
-    title: {
-      type: String,
-      default: ''
-    },
-    subTitle: {
-      type: String,
-      default: ''
-    },
+    title: { type: String, default: '' },
+    subTitle: { type: String, default: '' },
     enable: Boolean,
     noResult: Boolean,
-    width: {
-      type: String,
-      default: 320 + 'px'
-    },
-    height: {
-      type: String,
-      default: 240 + 'px'
-    }
+    width: { type: String, default: '320px' },
+    height: { type: String, default: '240px' }
   },
+  emits: ['OnSuccess', 'OnError'],
   data () {
     return {
-      result: 'Loading...',
-      cam: null,
-      webrtc: true,
-      scanner: null
+      result: '',
+      lastScanned: '',
+      errorMessage: '',
+      cameraSupported: Boolean(navigator.mediaDevices?.getUserMedia),
+      cameraState: 'starting',
+      outline: '',
+      frameWidth: 1,
+      frameHeight: 1,
+      frame: null,
+      running: false,
+      stream: null,
+      timer: null
+    }
+  },
+  computed: {
+    scanState () {
+      return !this.enable && this.cameraState !== 'error' ? 'paused' : this.cameraState
+    },
+    statusText () {
+      return {
+        starting: '正在啟用相機…',
+        scanning: '掃描中，請將 QR Code 對準鏡頭',
+        detected: '已找到 QR Code，請保持穩定',
+        decoded: '已讀取 QR Code',
+        paused: '掃描已暫停',
+        error: '相機無法啟用'
+      }[this.scanState]
     }
   },
   watch: {
-    enable: function (state) {
-      const self = this
-      self.scanner.setStopped(!state)
+    enable () {
+      this.lastScanned = ''
+      this.outline = ''
+      if (this.cameraState === 'decoded' || this.cameraState === 'detected') this.cameraState = 'scanning'
     }
   },
   mounted () {
-    const cam = document.getElementById('camsource')
-    const self = this
-    w69b.qr.decoding.setWorkerUrl(w69bDecodeworker)
-    if (navigator.mediaDevices) {
-      self.webrtc = true
-      self.scanner = new w69b.qr.ui.ContinuousScanner()
-      self.scanner.fg.Hb.setAttribute('playsinline', 'true')
-      self.scanner.setDecodedCallback(function (result) {
-        self.onSuccess(result)
-      })
-      self.scanner.render(cam)
-    } else {
-      self.webrtc = false
-      console.log('Sorry, native web camera streaming (getUserMedia) is not supported by this browser...')
-    }
+    this.running = true
+    if (this.cameraSupported) this.startCamera()
   },
   beforeUnmount () {
-    if (navigator.mediaDevices) {
-      const self = this
-      self.scanner.setStopped(true)
-      self.scanner.dispose()
-    }
+    this.running = false
+    clearTimeout(this.timer)
+    this.stream?.getTracks().forEach(track => track.stop())
   },
   methods: {
-    onSuccess (result) {
-      this.result = result
-      this.$emit('OnSuccess', result)
-    },
-    uploadChange () {
-      const self = this
-      const file = document.getElementById('upload').files[0]
-      const imageType = /^image\//
-      if (!imageType.test(file.type)) {
-        console.log('File type not valid')
-      }
-      // Read file
-      const reader = new FileReader()
-      reader.addEventListener('load', function () {
-        const image = new Image()
-        image.onload = function (imageEvent) {
-          // Resize the image
-          const decoder = new window.w69b.qr.decoding.Decoder()
-          decoder.decode(image).then(function (result) {
-            // succesfully decoded QR Code.
-            self.onSuccess(result.text)
-          }, function () {
-            self.$emit('OnError', 'no qr code found')
-          })
+    async startCamera () {
+      this.cameraState = 'starting'
+      this.errorMessage = ''
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false })
+        if (!this.running) {
+          stream.getTracks().forEach(track => track.stop())
+          return
         }
-        image.src = this.result
-      }.bind(reader), false)
-      reader.readAsDataURL(file)
+        this.stream = stream
+        this.$refs.video.srcObject = stream
+        await this.$refs.video.play()
+        if (!this.running) return
+        this.cameraState = 'scanning'
+        this.frame = document.createElement('canvas').getContext('2d', { willReadFrequently: true })
+        this.scan()
+      } catch (error) {
+        if (this.running) this.onCameraError(error)
+      }
+    },
+    async scan () {
+      if (!this.running) return
+      try {
+        if (this.enable && this.$refs.video.readyState >= 2) {
+          const video = this.$refs.video
+          // ponytail: cap frames at 960px for throughput; raise for small or distant codes.
+          const scale = Math.min(1, 960 / Math.max(video.videoWidth, video.videoHeight))
+          this.frameWidth = Math.max(1, Math.round(video.videoWidth * scale))
+          this.frameHeight = Math.max(1, Math.round(video.videoHeight * scale))
+          if (this.frame.canvas.width !== this.frameWidth) this.frame.canvas.width = this.frameWidth
+          if (this.frame.canvas.height !== this.frameHeight) this.frame.canvas.height = this.frameHeight
+          this.frame.drawImage(video, 0, 0, this.frameWidth, this.frameHeight)
+          const codes = await readBarcodes(this.frame.getImageData(0, 0, this.frameWidth, this.frameHeight), readerOptions)
+          if (!this.running || !this.enable) return
+          const code = codes.find(code => code.isValid) || codes[0]
+          this.outline = code
+            ? ['topLeft', 'topRight', 'bottomRight', 'bottomLeft']
+                .map(corner => `${code.position[corner].x},${code.position[corner].y}`).join(' ')
+            : ''
+          this.cameraState = code ? (code.isValid ? 'decoded' : 'detected') : 'scanning'
+          const value = code?.isValid ? code.text : ''
+          if (value && value !== this.lastScanned) this.onDetect(code)
+          this.lastScanned = value
+        }
+      } catch (error) {
+        if (this.running) this.onCameraError(error)
+        return
+      } finally {
+        if (this.running && this.cameraState !== 'error') this.timer = setTimeout(() => this.scan(), 100)
+      }
+    },
+    async uploadChange (event) {
+      const file = event.target.files[0]
+      if (!file || !this.enable) return
+      try {
+        if (!file.type.startsWith('image/')) throw new Error('請選擇圖片檔案')
+        const codes = await readBarcodes(file, readerOptions)
+        const code = codes.find(code => code.isValid)
+        if (!code) throw new Error('找不到 QR Code')
+        if (this.running && this.enable) this.onDetect(code)
+      } catch (error) {
+        if (this.running) this.onError(error)
+      } finally {
+        event.target.value = ''
+      }
+    },
+    onDetect (code) {
+      this.errorMessage = ''
+      this.result = code.text
+      this.$emit('OnSuccess', this.result)
+    },
+    onError (error) {
+      this.errorMessage = error.message
+      this.$emit('OnError', error.message)
+    },
+    onCameraError (error) {
+      this.cameraState = 'error'
+      this.outline = ''
+      this.stream?.getTracks().forEach(track => track.stop())
+      this.errorMessage = error.name === 'NotAllowedError'
+        ? '請允許瀏覽器使用相機，再重新啟用相機。'
+        : '無法啟用相機，請確認相機連線及是否被其他程式使用。'
+      this.$emit('OnError', error.message)
     }
   }
 }
 </script>
 
-<style lang="scss">
-#camsource {
-  background: #c9a474;
+<style scoped>
+.qrcode-reader {
+  text-align: center;
+}
+
+.camera {
+  position: relative;
+  max-width: 100%;
+  overflow: hidden;
+  background: #111;
+  margin: 0 auto 1rem;
   border: 2px solid #c9a474;
   border-radius: 15px;
-  padding: 10px;
-  width: 80vw;
-  height: 60vw;
-  max-width: 320px;
-  max-height: 240px;
 }
 
-#uploadField {
-  max-width: 300px;
-  @media screen and (max-width: 454px) {
-    max-width: 150px;
-  }
-}
-
-#uploadButton {
-  cursor: pointer;
-  z-index: 1;
+.camera video,
+.camera svg {
   display: block;
-  margin: auto;
-  min-height: 300px;
-  @media screen and (max-width: 454px) {
-    min-height: 150px;
-  }
-  background: url('../assets/uploadfile.png');
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
-#upload {
-  display: none;
+.camera svg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
 }
 
-[role="subTitle"] {
-  margin-bottom: 3rem;
+.camera polygon {
+  fill: none;
+  stroke: #ffc107;
+  stroke-width: 3;
+  vector-effect: non-scaling-stroke;
+}
+
+.camera[data-state="decoded"] polygon {
+  stroke: #00e676;
+}
+
+.scan-status {
+  margin: 0 0 0.5rem;
+  font-size: 0.875rem;
+}
+
+label {
+  display: block;
+}
+
+input {
+  display: block;
+  max-width: 100%;
+  margin: 0.5rem auto;
 }
 </style>

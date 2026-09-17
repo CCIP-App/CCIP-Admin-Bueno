@@ -1,7 +1,7 @@
 <template>
   <header>
     <v-app-bar dark fixed color="primary">
-      <v-app-bar-nav-icon @click.stop="$emit('sidebar')"></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon aria-label="切換選單" @click.stop="$emit('sidebar')"></v-app-bar-nav-icon>
       <v-toolbar-title>
         <span>OPass Admin - {{ event_name }}</span>
       </v-toolbar-title>
@@ -15,6 +15,7 @@ import portalApi from '@/module/portalApi'
 
 export default {
   name: 'main-nav',
+  emits: ['sidebar'],
   data () {
     return {
       event_name: ''

@@ -2,45 +2,45 @@
   <div id='Dashboard'>
     <v-container fluid>
       <v-row row wrap>
-        <v-col :xs="12" class="mb-3">
+        <v-col cols="12" class="mb-3">
           <v-card>
             <v-card-text role="refreshCountDown">
-              <span class="text-xs-center">{{ countDown }} 秒後 Refresh 統計資料</span>
+              <span class="text-center">{{ countDown }} 秒後 Refresh 統計資料</span>
               <v-btn color="primary" dark @click="refresh">Refresh Now</v-btn>
               <v-select
                 :items="roles"
                 label="Roles"
-                solo
+                variant="solo"
                 v-model="selectedRole"
               ></v-select>
             </v-card-text>
           </v-card>
         </v-col>
-        <v-col :xs="12" :md="6" :xl="4" class="mb-3">
+        <v-col cols="12" :md="6" :xl="4" class="mb-3">
           <v-card>
             <v-card-text>
-              <h4 class="ma-0 text-xs-left">App 使用率</h4>
-              <p class="text-xs-center ma-0 mt-4">{{ appLogged }} / {{ appTotal }} - {{ appPercentage }}% ({{ selectedRole }}: {{ this.series.logged }} / {{ this.series.total }} - {{ rolePercentage }}%)</p>
-              <v-progress-linear stream :buffer-value="Math.max(appPercentage, rolePercentage)" :value="Math.min(appPercentage, rolePercentage)" class="ma-0 mb-4"></v-progress-linear>
+              <h4 class="ma-0 text-left">App 使用率</h4>
+              <p class="text-center ma-0 mt-4">{{ appLogged }} / {{ appTotal }} - {{ appPercentage }}% ({{ selectedRole }}: {{ this.series.logged }} / {{ this.series.total }} - {{ rolePercentage }}%)</p>
+              <v-progress-linear stream :buffer-value="Math.max(appPercentage, rolePercentage)" :model-value="Math.min(appPercentage, rolePercentage)" class="ma-0 mb-4"></v-progress-linear>
             </v-card-text>
           </v-card>
         </v-col>
         <template v-for="(data, n) in checkins" :key="'checkins'+data.scenario+n">
-          <v-col :xs="12" :md="6" :xl="4" class="mb-3">
+          <v-col cols="12" :md="6" :xl="4" class="mb-3">
             <v-card>
               <v-card-text>
-                <h4 class="ma-0 text-xs-left">{{ data.scenario }} 報到率</h4>
-                <p class="text-xs-center ma-0 mt-4">{{ data.used }} / {{ data.enabled }} - {{ percentage(data.used, data.enabled) }}%</p>
-                <v-progress-linear stream :buffer-value="percentage(data.used, data.enabled)" :value="percentage(data.used, data.enabled)" class="ma-0 mb-4"></v-progress-linear>
+                <h4 class="ma-0 text-left">{{ data.scenario }} 報到率</h4>
+                <p class="text-center ma-0 mt-4">{{ data.used }} / {{ data.enabled }} - {{ percentage(data.used, data.enabled) }}%</p>
+                <v-progress-linear stream :buffer-value="percentage(data.used, data.enabled)" :model-value="percentage(data.used, data.enabled)" class="ma-0 mb-4"></v-progress-linear>
               </v-card-text>
             </v-card>
           </v-col>
         </template>
         <template v-for="(data, n) in series.series" :key="'charts'+data.scenario+n">
-          <v-col :xs="12" :md="6" :xl="4" class="mb-3">
+          <v-col cols="12" :md="6" :xl="4" class="mb-3">
             <v-card>
               <v-card-text>
-                <h4 class="ma-0 text-xs-left">Used for {{ data.scenario }}: Used {{ data.used }} / Enabled {{ data.enabled }} / Total {{ series.total }}</h4>
+                <h4 class="ma-0 text-left">Used for {{ data.scenario }}: Used {{ data.used }} / Enabled {{ data.enabled }} / Total {{ series.total }}</h4>
                 <high-chart :options="chartOption(data.chart)" style="display: flex"></high-chart>
               </v-card-text>
             </v-card>

@@ -1,8 +1,8 @@
 <template>
   <div role="squareGrid" :style="`--edgeLength: ${edgeLength}`">
-    <template v-for="(booth, index) in booths">
+    <template v-for="(booth, index) in booths" :key="index">
       <template v-if="showAnchor && booth.slug">
-        <a :href="`#${booth.slug}`" :key="index">
+        <a :href="`#${booth.slug}`">
           <Chip
             :logoUri="booth.imageUrl"
             :displayName="booth.displayText"
@@ -15,7 +15,6 @@
           :logoUri="booth.imageUrl"
           :displayName="booth.displayText"
           :isActive="userStamps.findIndex(stamp => stamp.deliverer === booth.slug)> -1 || booth.isBonus"
-          :key="index"
         />
       </template>
     </template>

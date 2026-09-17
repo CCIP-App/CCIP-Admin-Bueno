@@ -2,25 +2,25 @@
   <div id='Announcement'>
     <v-container fluid>
       <v-row>
-        <v-col :xs="12" :md="12" style="margin: 0 auto;">
+        <v-col cols="12" :md="12" style="margin: 0 auto;">
           <v-card style="margin: 0 auto;">
-            <v-card-text class=" text-xs-center">
+            <v-card-text class=" text-center">
               <h5 class="ma-0">新增大會公告</h5>
               <v-select :items="options" placeholder="選擇對象" v-model.number="newAnnounce.role" :disabled="disabled"></v-select>
               <v-text-field type="text" placeholder="Msg(zh)" v-model="newAnnounce.msg_zh" :disabled="disabled"></v-text-field>
               <v-text-field type="text" placeholder="Msg(en)" v-model="newAnnounce.msg_en" :disabled="disabled"></v-text-field>
               <v-text-field type="text" placeholder="URI(optional)" v-model="newAnnounce.uri" :disabled="disabled"></v-text-field>
-              <v-btn ripple info @click="send" :disabled="disabled" :loading="disabled">Send!</v-btn>
+              <v-btn ripple color="info" @click="send" :disabled="disabled" :loading="disabled">Send!</v-btn>
             </v-card-text>
           </v-card>
         </v-col>
       </v-row>
       <br>
-      <v-alert dismissible type="warning" v-model="alert" role="alert">{{ alertMessage }}</v-alert>
+      <v-alert closable type="warning" v-model="alert" role="alert">{{ alertMessage }}</v-alert>
       <v-row>
-        <v-col :xs="12" :md="12" style="margin: 0 auto;">
+        <v-col cols="12" :md="12" style="margin: 0 auto;">
           <v-card style="margin: 0 auto;">
-            <v-card-text class=" text-xs-center">
+            <v-card-text class=" text-center">
               <h5 class="ma-0">大會公告歷程</h5>
               <v-table v-if="announcements.length!=0">
                 <thead>
@@ -101,8 +101,8 @@ export default {
     },
     formatDatetime (time) {
       const datetime = new Date(time * 1000)
-      return this.leftpad(datetime.getMonth() + 1, 2) + '/' + this.leftpad(datetime.getDate(), 2) + ' ' +
-          this.leftpad(datetime.getHours(), 2) + ':' + this.leftpad(datetime.getMinutes(), 2)
+      return this.leftpad(datetime.getMonth() + 1, 2) + '/' + this.leftpad(datetime.getDate(), 2) + ' '
+        + this.leftpad(datetime.getHours(), 2) + ':' + this.leftpad(datetime.getMinutes(), 2)
     },
     leftpad (number, targetLength) {
       let output = number + ''

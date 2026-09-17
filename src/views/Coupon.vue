@@ -1,11 +1,11 @@
 <template>
   <div id="Coupon">
-    <v-alert dismissible type="warning" v-model="alert" role="alert" class="mb-3">{{ alertMessage }}</v-alert>
+    <v-alert closable type="warning" v-model="alert" role="alert" class="mb-3">{{ alertMessage }}</v-alert>
     <v-row>
-      <v-col :xs="12" :md="5">
+      <v-col cols="12" :md="5">
         <qrcode-reader class="mr-3 mt-2 mb-3" :enable="qrState" :width="'32vw'" :height="'24vw'" :noResult="true" @OnSuccess="onSuccess" @OnError="onError" />
       </v-col>
-      <v-col :xs="12" :md="7">
+      <v-col cols="12" :md="7">
         <v-card>
           <v-card-row  class="green darken-1">
             <v-card-title>
@@ -22,8 +22,8 @@
             </template>
           </v-card-text>
           <v-card-row actions>
-            <v-btn class="lighten-2 white--text mr-2" info @click="clearUser">Clear User</v-btn>
-            <v-btn class="lighten-2 white--text" error :loading="revoking" :disabled="revoking" @click="revokCoupon">Revoke Coupon</v-btn>
+            <v-btn class="mr-2" color="info" @click="clearUser">Clear User</v-btn>
+            <v-btn class="lighten-2 white--text" color="error" :loading="revoking" :disabled="revoking" @click="revokCoupon">Revoke Coupon</v-btn>
           </v-card-row>
         </v-card>
       </v-col>
@@ -33,7 +33,7 @@
 
 <script>
 import apiClient from '../module/apiClient'
-import sha1 from 'hash.js/lib/hash/sha/1'
+import { sha1Hex } from '@/utils/hash.js'
 export default {
   name: 'Coupon',
   data () {
@@ -51,7 +51,7 @@ export default {
   },
   methods: {
     onSuccess (token) {
-      token = this.sha1Gen(token)
+      token = sha1Hex(token)
       if (this.token !== token) {
         this.token = token
         apiClient.getPuzzle(this.token).then((data) => {
@@ -66,11 +66,6 @@ export default {
     },
     onError (err) {
       console.log(err)
-    },
-    sha1Gen (raw) {
-      const hashGen = sha1()
-      hashGen.update(raw)
-      return hashGen.digest('hex')
     },
     clearUser () {
       this.user = null

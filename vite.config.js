@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vuetify from 'vite-plugin-vuetify'
-import path from 'path'
+import { fileURLToPath } from 'node:url'
 
 export default defineConfig(({ mode }) => ({
   base: mode === 'production'
@@ -15,7 +15,7 @@ export default defineConfig(({ mode }) => ({
   ],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src')
+      '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   }
 }))

@@ -12,7 +12,7 @@
           :cols="12"
           :md="7"
         >
-          <v-alert dismissible warning v-model="alert" role="alert">{{ alertMessage }}</v-alert>
+          <v-alert closable type="warning" v-model="alert" role="alert">{{ alertMessage }}</v-alert>
           <v-card>
             <v-card-title>Player</v-card-title>
             <v-card-text v-show="player.token !== ''">
@@ -34,7 +34,7 @@
       {{ snackbar.text }}
       <v-btn
         color="pink"
-        text
+        variant="text"
         @click="snackbar.status = false"
       >
         Close
@@ -45,10 +45,9 @@
 
 <script>
 import apiClient from '../module/apiClient'
-import sha1 from 'hash.js/lib/hash/sha/1'
+import { sha1Hex } from '@/utils/hash.js'
 import bingoShuffler from '@/utils/shuffledBingo.js'
 import SquareGrid from '@/components/SquareGrid.vue'
-import _ from 'lodash'
 
 export default {
   name: 'BingoGame',
@@ -98,15 +97,14 @@ export default {
     },
     countBingos () {
       const itemNum = this.shuffledBoothList.length
-      const edgeL = Math.ceil(Math.sqrt(itemNum, 2))
+      if (itemNum === 0) return 0
+      const edgeL = Math.ceil(Math.sqrt(itemNum))
       let bingosIndex = []
       // Horizontal
-      const horizontal = _.chunk(
-        Array(itemNum)
-          .fill(0)
-          .map((_, i) => i),
-        edgeL
-      )
+      const horizontal = []
+      for (let start = 0; start < itemNum; start += edgeL) {
+        horizontal.push(Array.from({ length: Math.min(edgeL, itemNum - start) }, (_, index) => start + index))
+      }
       bingosIndex = bingosIndex.concat(horizontal)
       // Vertical
       const vertical = Array(edgeL)
@@ -133,9 +131,9 @@ export default {
           (pv, stamp) =>
             (userDeliverers.findIndex(
               userDeliver => userDeliver === stamp.slug
-            ) > -1 ||
-              stamp.isBonus) &&
-            pv,
+            ) > -1
+            || stamp.isBonus)
+          && pv,
           true
         )
       ).length
@@ -146,7 +144,7 @@ export default {
       if (this.currentScanToken !== token) {
         this.currentScanToken = token
         this.alert = false
-        apiClient.getBingo(this.sha1Gen(token))
+        apiClient.getBingo(sha1Hex(token))
           .then((res) => {
             if (!res.valid) {
               this.player = {
@@ -177,11 +175,6 @@ export default {
     },
     onError (err) {
       console.log(err)
-    },
-    sha1Gen (raw) {
-      const hashGen = sha1()
-      hashGen.update(raw)
-      return hashGen.digest('hex')
     },
     clearPlayer () {
       this.openToast('玩家清單已經被清空(⊙ω⊙)')

@@ -1,5 +1,5 @@
 <template>
-  <div style="margin: 0 auto">
+  <div class="highcharts-light" style="margin: 0 auto">
 
   </div>
 </template>

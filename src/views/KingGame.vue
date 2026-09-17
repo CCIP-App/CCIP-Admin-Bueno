@@ -5,7 +5,7 @@
       wrap
     >
       <v-col
-        :xs="12"
+        cols="12"
         :md="6"
       >
         <qrcode-reader
@@ -18,12 +18,12 @@
         />
       </v-col>
       <v-col
-        :xs="12"
+        cols="12"
         :md="6"
       >
         <v-alert
-          dismissible
-          warning
+          closable
+          type="warning"
           v-model="alert"
           role="alert"
         >{{ alertMessage }}</v-alert>
@@ -51,7 +51,7 @@
         </v-card>
       </v-col>
       <v-col
-        :xs="12"
+        cols="12"
         :md="12"
       >
         <!-- <v-data-table

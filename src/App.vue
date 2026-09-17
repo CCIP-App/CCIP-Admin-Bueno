@@ -6,9 +6,11 @@
     <main>
       <v-main>
         <v-container fluid>
-          <transition name="slide" mode="out-in">
-            <router-view></router-view>
-          </transition>
+          <router-view v-slot="{ Component }">
+            <transition name="slide" mode="out-in">
+              <component :is="Component" />
+            </transition>
+          </router-view>
         </v-container>
       </v-main>
     </main>

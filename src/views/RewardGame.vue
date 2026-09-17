@@ -12,7 +12,7 @@
           cols="12"
           md="7"
         >
-          <v-alert dismissible warning v-model="alert" role="alert">{{ alertMessage }}</v-alert>
+          <v-alert closable type="warning" v-model="alert" role="alert">{{ alertMessage }}</v-alert>
           <v-card>
             <v-card-title>Player</v-card-title>
             <v-card-text v-show="players.length > 0">
@@ -34,7 +34,7 @@
       {{ snackbar.text }}
       <v-btn
         color="pink"
-        text
+        variant="text"
         @click="snackbar.status = false"
       >
         Close
@@ -45,7 +45,7 @@
 
 <script>
 import apiClient from '../module/apiClient'
-import sha1 from 'hash.js/lib/hash/sha/1'
+import { sha1Hex } from '@/utils/hash.js'
 export default {
   name: 'RewardGame',
   data () {
@@ -78,7 +78,7 @@ export default {
       if (this.currentScanToken !== token) {
         this.currentScanToken = token
         this.alert = false
-        apiClient.getReward(this.sha1Gen(token))
+        apiClient.getReward(sha1Hex(token))
           .then((res) => {
             if (!res.valid) {
               const bonusScore = this.rewardConfig.booths
@@ -121,11 +121,6 @@ export default {
     },
     onError (err) {
       console.log(err)
-    },
-    sha1Gen (raw) {
-      const hashGen = sha1()
-      hashGen.update(raw)
-      return hashGen.digest('hex')
     },
     clearPlayer () {
       this.openToast('玩家清單已經被清空(⊙ω⊙)')

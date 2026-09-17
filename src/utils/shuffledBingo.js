@@ -1,10 +1,4 @@
-import crypto from 'crypto'
-
-function md5Hash (token) {
-  const md5 = crypto.createHash('md5')
-  md5.update(token)
-  return md5.digest('hex')
-}
+import { md5Hex } from './hash.js'
 
 function generateSeed (md5hash) {
   const validChar = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f']
@@ -24,7 +18,7 @@ function generateSeed (md5hash) {
 
 export default function shuffledBingo (patterns) {
   return function (token, booths) {
-    const seed = generateSeed(md5Hash(token))
+    const seed = generateSeed(md5Hex(token))
 
     const boothSet = booths.reduce((set, booth) => {
       if (set[booth.significant] instanceof Array) {

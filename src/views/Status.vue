@@ -1,7 +1,7 @@
 <template>
   <div id='Status'>
-    <!-- <v-alert dismissible type="warning" v-model="alert" role="alert" class="mb-3">{{ alertMessage }}</v-alert> -->
-    <!-- <v-alert dismissible type="success" v-model="successCI" role="alert" class="mb-3">{{ alertMessage }}</v-alert> -->
+    <!-- <v-alert closable type="warning" v-model="alert" role="alert" class="mb-3">{{ alertMessage }}</v-alert> -->
+    <!-- <v-alert closable type="success" v-model="successCI" role="alert" class="mb-3">{{ alertMessage }}</v-alert> -->
     <v-tabs
       v-model="active"
       grow
@@ -40,7 +40,7 @@
                   <tr v-for="item in desserts"  :key="item">
                     <td
                       v-for="(value, key) in item"
-                      :class="[{'text-xs-right': key!=='name'},{'not-exist': value.trim()==='n/a'},{'used': value.trim().match(/^used/i) !== null}]"
+                      :class="[{'text-right': key!=='name'},{'not-exist': value.trim()==='n/a'},{'used': value.trim().match(/^used/i) !== null}]"
                       :key="item.name+key+value">{{ value }}</td>
                   </tr>
                 </tbody>

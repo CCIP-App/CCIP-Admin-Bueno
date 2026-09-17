@@ -5,13 +5,13 @@
       color="primary"
       :multi-line="true"
       :timeout="5000"
-      :top="true"
+      location="top"
     >
       <v-alert type="warning" v-model="alert" prominent role="alert" class="pa-3">{{ alertMessage }}</v-alert>
       <v-alert type="success" v-model="successCI" role="alert" class="pa-3">{{ alertMessage }}</v-alert>
       <v-btn
         dark
-        text
+        variant="text"
         @click="alert = false"
       >
         Close
@@ -20,14 +20,14 @@
     <v-select
       :items="checkInItems"
       label="選擇報到方法"
-      solo
+      variant="solo"
       v-model="nowFunc"
     ></v-select>
     <v-row class="mb-3" row wrap>
-      <v-col :xs="12" :md="4">
+      <v-col cols="12" :md="4">
         <qrcode-reader :enable="qrState" :width="'100%'" :height="'300px'" :noResult="true" @OnSuccess="OnQRCodeScanSuccess" />
       </v-col>
-      <v-col :xs="12" :md="6">
+      <v-col cols="12" :md="6">
         <v-card>
           <v-card-text>
             <ul v-if="user.user_id" role="userStatus">

@@ -16,10 +16,10 @@
 <script>
 export default {
   name: 'main-side',
-  props: { value: Boolean },
+  props: { modelValue: Boolean },
+  emits: ['update:modelValue'],
   data () {
     return {
-      drawer: null,
       items: [{
         title: '控制板',
         href: '/',
@@ -68,12 +68,14 @@ export default {
       ]
     }
   },
-  watch: {
-    drawer () {
-      this.$emit('input', this.drawer)
-    },
-    value () {
-      this.drawer = this.value
+  computed: {
+    drawer: {
+      get () {
+        return this.modelValue
+      },
+      set (value) {
+        this.$emit('update:modelValue', value)
+      }
     }
   }
 }

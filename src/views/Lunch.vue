@@ -1,12 +1,12 @@
 <template>
   <div id='Lunch'>
-    <v-alert dismissible warning v-model="alert" role="alert" class="mb-3">{{ alertMessage }}</v-alert>
-    <v-alert dismissible success v-model="successCI" role="alert" class="mb-3">{{ alertMessage }}</v-alert>
+    <v-alert closable type="warning" v-model="alert" role="alert" class="mb-3">{{ alertMessage }}</v-alert>
+    <v-alert closable type="success" v-model="successCI" role="alert" class="mb-3">{{ alertMessage }}</v-alert>
     <v-row row wrap>
-      <v-col :xs="12" :md="6">
+      <v-col cols="12" :md="6">
         <qrcode-reader :enable="qrState" :width="'100%'" :height="'300px'" :noResult="true" @OnSuccess="OnSuccess" />
       </v-col>
-      <v-col :xs="12" :md="6">
+      <v-col cols="12" :md="6">
         <v-card>
           <!-- <v-card-row class="green darken-1"> -->
             <v-card-title>
