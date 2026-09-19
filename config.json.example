@@ -3,10 +3,8 @@
   "password": "",
   "baseUrl": "",
   "event_id": "",
-  "oneSignal": {
-    "app_id": "",
-    "api_key": ""
-  },
   "rewardConfig": "",
-  "bingoConfig": ""
+  "bingoConfig": "",
+  "gateway_url": "https://push.example.org",
+  "gateway_key": ""
 }

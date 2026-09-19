@@ -9,6 +9,7 @@
   "author": "yoyo930021 <yoyo930021@gmail.com>",
   "scripts": {
     "dev": "vite",
+    "preview:local": "node scripts/preview-local.mjs",
     "build": "vite build",
     "lint": "eslint .",
     "test": "node --test tests/*.test.mjs && node tests/smoke.mjs"
