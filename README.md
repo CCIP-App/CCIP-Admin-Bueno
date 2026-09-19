@@ -21,14 +21,14 @@
 
 ## Build Setup
 
-Use Node.js 24 or newer. Copy `config.json.default` to `config.json` and fill in the event and API settings before running the app. Camera scanning requires HTTPS or localhost. Image upload is only shown when the browser does not support camera capture; denied permissions keep the camera workflow with a retry action. A yellow outline marks a located QR code that cannot yet be decoded, and a green outline marks a decoded QR code.
+Use Node.js 24 or newer. Copy `config.json.example` to `config.json` and fill in the event and API settings before running the app. Camera scanning requires HTTPS or localhost. Image upload is only shown when the browser does not support camera capture; denied permissions keep the camera workflow with a retry action. A yellow outline marks a located QR code that cannot yet be decoded, and a green outline marks a decoded QR code.
 
 ``` bash
 # install dependencies
 npm ci
 
 # configure the event and API endpoints
-cp config.json.default config.json
+cp config.json.example config.json
 
 # serve with hot reload at localhost:5173
 npm run dev
