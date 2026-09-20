@@ -25,12 +25,13 @@ assert.deepEqual(shuffledBingo('1111')(token, booths).map(booth => booth.slug), 
 
 const testConfig = {
   username: 'X-Test-Key',
-  password: 'test-only',
+  password: 'server-test-only',
   baseUrl: 'https://admin-test.invalid/api/',
   event_id: 'test',
-  oneSignal: { app_id: 'test', api_key: 'test-only' },
   rewardConfig: 'https://admin-test.invalid/reward.json',
-  bingoConfig: 'https://admin-test.invalid/bingo.json'
+  bingoConfig: 'https://admin-test.invalid/bingo.json',
+  gateway_url: 'https://push-test.invalid',
+  gateway_key: 'gateway-test-only'
 }
 const outDir = await mkdtemp(join(tmpdir(), 'ccip-admin-smoke-'))
 let server
@@ -39,6 +40,13 @@ let page
 const requests = []
 const errors = []
 const unexpected = []
+let eventContext = { event_id: 'test', organizer_name: 'Test organizer', send_until: '2027-01-01T00:00:00Z', publishing_enabled: true }
+let contextStatus = 200
+let pushStatus = 200
+let rolesFail = false
+let expectedPushFailure = false
+const pushes = []
+const contextRequests = []
 try {
   await build({
     logLevel: 'warn',
@@ -58,7 +66,36 @@ try {
   await context.route('**/*', async route => {
     const request = route.request()
     const target = new URL(request.url())
+    if (target.origin === testConfig.gateway_url) {
+      const headers = { 'access-control-allow-origin': new URL(url).origin, 'access-control-allow-headers': 'Authorization, Content-Type', 'access-control-allow-methods': 'GET, POST, OPTIONS', 'access-control-expose-headers': 'Retry-After', 'retry-after': '60', 'cache-control': 'no-store' }
+      if (request.method() === 'OPTIONS') return route.fulfill({ status: 204, headers })
+      assert.equal(request.headers().authorization, `Bearer ${testConfig.gateway_key}`)
+      assert.equal(request.headers()['x-test-key'], undefined)
+      assert.equal(target.search, '')
+      if (target.pathname === '/v1/context') {
+        contextRequests.push(target.href)
+        return route.fulfill({ status: contextStatus, headers, json: contextStatus === 200 ? eventContext : { code: 'INVALID_REQUEST', message: 'test' } })
+      }
+      if (target.pathname === '/v1/messages') {
+        const body = request.postDataJSON()
+        pushes.push(body)
+        if (pushStatus === 'lost') return route.abort()
+        const dispatches = body.roles.flatMap(role => ['en', 'zh-Hant'].map(locale => ({ role, locale, topic: `opass-v1.test.${role}.${locale}`, fcm_message_id: 'projects/test/messages/test' })))
+        const identity = { push_id: '00000000-0000-4000-8000-000000000001', event_id: 'test' }
+        let json = { ...identity, status: 'accepted', dispatches }
+        if (pushStatus === 502) json = { ...identity, status: 'incomplete', accepted: dispatches.slice(0, 1), unaccepted: dispatches.slice(1).map(({ fcm_message_id, ...item }, i) => ({ ...item, outcome: ['unknown', 'not_attempted', 'rejected'][i % 3], code: 'TEST' })) }
+        if ([400, 401, 403, 429, 500].includes(pushStatus)) json = { code: pushStatus === 403 ? 'EVENT_PUBLISHING_EXPIRED' : 'TEST', message: 'test' }
+        if (pushStatus === 'malformed') json = { status: 'accepted' }
+        return route.fulfill({ status: typeof pushStatus === 'number' ? pushStatus : 200, headers, json })
+      }
+      unexpected.push(target.href)
+      return route.abort()
+    }
     if (target.origin === new URL(url).origin) {
+      if (target.pathname.endsWith('.json')) {
+        unexpected.push(target.href)
+        return route.abort()
+      }
       if (target.pathname.endsWith('.wasm')) wasmRequests.push(target.href)
       if (target.pathname.endsWith('favicon.ico')) return route.fulfill({ status: 204 })
       return route.continue()
@@ -74,9 +111,11 @@ try {
       return route.abort()
     }
     if (request.method() === 'OPTIONS') return respond({})
+    assert.equal(request.headers().authorization, undefined)
+    if (target.pathname === '/api/roles') assert.equal(request.headers()['x-test-key'], testConfig.password)
     requests.push({ path: target.pathname, token: target.searchParams.get('token'), method: request.method(), body: request.postData() })
     switch (target.pathname) {
-      case '/api/roles': return respond(['attendee'])
+      case '/api/roles': return rolesFail ? route.fulfill({ status: 500, headers: { 'access-control-allow-origin': '*' }, json: {} }) : respond(['attendee'])
       case '/api/scenarios': return respond(['day1checkin'])
       case '/api/dashboard': return respond([{ role: 'attendee', logged: 1, total: 2, scenarios: [{ scenario: 'day1checkin', enabled: 2, used: 1 }] }])
       case '/api/dashboard/attendee': return respond([{ user_id: 'Demo Attendee', attr: {}, scenario: { day1checkin: { used: 1 } } }])
@@ -100,12 +139,15 @@ try {
   page.setDefaultTimeout(15000)
   page.on('pageerror', error => errors.push(error.message))
   page.on('console', message => {
+    if (expectedPushFailure && message.type() === 'error' && message.text().startsWith('Failed to load resource:')) return
     if (message.type() === 'error' || message.text().startsWith('[Vue warn]')) errors.push(message.text())
   })
   await page.goto(url)
   await page.getByText('OPass Admin - Upgrade test').waitFor()
   await page.locator('.highcharts-series').first().waitFor()
   assert.equal(await page.locator('.highcharts-background').first().evaluate(element => getComputedStyle(element).fill), 'rgb(255, 255, 255)')
+  assert.deepEqual(await page.locator('#Dashboard .v-card-text > p').evaluateAll(elements => elements.map(element => getComputedStyle(element).textAlign)), ['start', 'start'])
+  assert.equal(await page.locator('[role=refreshCountDown]').evaluate(element => getComputedStyle(element).textAlign), 'center')
   if (await page.locator('.v-navigation-drawer').evaluate(element => element.classList.contains('v-navigation-drawer--active'))) {
     await page.locator('.v-navigation-drawer__scrim').click()
   }
@@ -123,6 +165,7 @@ try {
   await page.getByRole('button', { name: '切換選單' }).click()
   await page.getByRole('link', { name: '查詢', exact: true }).click()
   await page.getByText('Demo Attendee', { exact: true }).waitFor()
+  assert.deepEqual(await page.locator('#Status tbody td').evaluateAll(elements => elements.map(element => getComputedStyle(element).textAlign)), ['start', 'start', 'start'])
 
   await page.goto(url + '#/checkin')
   await page.locator('#CheckIn input[type=file]').waitFor()
@@ -153,6 +196,7 @@ try {
 
   await page.goto(url + '#/announcement')
   await page.locator('#Announcement').waitFor()
+  assert.deepEqual(await page.locator('#Announcement h5').evaluateAll(elements => elements.map(element => getComputedStyle(element).textAlign)), ['start', 'start'])
   await page.locator('.v-select .v-field').click()
   await page.getByRole('option', { name: '全體', exact: true }).click()
   await page.getByPlaceholder('Msg(zh)').fill('測試公告')
@@ -161,10 +205,103 @@ try {
   await page.getByRole('cell', { name: 'Test announcement' }).waitFor()
   const announcement = requests.find(request => request.path === '/api/announcement' && request.method === 'POST')
   assert.deepEqual(new URLSearchParams(announcement.body).getAll('role[]'), ['attendee'])
+  expectedPushFailure = true
+  const fillPush = async () => {
+    await page.goto(url + '#/status')
+    await page.locator('#Status').waitFor()
+    const beforeRoles = requests.filter(r => r.path === '/api/roles').length
+    await page.goto(url + '#/push')
+    await page.getByRole('heading', { name: '新增推播通知', exact: true }).waitFor()
+    assert.equal(await page.locator('#PushNotification h5').evaluate(element => getComputedStyle(element).textAlign), 'start')
+    await page.locator('#PushNotification .v-select .v-field').click()
+    await page.getByRole('option', { name: '全體', exact: true }).click()
+    await page.getByRole('listbox').waitFor({ state: 'hidden' })
+    await page.getByLabel('英文', { exact: true }).fill('Test push')
+    await page.getByPlaceholder('Msg(zh)').fill('測試推播')
+    assert.equal(await page.locator('#PushNotification textarea').count(), 0)
+    assert.equal(await page.locator('#PushNotification').getByRole('textbox').count(), 3)
+    assert.equal(await page.locator('#PushNotification p').count(), 0)
+    assert.equal(requests.filter(r => r.path === '/api/roles').length, beforeRoles + 1)
+  }
+  const confirmPush = async () => {
+    await page.getByRole('button', { name: 'Send!', exact: true }).click()
+    await page.getByRole('dialog', { name: '確認推播：送出後無法收回', exact: true }).waitFor()
+    const confirmation = await page.getByRole('dialog').innerText()
+    for (const value of ['Test organizer', 'test', 'attendee', 'Test push', '測試推播']) assert.ok(confirmation.includes(value))
+  }
+  for (const status of [200, 400, 401, 403, 429, 500, 502, 'lost', 'malformed']) {
+    pushStatus = status
+    await fillPush()
+    if (status === 200) await page.getByLabel('URI', { exact: true }).fill('https://example.com/first')
+    await confirmPush()
+    const before = pushes.length
+    await page.getByRole('button', { name: '確認並送出', exact: true }).click()
+    await page.locator('[role=status]').waitFor()
+    const result = await page.locator('[role=status]').innerText()
+    assert.match(result, status === 200 ? /通知已送出/ : status === 502 ? /請勿重送/ : typeof status === 'string' ? /結果未知/ : /通知尚未送出/)
+    assert.equal(result.includes('FCM'), false)
+    if (status === 429) assert.match(result, /60 秒/)
+    assert.equal(pushes.length, before + 1, 'No automatic retry')
+    assert.deepEqual(pushes.at(-1), {
+      roles: ['attendee'], contents: { en: 'Test push', 'zh-Hant': '測試推播' },
+      ...(status === 200 ? { uri: 'https://example.com/first' } : {})
+    })
+    const preventResend = [502, 'lost', 'malformed'].includes(status)
+    assert.equal(await page.getByRole('button', { name: 'Send!', exact: true }).isDisabled(), preventResend)
+    if (status === 200) {
+      for (const label of ['英文', '正體中文', 'URI']) assert.equal(await page.getByLabel(label, { exact: true }).inputValue(), '')
+      await page.screenshot({ path: join(tmpdir(), 'ccip-admin-push-accepted.png'), fullPage: true, animations: 'disabled' })
+      await page.getByPlaceholder('Msg(en)').fill('Test push - next message')
+      await page.getByPlaceholder('Msg(zh)').fill('測試推播第二則')
+      await confirmPush()
+      assert.ok((await page.getByRole('dialog').innerText()).includes('Test push - next message'))
+      await page.getByRole('button', { name: '確認並送出', exact: true }).click()
+      await page.getByRole('status').waitFor()
+      assert.equal(pushes.length, before + 2, 'The next message can be sent without dismissing the result or reloading')
+      assert.deepEqual(pushes.at(-1), { roles: ['attendee'], contents: { en: 'Test push - next message', 'zh-Hant': '測試推播第二則' } })
+      for (const label of ['英文', '正體中文', 'URI']) assert.equal(await page.getByLabel(label, { exact: true }).inputValue(), '')
+      await page.getByPlaceholder('Msg(en)').fill('Test push')
+    }
+    assert.equal(await page.getByRole('status').getByRole('button').count(), 1)
+    await page.getByRole('status').getByRole('button').click()
+    assert.equal(await page.getByPlaceholder('Msg(zh)').inputValue(), preventResend || status === 200 ? '' : '測試推播')
+    assert.equal(await page.getByPlaceholder('Msg(en)').inputValue(), preventResend ? '' : 'Test push')
+    assert.equal(pushes.length, before + (status === 200 ? 2 : 1), 'Closing the result never resends')
+  }
+  for (const change of ['organizer_name', 'send_until']) {
+    await fillPush()
+    await confirmPush()
+    const previous = eventContext[change]
+    eventContext = { ...eventContext, [change]: change === 'organizer_name' ? 'Another organizer' : '2027-02-01T00:00:00Z' }
+    const before = pushes.length
+    await page.getByRole('button', { name: '確認並送出' }).click()
+    await page.getByText('推播設定或中央活動資料已變更，請重新確認。').waitFor()
+    assert.equal(pushes.length, before)
+    eventContext = { ...eventContext, [change]: previous }
+  }
+  for (const fault of ['event', 'expired', 'context400', 'context500']) {
+    await fillPush()
+    if (fault === 'event') eventContext.event_id = 'other'
+    if (fault === 'expired') eventContext.publishing_enabled = false
+    if (fault === 'context400') contextStatus = 400
+    if (fault === 'context500') contextStatus = 500
+    const before = pushes.length
+    await page.getByRole('button', { name: 'Send!', exact: true }).click()
+    await page.locator('#PushNotification .v-alert[role=alert]').waitFor()
+    assert.equal(await page.getByRole('dialog').count(), 0)
+    assert.equal(pushes.length, before)
+    eventContext = { ...eventContext, event_id: 'test', publishing_enabled: true }
+    contextStatus = 200
+  }
+  await page.goto(url + '#/status')
+  await page.locator('#Status').waitFor()
+  rolesFail = true
   await page.goto(url + '#/push')
-  await page.locator('#PushNotification').waitFor()
-  await page.locator('.v-select .v-field').click()
-  await page.getByRole('option', { name: '全體', exact: true }).click()
+  await page.getByText('角色清單載入失敗或不合法，禁止發送。').waitFor()
+  assert.equal(await page.getByRole('button', { name: 'Send!', exact: true }).isDisabled(), true)
+  rolesFail = false
+  expectedPushFailure = false
+  assert.ok(contextRequests.length > pushes.length, 'Context is checked before confirmation and again before sending')
 
   // Denied permissions must keep the camera workflow, including a retry action.
   await page.evaluate(() => {

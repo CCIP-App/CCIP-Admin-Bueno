@@ -40,7 +40,7 @@
                   <tr v-for="item in desserts"  :key="item">
                     <td
                       v-for="(value, key) in item"
-                      :class="[{'text-right': key!=='name'},{'not-exist': value.trim()==='n/a'},{'used': value.trim().match(/^used/i) !== null}]"
+                      :class="[{'not-exist': value.trim()==='n/a'},{'used': value.trim().match(/^used/i) !== null}]"
                       :key="item.name+key+value">{{ value }}</td>
                   </tr>
                 </tbody>

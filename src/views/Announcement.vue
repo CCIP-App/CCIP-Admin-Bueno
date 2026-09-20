@@ -4,7 +4,7 @@
       <v-row>
         <v-col cols="12" :md="12" style="margin: 0 auto;">
           <v-card style="margin: 0 auto;">
-            <v-card-text class=" text-center">
+            <v-card-text>
               <h5 class="ma-0">新增大會公告</h5>
               <v-select :items="options" placeholder="選擇對象" v-model.number="newAnnounce.role" :disabled="disabled"></v-select>
               <v-text-field type="text" placeholder="Msg(zh)" v-model="newAnnounce.msg_zh" :disabled="disabled"></v-text-field>
@@ -20,7 +20,7 @@
       <v-row>
         <v-col cols="12" :md="12" style="margin: 0 auto;">
           <v-card style="margin: 0 auto;">
-            <v-card-text class=" text-center">
+            <v-card-text>
               <h5 class="ma-0">大會公告歷程</h5>
               <v-table v-if="announcements.length!=0">
                 <thead>
