@@ -20,7 +20,7 @@
           <v-card>
             <v-card-text>
               <h4 class="ma-0 text-left">App 使用率</h4>
-              <p class="text-center ma-0 mt-4">{{ appLogged }} / {{ appTotal }} - {{ appPercentage }}% ({{ selectedRole }}: {{ this.series.logged }} / {{ this.series.total }} - {{ rolePercentage }}%)</p>
+              <p class="ma-0 mt-4">{{ appLogged }} / {{ appTotal }} - {{ appPercentage }}% ({{ selectedRole }}: {{ this.series.logged }} / {{ this.series.total }} - {{ rolePercentage }}%)</p>
               <v-progress-linear stream :buffer-value="Math.max(appPercentage, rolePercentage)" :model-value="Math.min(appPercentage, rolePercentage)" class="ma-0 mb-4"></v-progress-linear>
             </v-card-text>
           </v-card>
@@ -30,7 +30,7 @@
             <v-card>
               <v-card-text>
                 <h4 class="ma-0 text-left">{{ data.scenario }} 報到率</h4>
-                <p class="text-center ma-0 mt-4">{{ data.used }} / {{ data.enabled }} - {{ percentage(data.used, data.enabled) }}%</p>
+                <p class="ma-0 mt-4">{{ data.used }} / {{ data.enabled }} - {{ percentage(data.used, data.enabled) }}%</p>
                 <v-progress-linear stream :buffer-value="percentage(data.used, data.enabled)" :model-value="percentage(data.used, data.enabled)" class="ma-0 mb-4"></v-progress-linear>
               </v-card-text>
             </v-card>

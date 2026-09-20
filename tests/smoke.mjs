@@ -146,6 +146,8 @@ try {
   await page.getByText('OPass Admin - Upgrade test').waitFor()
   await page.locator('.highcharts-series').first().waitFor()
   assert.equal(await page.locator('.highcharts-background').first().evaluate(element => getComputedStyle(element).fill), 'rgb(255, 255, 255)')
+  assert.deepEqual(await page.locator('#Dashboard .v-card-text > p').evaluateAll(elements => elements.map(element => getComputedStyle(element).textAlign)), ['start', 'start'])
+  assert.equal(await page.locator('[role=refreshCountDown]').evaluate(element => getComputedStyle(element).textAlign), 'center')
   if (await page.locator('.v-navigation-drawer').evaluate(element => element.classList.contains('v-navigation-drawer--active'))) {
     await page.locator('.v-navigation-drawer__scrim').click()
   }
@@ -163,6 +165,7 @@ try {
   await page.getByRole('button', { name: '切換選單' }).click()
   await page.getByRole('link', { name: '查詢', exact: true }).click()
   await page.getByText('Demo Attendee', { exact: true }).waitFor()
+  assert.deepEqual(await page.locator('#Status tbody td').evaluateAll(elements => elements.map(element => getComputedStyle(element).textAlign)), ['start', 'start', 'start'])
 
   await page.goto(url + '#/checkin')
   await page.locator('#CheckIn input[type=file]').waitFor()
@@ -193,6 +196,7 @@ try {
 
   await page.goto(url + '#/announcement')
   await page.locator('#Announcement').waitFor()
+  assert.deepEqual(await page.locator('#Announcement h5').evaluateAll(elements => elements.map(element => getComputedStyle(element).textAlign)), ['start', 'start'])
   await page.locator('.v-select .v-field').click()
   await page.getByRole('option', { name: '全體', exact: true }).click()
   await page.getByPlaceholder('Msg(zh)').fill('測試公告')
@@ -208,6 +212,7 @@ try {
     const beforeRoles = requests.filter(r => r.path === '/api/roles').length
     await page.goto(url + '#/push')
     await page.getByRole('heading', { name: '新增推播通知', exact: true }).waitFor()
+    assert.equal(await page.locator('#PushNotification h5').evaluate(element => getComputedStyle(element).textAlign), 'start')
     await page.locator('#PushNotification .v-select .v-field').click()
     await page.getByRole('option', { name: '全體', exact: true }).click()
     await page.getByRole('listbox').waitFor({ state: 'hidden' })

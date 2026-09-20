@@ -4,7 +4,7 @@
       <v-row>
         <v-col cols="12" :md="12" style="margin: 0 auto;">
           <v-card style="margin: 0 auto;">
-            <v-card-text class="text-center">
+            <v-card-text>
               <h5 class="ma-0">新增推播通知</h5>
               <v-select :items="options" placeholder="選擇對象" aria-label="選擇對象" v-model="draft.role" :disabled="locked" />
               <v-text-field type="text" placeholder="Msg(zh)" aria-label="正體中文" v-model="draft.contents['zh-Hant']" :disabled="locked" />
