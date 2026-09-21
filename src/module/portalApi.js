@@ -1,5 +1,5 @@
 import axios from 'axios'
-import configs from '../../config.json'
+import { config as configs } from './config'
 const portalUrl = 'https://portal.opass.app/events/'
 const config = {
   baseURL: portalUrl,

@@ -7,6 +7,7 @@ export default defineConfig(({ mode }) => ({
   base: mode === 'production'
     ? '/admin/'
     : '/',
+  server: { headers: { 'Cache-Control': 'no-store' } },
   plugins: [
     vue(),
     vuetify({

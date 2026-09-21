@@ -21,7 +21,7 @@
 
 ## Build Setup
 
-Use Node.js 24 or newer. Copy `config.json.example` to `config.json` and fill in the event, API and Gateway settings before building the app. Camera scanning requires HTTPS or localhost. Image upload is only shown when the browser does not support camera capture; denied permissions keep the camera workflow with a retry action. A yellow outline marks a located QR code that cannot yet be decoded, and a green outline marks a decoded QR code.
+Use Node.js 24 or newer. Copy `config.json.example` to `config.json` and fill in the event, API and Gateway settings before running the app. All eight fields are loaded at runtime when the page opens; reload after changing settings. Builds do not require or embed `config.json`. Camera scanning requires HTTPS or localhost. Image upload is only shown when the browser does not support camera capture; denied permissions keep the camera workflow with a retry action. A yellow outline marks a located QR code that cannot yet be decoded, and a green outline marks a decoded QR code.
 
 ``` bash
 # install dependencies
@@ -43,7 +43,7 @@ npm exec playwright install chromium
 npm test
 ```
 
-The smoke check builds with test configuration and blocks real backend requests. It covers all enabled routes, navigation, light charts under dark system preferences, forms, QR image/video decoding, camera permissions and retry, detection outlines, camera cleanup, and token/Bingo compatibility. To use an existing Chrome installation, set `CHROME_BIN` to its executable path when running `npm test`.
+The smoke check serves mocked runtime configuration and blocks real backend requests. It covers configuration reloads and failures, all enabled routes, navigation, light charts under dark system preferences, forms, QR image/video decoding, camera permissions and retry, detection outlines, camera cleanup, and token/Bingo compatibility. To use an existing Chrome installation, set `CHROME_BIN` to its executable path when running `npm test`.
 
 ## 公開活動推播
 
@@ -59,7 +59,7 @@ OPASS_SECRETS_DIR=/path/to/protected-directory npm run preview:local
 
 開啟 `http://127.0.0.1:4173/admin/#/push`，Basic Auth 使用者為 `opass`，密碼來自上述檔案。中央須登記 origin `http://127.0.0.1:4173`。
 
-設定與建置產物含憑證，不得公開或提交至 Git。部署時，整個 `/admin/`（含靜態資源）都須受 Basic Auth 與 `Cache-Control: no-store` 保護；本機預覽已套用此保護。`npm run dev` 僅使用測試憑證。
+設定檔含憑證，不得公開或提交至 Git。部署時，將 document root 外的 `config.json` 映射到 `/admin/config.json`，回傳 `Content-Type: application/json`；不將設定檔放進 `public/` 或建置產物。整個 `/admin/`（含設定端點與靜態資源）都須受 Basic Auth 與 `Cache-Control: no-store` 保護。本機預覽已套用此保護，並從專案根目錄的 `config.json` 即時讀檔；開發模式由 Vite 提供 `/config.json`，僅使用測試憑證。修改設定後重新整理頁面即可，不需重新建置或重啟預覽服務。
 
 ---
 

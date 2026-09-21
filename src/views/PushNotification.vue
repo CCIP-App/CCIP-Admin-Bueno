@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import appConfig from '../../config.json'
+import { config as appConfig } from '../module/config'
 import apiClient from '../module/apiClient'
 import { buildMessageRequest, createGatewayClient, validatePushConfig, locales, validateRoles } from '../module/pushGateway'
 

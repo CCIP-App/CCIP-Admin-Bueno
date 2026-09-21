@@ -5,14 +5,14 @@ import { resolve, extname, sep, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { build } from 'vite'
 
-export function startPreview ({ directory, password, port = 4173 }) {
+export function startPreview ({ directory, password, configFile = fileURLToPath(new URL('../config.json', import.meta.url)), port = 4173 }) {
   const authorization = Buffer.from(`Basic ${Buffer.from(`opass:${password}`).toString('base64')}`)
   const server = createServer(async (req, res) => {
     res.setHeader('Cache-Control', 'no-store')
     res.setHeader('X-Content-Type-Options', 'nosniff')
     const send = (status, data) => {
       res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' })
-      res.end(JSON.stringify(data))
+      res.end(req.method === 'HEAD' ? undefined : JSON.stringify(data))
     }
     try {
       const path = new URL(req.url, 'http://localhost').pathname
@@ -22,6 +22,7 @@ export function startPreview ({ directory, password, port = 4173 }) {
         return send(401, { message: 'Authentication required' })
       }
       if (!['GET', 'HEAD'].includes(req.method)) return send(405, {})
+      if (path === '/admin/config.json') return send(200, JSON.parse(await readFile(configFile, 'utf8')))
       const relative = decodeURIComponent(path.replace(/^\/admin\/?/, '')) || 'index.html'
       const file = resolve(directory, relative)
       if (!file.startsWith(resolve(directory) + sep)) return send(404, {})

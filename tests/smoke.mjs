@@ -23,7 +23,7 @@ const booths = ['a', 'b', 'c', 'd'].map(slug => ({
 }))
 assert.deepEqual(shuffledBingo('1111')(token, booths).map(booth => booth.slug), ['c', 'd', 'a', 'b'])
 
-const testConfig = {
+let testConfig = {
   username: 'X-Test-Key',
   password: 'server-test-only',
   baseUrl: 'https://admin-test.invalid/api/',
@@ -45,32 +45,41 @@ let contextStatus = 200
 let pushStatus = 200
 let rolesFail = false
 let expectedPushFailure = false
+let expectedConfigFailure = false
+let configRequests = 0
+let portalRequests = 0
 const pushes = []
 const contextRequests = []
 try {
   await build({
     logLevel: 'warn',
     plugins: [{
-      name: 'test-config',
+      name: 'runtime-config-only',
       enforce: 'pre',
-      resolveId: id => id === '../../config.json' ? '\0test-config' : undefined,
-      load: id => id === '\0test-config' ? `export default ${JSON.stringify(testConfig)}` : undefined
+      resolveId (id) {
+        assert.ok(!/(^|\/)config\.json($|\?)/.test(id), 'Build must not import config.json')
+      }
     }],
     build: { outDir, emptyOutDir: true }
   })
   server = await preview({ logLevel: 'warn', build: { outDir }, preview: { host: '127.0.0.1', port: 0 } })
   const url = server.resolvedUrls.local[0]
+  const configUrl = new URL('config.json', url).href
   browser = await chromium.launch({ executablePath: process.env.CHROME_BIN })
   const context = await browser.newContext({ colorScheme: 'dark' })
   const wasmRequests = []
   await context.route('**/*', async route => {
     const request = route.request()
     const target = new URL(request.url())
+    if (target.href === configUrl) {
+      configRequests++
+      return route.fulfill({ json: testConfig, headers: { 'cache-control': 'no-store' } })
+    }
     if (target.origin === testConfig.gateway_url) {
       const headers = { 'access-control-allow-origin': new URL(url).origin, 'access-control-allow-headers': 'Authorization, Content-Type', 'access-control-allow-methods': 'GET, POST, OPTIONS', 'access-control-expose-headers': 'Retry-After', 'retry-after': '60', 'cache-control': 'no-store' }
       if (request.method() === 'OPTIONS') return route.fulfill({ status: 204, headers })
       assert.equal(request.headers().authorization, `Bearer ${testConfig.gateway_key}`)
-      assert.equal(request.headers()['x-test-key'], undefined)
+      assert.equal(request.headers()[testConfig.username.toLowerCase()], undefined)
       assert.equal(target.search, '')
       if (target.pathname === '/v1/context') {
         contextRequests.push(target.href)
@@ -80,8 +89,8 @@ try {
         const body = request.postDataJSON()
         pushes.push(body)
         if (pushStatus === 'lost') return route.abort()
-        const dispatches = body.roles.flatMap(role => ['en', 'zh-Hant'].map(locale => ({ role, locale, topic: `opass-v1.test.${role}.${locale}`, fcm_message_id: 'projects/test/messages/test' })))
-        const identity = { push_id: '00000000-0000-4000-8000-000000000001', event_id: 'test' }
+        const dispatches = body.roles.flatMap(role => ['en', 'zh-Hant'].map(locale => ({ role, locale, topic: `opass-v1.${testConfig.event_id}.${role}.${locale}`, fcm_message_id: 'projects/test/messages/test' })))
+        const identity = { push_id: '00000000-0000-4000-8000-000000000001', event_id: testConfig.event_id }
         let json = { ...identity, status: 'accepted', dispatches }
         if (pushStatus === 502) json = { ...identity, status: 'incomplete', accepted: dispatches.slice(0, 1), unaccepted: dispatches.slice(1).map(({ fcm_message_id, ...item }, i) => ({ ...item, outcome: ['unknown', 'not_attempted', 'rejected'][i % 3], code: 'TEST' })) }
         if ([400, 401, 403, 429, 500].includes(pushStatus)) json = { code: pushStatus === 403 ? 'EVENT_PUBLISHING_EXPIRED' : 'TEST', message: 'test' }
@@ -105,15 +114,19 @@ try {
       json,
       headers: { 'access-control-allow-origin': '*', 'access-control-allow-headers': '*', 'access-control-allow-methods': 'GET, POST, OPTIONS' }
     })
-    if (target.href === 'https://portal.opass.app/events/test') return respond({ event_id: 'Upgrade test' })
-    if (target.hostname !== 'admin-test.invalid') {
+    if (target.href === `https://portal.opass.app/events/${testConfig.event_id}`) {
+      portalRequests++
+      return respond({ event_id: `Upgrade ${testConfig.event_id}` })
+    }
+    if (target.origin !== new URL(testConfig.baseUrl).origin) {
       unexpected.push(target.href)
       return route.abort()
     }
     if (request.method() === 'OPTIONS') return respond({})
     assert.equal(request.headers().authorization, undefined)
-    if (target.pathname === '/api/roles') assert.equal(request.headers()['x-test-key'], testConfig.password)
+    if (target.pathname === '/api/roles') assert.equal(request.headers()[testConfig.username.toLowerCase()], testConfig.password)
     requests.push({ path: target.pathname, token: target.searchParams.get('token'), method: request.method(), body: request.postData() })
+    if ([testConfig.rewardConfig, testConfig.bingoConfig].includes(target.href)) return respond({ booths, bingoPattern: '1111', title: { zh: '測試', en: 'Test' } })
     switch (target.pathname) {
       case '/api/roles': return rolesFail ? route.fulfill({ status: 500, headers: { 'access-control-allow-origin': '*' }, json: {} }) : respond(['attendee'])
       case '/api/scenarios': return respond(['day1checkin'])
@@ -124,8 +137,6 @@ try {
       case '/api/status': return respond({ user_id: 'Demo Attendee', first_use: 1, role: 'attendee', scenarios: [] })
       case '/api/event/puzzle/deliverers': return respond(booths)
       case '/api/event/puzzle': return respond({ user_id: 'Demo Attendee', valid: null, deliverers: booths.map(booth => ({ deliverer: booth.slug })) })
-      case '/reward.json':
-      case '/bingo.json': return respond({ booths, bingoPattern: '1111', title: { zh: '測試', en: 'Test' } })
       default:
         unexpected.push(target.href)
         return route.abort()
@@ -139,7 +150,7 @@ try {
   page.setDefaultTimeout(15000)
   page.on('pageerror', error => errors.push(error.message))
   page.on('console', message => {
-    if (expectedPushFailure && message.type() === 'error' && message.text().startsWith('Failed to load resource:')) return
+    if ((expectedPushFailure || expectedConfigFailure) && message.type() === 'error' && message.text().startsWith('Failed to load resource:')) return
     if (message.type() === 'error' || message.text().startsWith('[Vue warn]')) errors.push(message.text())
   })
   await page.goto(url)
@@ -227,7 +238,7 @@ try {
     await page.getByRole('button', { name: 'Send!', exact: true }).click()
     await page.getByRole('dialog', { name: '確認推播：送出後無法收回', exact: true }).waitFor()
     const confirmation = await page.getByRole('dialog').innerText()
-    for (const value of ['Test organizer', 'test', 'attendee', 'Test push', '測試推播']) assert.ok(confirmation.includes(value))
+    for (const value of ['Test organizer', testConfig.event_id, 'attendee', 'Test push', '測試推播']) assert.ok(confirmation.includes(value))
   }
   for (const status of [200, 400, 401, 403, 429, 500, 502, 'lost', 'malformed']) {
     pushStatus = status
@@ -376,9 +387,48 @@ try {
   await page.getByText('Demo Attendee', { exact: true }).waitFor()
   assert.ok(await page.evaluate(() => window.testCameraTracks.every(track => track.readyState === 'ended')))
   assert.ok(wasmRequests.length > 0, 'QR decoder must load the locally bundled WASM')
+
+  // The same build must use all eight updated settings after a reload.
+  assert.equal(configRequests, 1, 'Settings are loaded once per page, not on navigation or sending')
+  testConfig = {
+    username: 'X-Reloaded-Key', password: 'reloaded-server-test-only',
+    baseUrl: 'https://admin-reloaded.invalid/api/', event_id: 'reloaded',
+    rewardConfig: 'https://admin-reloaded.invalid/reward-reloaded.json',
+    bingoConfig: 'https://admin-reloaded.invalid/bingo-reloaded.json',
+    gateway_url: 'https://push-reloaded.invalid', gateway_key: 'reloaded-gateway-test-only'
+  }
+  eventContext = { ...eventContext, event_id: testConfig.event_id }
+  pushStatus = 200
+  await page.reload()
+  await page.getByText('OPass Admin - Upgrade reloaded').waitFor()
+  await fillPush()
+  await confirmPush()
+  await page.getByRole('button', { name: '確認並送出', exact: true }).click()
+  await page.getByText('通知已送出。是否收到通知仍取決於使用者的裝置與通知設定。').waitFor()
+  await page.goto(url + '#/bingo')
+  await page.locator('#BingoGame input[type=file]').waitFor()
+  await scan()
+  await page.getByText('已達成 6 連線', { exact: true }).waitFor()
+  await page.goto(url + '#/reward')
+  await page.locator('#RewardGame input[type=file]').waitFor()
+  await scan()
+  await page.getByText('Demo Attendee： 4', { exact: true }).waitFor()
+  assert.equal(configRequests, 2)
+
+  expectedConfigFailure = true
+  for (const failure of [null, { status: 404, body: '' }, { contentType: 'application/json', body: '{' }, { json: { ...testConfig, baseUrl: null } }]) {
+    await page.route(configUrl, route => failure ? route.fulfill(failure) : route.abort(), { times: 1 })
+    const before = [requests.length, contextRequests.length, portalRequests, pushes.length]
+    await page.reload()
+    await page.getByRole('alert').getByText('後台載入失敗，請確認 config.json 設定後重新整理。').waitFor()
+    assert.deepEqual([requests.length, contextRequests.length, portalRequests, pushes.length], before, 'No backend requests before valid settings are loaded')
+  }
+  await page.getByRole('button', { name: '重新整理', exact: true }).click()
+  await page.getByText('OPass Admin - Upgrade reloaded').waitFor()
+  expectedConfigFailure = false
   assert.deepEqual(unexpected, [], 'Tests must not reach any real backend or external decoder')
   assert.deepEqual(errors, [], 'No browser errors or Vue warnings')
-  console.log('Passed: hashes, Bingo ordering, all routes, forms, light charts, QR decoding, camera permissions/retry, detection outlines and cleanup')
+  console.log('Passed: runtime config reload/failures, hashes, Bingo ordering, all routes, forms, light charts, QR decoding, camera permissions/retry, detection outlines and cleanup')
 } catch (error) {
   console.error({ errors, unexpected, requests })
   if (page) {
