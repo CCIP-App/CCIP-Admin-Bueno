@@ -43,183 +43,181 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { computed, onMounted, ref } from 'vue'
 import apiClient from '../module/apiClient'
 import { sha1Hex } from '@/utils/hash.js'
 import bingoShuffler from '@/utils/shuffledBingo.js'
+import QrcodeReader from '@/components/QrcodeReader.vue'
 import SquareGrid from '@/components/SquareGrid.vue'
 
-export default {
-  name: 'BingoGame',
-  components: {
-    SquareGrid
-  },
-  data () {
-    return {
-      qrState: true,
-      player: {
-        nickname: '',
-        token: ''
-      },
-      stamps: [],
-      alert: false,
-      alertMessage: '',
-      currentScanToken: '',
-      revoking: false,
-      boothList: [],
-      bingoConfig: {
-        booths: [],
-        confName: '',
-        bingoPattern: '',
-        title: {
-          zh: '',
-          en: ''
+const qrState = ref(true)
+const player = ref({
+  nickname: '',
+  token: ''
+})
+const stamps = ref([])
+const alert = ref(false)
+const alertMessage = ref('')
+const currentScanToken = ref('')
+const revoking = ref(false)
+const boothList = ref([])
+const bingoConfig = ref({
+  booths: [],
+  confName: '',
+  bingoPattern: '',
+  title: {
+    zh: '',
+    en: ''
+  }
+})
+const snackbar = ref({
+  status: false,
+  text: ''
+})
+
+const shuffledBoothList = computed(() => {
+  if (bingoConfig.value.booths.length === 0) return []
+
+  const shuffled = bingoShuffler(bingoConfig.value.bingoPattern)(
+    player.value.token || '',
+    bingoConfig.value.booths.map(booth => ({
+      ...booth,
+      displayText: booth.displayText['zh-TW']
+    }))
+  )
+  return shuffled
+})
+
+const countBingos = computed(() => {
+  const itemNum = shuffledBoothList.value.length
+  if (itemNum === 0) return 0
+  const edgeL = Math.ceil(Math.sqrt(itemNum))
+  let bingosIndex = []
+  // Horizontal
+  const horizontal = []
+  for (let start = 0; start < itemNum; start += edgeL) {
+    horizontal.push(Array.from({ length: Math.min(edgeL, itemNum - start) }, (_, index) => start + index))
+  }
+  bingosIndex = bingosIndex.concat(horizontal)
+  // Vertical
+  const vertical = Array(edgeL)
+    .fill(Array(edgeL).fill(0))
+    .map((row, rowI) => row.map((_, colI) => colI * edgeL + rowI))
+  bingosIndex = bingosIndex.concat(vertical)
+  // Diagonal
+  const RTLB = Array(edgeL)
+    .fill(0)
+    .map((_, i) => i + i * edgeL)
+  const LTRB = Array(edgeL)
+    .fill(0)
+    .map((_, i) => (i + 1) * (edgeL - 1))
+  bingosIndex = bingosIndex.concat([RTLB], [LTRB])
+  const lines = bingosIndex.map(bingoLine =>
+    bingoLine.map(index => ({
+      slug: shuffledBoothList.value[index].slug,
+      isBonus: shuffledBoothList.value[index].isBonus
+    }))
+  )
+  const userDeliverers = stamps.value.map(deliverer => deliverer.deliverer)
+  return lines.filter(line =>
+    line.reduce(
+      (pv, stamp) =>
+        (userDeliverers.findIndex(
+          userDeliver => userDeliver === stamp.slug
+        ) > -1
+        || stamp.isBonus)
+      && pv,
+      true
+    )
+  ).length
+})
+
+function onSuccess (token) {
+  if (currentScanToken.value !== token) {
+    currentScanToken.value = token
+    alert.value = false
+    apiClient.getBingo(sha1Hex(token))
+      .then((res) => {
+        if (!res.valid) {
+          player.value = {
+            nickname: res.user_id,
+            token: token
+          }
+          stamps.value = res.deliverers
+        } else {
+          // Show dialog: user is invalid
+          alertMessage.value = 'This player has been revoked.'
+          alert.value = true
         }
-      },
-      snackbar: {
-        status: false,
-        text: ''
-      }
-    }
-  },
-  computed: {
-    shuffledBoothList () {
-      if (this.bingoConfig.booths.length === 0) return []
-
-      const shuffled = bingoShuffler(this.bingoConfig.bingoPattern)(
-        this.player.token || '',
-        this.bingoConfig.booths.map(booth => ({
-          ...booth,
-          displayText: booth.displayText['zh-TW']
-        }))
-      )
-      return shuffled
-    },
-    countBingos () {
-      const itemNum = this.shuffledBoothList.length
-      if (itemNum === 0) return 0
-      const edgeL = Math.ceil(Math.sqrt(itemNum))
-      let bingosIndex = []
-      // Horizontal
-      const horizontal = []
-      for (let start = 0; start < itemNum; start += edgeL) {
-        horizontal.push(Array.from({ length: Math.min(edgeL, itemNum - start) }, (_, index) => start + index))
-      }
-      bingosIndex = bingosIndex.concat(horizontal)
-      // Vertical
-      const vertical = Array(edgeL)
-        .fill(Array(edgeL).fill(0))
-        .map((row, rowI) => row.map((_, colI) => colI * edgeL + rowI))
-      bingosIndex = bingosIndex.concat(vertical)
-      // Diagonal
-      const RTLB = Array(edgeL)
-        .fill(0)
-        .map((_, i) => i + i * edgeL)
-      const LTRB = Array(edgeL)
-        .fill(0)
-        .map((_, i) => (i + 1) * (edgeL - 1))
-      bingosIndex = bingosIndex.concat([RTLB], [LTRB])
-      const lines = bingosIndex.map(bingoLine =>
-        bingoLine.map(index => ({
-          slug: this.shuffledBoothList[index].slug,
-          isBonus: this.shuffledBoothList[index].isBonus
-        }))
-      )
-      const userDeliverers = this.stamps.map(deliverer => deliverer.deliverer)
-      return lines.filter(line =>
-        line.reduce(
-          (pv, stamp) =>
-            (userDeliverers.findIndex(
-              userDeliver => userDeliver === stamp.slug
-            ) > -1
-            || stamp.isBonus)
-          && pv,
-          true
-        )
-      ).length
-    }
-  },
-  methods: {
-    onSuccess (token) {
-      if (this.currentScanToken !== token) {
-        this.currentScanToken = token
-        this.alert = false
-        apiClient.getBingo(sha1Hex(token))
-          .then((res) => {
-            if (!res.valid) {
-              this.player = {
-                nickname: res.user_id,
-                token: token
-              }
-              this.stamps = res.deliverers
-            } else {
-              // Show dialog: user is invalid
-              this.alertMessage = 'This player has been revoked.'
-              this.alert = true
-            }
-          })
-          .catch((err) => {
-            // Show dialog: show request err
-            if (err.response) {
-              this.alertMessage = err.response.status + ' - ' + err.response.data.message
-            } else {
-              this.alertMessage = 'Something error on network'
-            }
-            this.alert = true
-          })
-      }
-    },
-    openToast (text) {
-      this.snackbar.text = text
-      this.snackbar.status = true
-    },
-    onError (err) {
-      console.log(err)
-    },
-    clearPlayer () {
-      this.openToast('玩家清單已經被清空(⊙ω⊙)')
-      this.currentScanToken = ''
-      this.player = {
-        nickname: '',
-        token: ''
-      }
-      this.alert = false
-      this.alertMessage = ''
-    },
-    revokPlayer () {
-      if (this.player === undefined) {
-        this.openToast('沒有東西可以註銷，不要亂戳(;´༎ຶД༎ຶ`)')
-        return
-      }
-
-      this.revoking = this.loader = true
-
-      apiClient.revokPlayer(this.player.token).then((data) => {
-        if (data.successful) {
-          this.player.nickname += ' - 已註銷'
+      })
+      .catch((err) => {
+        // Show dialog: show request err
+        if (err.response) {
+          alertMessage.value = err.response.status + ' - ' + err.response.data.message
+        } else {
+          alertMessage.value = 'Something error on network'
         }
-      }).catch((err) => {
-        console.error(err)
-      }).finally(() => {
-        this.revoking = false
+        alert.value = true
       })
-    },
-    loadBoothList () {
-      apiClient.getBoothList().then((res) => {
-        this.boothList = res
-      })
-    },
-    loadBingoConfig () {
-      apiClient.getBingoConfig().then((res) => {
-        this.bingoConfig = res
-      })
-    }
-  },
-  mounted () {
-    this.loadBoothList()
-    this.loadBingoConfig()
   }
 }
+
+function openToast (text) {
+  snackbar.value.text = text
+  snackbar.value.status = true
+}
+
+function onError (err) {
+  console.log(err)
+}
+
+function clearPlayer () {
+  openToast('玩家清單已經被清空(⊙ω⊙)')
+  currentScanToken.value = ''
+  player.value = {
+    nickname: '',
+    token: ''
+  }
+  alert.value = false
+  alertMessage.value = ''
+}
+
+function revokPlayer () {
+  if (player.value === undefined) {
+    openToast('沒有東西可以註銷，不要亂戳(;´༎ຶД༎ຶ`)')
+    return
+  }
+
+  revoking.value = true
+
+  apiClient.revokPlayer(player.value.token).then((data) => {
+    if (data.successful) {
+      player.value.nickname += ' - 已註銷'
+    }
+  }).catch((err) => {
+    console.error(err)
+  }).finally(() => {
+    revoking.value = false
+  })
+}
+
+function loadBoothList () {
+  apiClient.getBoothList().then((res) => {
+    boothList.value = res
+  })
+}
+
+function loadBingoConfig () {
+  apiClient.getBingoConfig().then((res) => {
+    bingoConfig.value = res
+  })
+}
+
+onMounted(() => {
+  loadBoothList()
+  loadBingoConfig()
+})
 </script>
 
 <style lang="scss">

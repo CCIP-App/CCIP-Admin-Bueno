@@ -1,23 +1,16 @@
 import { createApp } from 'vue'
 import vuetify from './plugins/vuetify'
 import App from './App.vue'
+import router from './router'
 import { loadConfig } from './module/config'
 
 async function start () {
   try {
     await loadConfig()
-    const [{ default: router }, { default: Components }] = await Promise.all([
-      import('./router'), import('./components/_index')
-    ])
-    const app = createApp(App)
+    createApp(App)
       .use(router)
       .use(vuetify)
-
-    Object.keys(Components).forEach(key => {
-      app.component(key, Components[key])
-    })
-
-    app.mount('#app')
+      .mount('#app')
   } catch {
     const root = document.querySelector('#app')
     root.setAttribute('role', 'alert')

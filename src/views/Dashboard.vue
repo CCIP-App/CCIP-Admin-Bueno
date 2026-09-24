@@ -20,7 +20,7 @@
           <v-card>
             <v-card-text>
               <h4 class="ma-0 text-left">App 使用率</h4>
-              <p class="ma-0 mt-4">{{ appLogged }} / {{ appTotal }} - {{ appPercentage }}% ({{ selectedRole }}: {{ this.series.logged }} / {{ this.series.total }} - {{ rolePercentage }}%)</p>
+              <p class="ma-0 mt-4">{{ appLogged }} / {{ appTotal }} - {{ appPercentage }}% ({{ selectedRole }}: {{ series.logged }} / {{ series.total }} - {{ rolePercentage }}%)</p>
               <v-progress-linear stream :buffer-value="Math.max(appPercentage, rolePercentage)" :model-value="Math.min(appPercentage, rolePercentage)" class="ma-0 mb-4"></v-progress-linear>
             </v-card-text>
           </v-card>
@@ -51,158 +51,154 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, onMounted } from 'vue'
 import apiClient from '../module/apiClient'
-export default {
-  name: 'Dashboard',
-  data () {
+import HighChart from '@/components/HighChart.vue'
+
+const countDown = ref(30)
+const roles = ref([])
+const selectedRole = ref('')
+const datas = ref([])
+
+const appLogged = computed(() => {
+  const logged = datas.value.map((d) => d.logged)
+  return logged.length > 0 ? logged.reduce((a, b) => a + b) : 0
+})
+const appTotal = computed(() => {
+  const total = datas.value.map((d) => d.total)
+  return total.length > 0 ? total.reduce((a, b) => a + b) : 0
+})
+const appPercentage = computed(() => {
+  return percentage(appLogged.value, appTotal.value)
+})
+const rolePercentage = computed(() => {
+  return Math.round((series.value.logged / series.value.total) * 10000) / 100 || 0
+})
+const series = computed(() => {
+  const roles = datas.value.filter((d) => d.role === selectedRole.value)
+  const role = roles.length > 0 ? roles[0] : null
+  if (role !== null) {
     return {
-      countDown: 30,
-      roles: [],
-      selectedRole: '',
-      datas: []
-    }
-  },
-  computed: {
-    appLogged () {
-      const logged = this.datas.map((d) => d.logged)
-      return logged.length > 0 ? logged.reduce((a, b) => a + b) : 0
-    },
-    appTotal () {
-      const total = this.datas.map((d) => d.total)
-      return total.length > 0 ? total.reduce((a, b) => a + b) : 0
-    },
-    appPercentage () {
-      return this.percentage(this.appLogged, this.appTotal)
-    },
-    rolePercentage () {
-      return Math.round((this.series.logged / this.series.total) * 10000) / 100 || 0
-    },
-    series () {
-      const roles = this.datas.filter((d) => d.role === this.selectedRole)
-      const role = roles.length > 0 ? roles[0] : null
-      if (role !== null) {
+      series: role.scenarios.map((scenario) => {
         return {
-          series: role.scenarios.map((scenario) => {
-            return {
-              chart: [
-                {
-                  name: '已用',
-                  y: scenario.used
-                },
-                {
-                  name: '未用',
-                  y: role.total - scenario.enabled
-                },
-                {
-                  name: '能用未用',
-                  y: scenario.enabled - scenario.used
-                }
-              ],
-              used: scenario.used,
-              enabled: scenario.enabled,
-              scenario: scenario.scenario
+          chart: [
+            {
+              name: '已用',
+              y: scenario.used
+            },
+            {
+              name: '未用',
+              y: role.total - scenario.enabled
+            },
+            {
+              name: '能用未用',
+              y: scenario.enabled - scenario.used
             }
-          }),
-          logged: role.logged,
-          total: role.total,
-          role: this.selectedRole
+          ],
+          used: scenario.used,
+          enabled: scenario.enabled,
+          scenario: scenario.scenario
         }
-      }
-      return {}
-    },
-    checkins () {
-      const checkins = this.datas.map((data) => data.scenarios).map((scenarios) => scenarios.filter((scenario) => scenario.scenario.match(/^day(.+)checkin$/))).flat()
-      const days = [...new Set(checkins.map((checkin) => checkin.scenario).sort())]
-      const allDays = days.map((day) => {
-        const checkin = checkins.filter((checkin) => checkin.scenario === day)
-        if (checkin.length > 0) {
-          const data = checkin.reduce((a, b) => {
-            return {
-              enabled: a.enabled + b.enabled,
-              used: a.used + b.used,
-              scenario: day
-            }
-          })
-          return data
-        } else {
-          return {}
+      }),
+      logged: role.logged,
+      total: role.total,
+      role: selectedRole.value
+    }
+  }
+  return {}
+})
+const checkins = computed(() => {
+  const checkins = datas.value.map((data) => data.scenarios).map((scenarios) => scenarios.filter((scenario) => scenario.scenario.match(/^day(.+)checkin$/))).flat()
+  const days = [...new Set(checkins.map((checkin) => checkin.scenario).sort())]
+  const allDays = days.map((day) => {
+    const checkin = checkins.filter((checkin) => checkin.scenario === day)
+    if (checkin.length > 0) {
+      const data = checkin.reduce((a, b) => {
+        return {
+          enabled: a.enabled + b.enabled,
+          used: a.used + b.used,
+          scenario: day
         }
       })
-      return allDays
+      return data
+    } else {
+      return {}
     }
-  },
-  methods: {
-    percentage (used, total) {
-      return (Math.round(used / total * 1000) / 10) || 0
-    },
-    // Overwriting base render method with actual data.
-    chartOption (datas) {
-      return {
-        credits: {
-          enabled: false
-        },
-        chart: {
-          type: 'pie',
-          spacing: [0, 0, 0, 0]
-        },
-        title: {
-          text: ''
-        },
-        plotOptions: {
-          series: {
-            dataLabels: {
-              enabled: true,
-              format:
-                '<span style="font-size: 1.1rem">{point.name} - {point.y}</span>',
-              distance: -30
-            }
-          }
-        },
+  })
+  return allDays
+})
 
-        tooltip: {
-          headerFormat: '',
-          pointFormat:
-            '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b><br/>'
-        },
-        series: [
-          {
-            name: 'Brands',
-            colorByPoint: true,
-            data: datas
-          }
-        ]
+function percentage (used, total) {
+  return (Math.round(used / total * 1000) / 10) || 0
+}
+
+// Overwriting base render method with actual data.
+function chartOption (datas) {
+  return {
+    credits: {
+      enabled: false
+    },
+    chart: {
+      type: 'pie',
+      spacing: [0, 0, 0, 0]
+    },
+    title: {
+      text: ''
+    },
+    plotOptions: {
+      series: {
+        dataLabels: {
+          enabled: true,
+          format:
+            '<span style="font-size: 1.1rem">{point.name} - {point.y}</span>',
+          distance: -30
+        }
       }
     },
-    refresh () {
-      this.countDown = 30
-      apiClient.getDasboard().then(
-        res => {
-          this.datas = res.data
-        },
-        err => {
-          console.error(err)
-        }
-      )
-    }
-  },
-  mounted () {
-    const self = this
-    apiClient.getRoles().then((roles) => {
-      self.roles = roles
-      if (self.roles.length > 0) {
-        self.selectedRole = self.roles[0]
+
+    tooltip: {
+      headerFormat: '',
+      pointFormat:
+        '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b><br/>'
+    },
+    series: [
+      {
+        name: 'Brands',
+        colorByPoint: true,
+        data: datas
       }
-      self.refresh()
-      setInterval(() => {
-        self.countDown -= 1
-        if (self.countDown === 0) {
-          self.refresh()
-        }
-      }, 1000)
-    })
+    ]
   }
 }
+
+function refresh () {
+  countDown.value = 30
+  apiClient.getDasboard().then(
+    res => {
+      datas.value = res.data
+    },
+    err => {
+      console.error(err)
+    }
+  )
+}
+
+onMounted(() => {
+  apiClient.getRoles().then((res) => {
+    roles.value = res
+    if (roles.value.length > 0) {
+      selectedRole.value = roles.value[0]
+    }
+    refresh()
+    setInterval(() => {
+      countDown.value -= 1
+      if (countDown.value === 0) {
+        refresh()
+      }
+    }, 1000)
+  })
+})
 </script>
 
 <style lang="scss">

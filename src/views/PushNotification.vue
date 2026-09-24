@@ -40,94 +40,96 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, onMounted } from 'vue'
 import { config as appConfig } from '../module/config'
 import apiClient from '../module/apiClient'
 import { buildMessageRequest, createGatewayClient, validatePushConfig, locales, validateRoles } from '../module/pushGateway'
 
 const emptyDraft = () => ({ role: '', contents: { en: '', 'zh-Hant': '' }, uri: '' })
 
-export default {
-  name: 'PushNotification',
-  data () {
-    return {
-      locales, labels: { en: '英文', 'zh-Hant': '正體中文' },
-      roles: null, draft: emptyDraft(), busy: false,
-      confirming: false, confirmation: null, result: null, error: ''
-    }
-  },
-  computed: {
-    options () { return [{ value: 'all', title: '全體' }, ...(this.roles || []).map(role => ({ value: role, title: role }))] },
-    preventResend () { return this.result && !['accepted', 'not_started'].includes(this.result.kind) },
-    locked () { return this.busy || this.confirming || !!this.preventResend }
-  },
-  async mounted () {
-    try {
-      this.roles = validateRoles(await apiClient.getRoles())
-    } catch {
-      this.error = '角色清單載入失敗或不合法，禁止發送。'
-    }
-    if (this.roles) await this.refresh()
-  },
-  methods: {
-    async checkPushSettings () {
-      const eventId = appConfig.event_id
-      const pushConfig = validatePushConfig({ gateway_url: appConfig.gateway_url, gateway_key: appConfig.gateway_key })
-      const eventContext = await createGatewayClient(pushConfig).getEventContext(eventId)
-      return { pushConfig, eventContext, eventId }
-    },
-    async refresh () {
-      this.busy = true
-      this.error = ''
-      try {
-        await this.checkPushSettings()
-      } catch (error) {
-        this.error = error.message
-      } finally {
-        this.busy = false
-      }
-    },
-    async prepare () {
-      if (this.locked || !this.roles) return
-      this.busy = true
-      this.error = ''
-      this.result = null
-      try {
-        const request = buildMessageRequest(this.roles, this.draft)
-        this.confirmation = { ...await this.checkPushSettings(), request }
-        this.confirming = true
-      } catch (error) {
-        this.error = error.message
-      } finally {
-        this.busy = false
-      }
-    },
-    async send () {
-      if (this.busy || !this.confirming) return
-      this.busy = true
-      this.error = ''
-      try {
-        const fresh = await this.checkPushSettings()
-        const before = this.confirmation
-        if (JSON.stringify(fresh) !== JSON.stringify({ pushConfig: before.pushConfig, eventContext: before.eventContext, eventId: before.eventId })) {
-          throw new Error('推播設定或中央活動資料已變更，請重新確認。')
-        }
-        this.result = await createGatewayClient(fresh.pushConfig).send(fresh.eventId, before.request)
-        if (this.result.kind === 'accepted') this.draft = { ...emptyDraft(), role: this.draft.role }
-      } catch (error) {
-        this.error = error.message
-      } finally {
-        this.busy = false
-        this.confirming = false
-        this.confirmation = null
-      }
-    },
-    async newMessage () {
-      if (this.preventResend) this.draft = emptyDraft()
-      this.result = null
-      await this.refresh()
-    }
+const labels = ref({ en: '英文', 'zh-Hant': '正體中文' })
+const roles = ref(null)
+const draft = ref(emptyDraft())
+const busy = ref(false)
+const confirming = ref(false)
+const confirmation = ref(null)
+const result = ref(null)
+const error = ref('')
+
+const options = computed(() => [{ value: 'all', title: '全體' }, ...(roles.value || []).map(role => ({ value: role, title: role }))])
+const preventResend = computed(() => result.value && !['accepted', 'not_started'].includes(result.value.kind))
+const locked = computed(() => busy.value || confirming.value || !!preventResend.value)
+
+onMounted(async () => {
+  try {
+    roles.value = validateRoles(await apiClient.getRoles())
+  } catch {
+    error.value = '角色清單載入失敗或不合法，禁止發送。'
   }
+  if (roles.value) await refresh()
+})
+
+async function checkPushSettings () {
+  const eventId = appConfig.event_id
+  const pushConfig = validatePushConfig({ gateway_url: appConfig.gateway_url, gateway_key: appConfig.gateway_key })
+  const eventContext = await createGatewayClient(pushConfig).getEventContext(eventId)
+  return { pushConfig, eventContext, eventId }
+}
+
+async function refresh () {
+  busy.value = true
+  error.value = ''
+  try {
+    await checkPushSettings()
+  } catch (err) {
+    error.value = err.message
+  } finally {
+    busy.value = false
+  }
+}
+
+async function prepare () {
+  if (locked.value || !roles.value) return
+  busy.value = true
+  error.value = ''
+  result.value = null
+  try {
+    const request = buildMessageRequest(roles.value, draft.value)
+    confirmation.value = { ...await checkPushSettings(), request }
+    confirming.value = true
+  } catch (err) {
+    error.value = err.message
+  } finally {
+    busy.value = false
+  }
+}
+
+async function send () {
+  if (busy.value || !confirming.value) return
+  busy.value = true
+  error.value = ''
+  try {
+    const fresh = await checkPushSettings()
+    const before = confirmation.value
+    if (JSON.stringify(fresh) !== JSON.stringify({ pushConfig: before.pushConfig, eventContext: before.eventContext, eventId: before.eventId })) {
+      throw new Error('推播設定或中央活動資料已變更，請重新確認。')
+    }
+    result.value = await createGatewayClient(fresh.pushConfig).send(fresh.eventId, before.request)
+    if (result.value.kind === 'accepted') draft.value = { ...emptyDraft(), role: draft.value.role }
+  } catch (err) {
+    error.value = err.message
+  } finally {
+    busy.value = false
+    confirming.value = false
+    confirmation.value = null
+  }
+}
+
+async function newMessage () {
+  if (preventResend.value) draft.value = emptyDraft()
+  result.value = null
+  await refresh()
 }
 </script>
 

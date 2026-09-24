@@ -17,15 +17,10 @@
   </v-app>
 </template>
 
-<script>
-export default {
-  data () {
-    return {
-      drawer: true
-    }
-  },
+<script setup>
+import { ref } from 'vue'
+import MainNav from '@/components/MainNav.vue'
+import MainSide from '@/components/MainSide.vue'
 
-  mounted () {
-  }
-}
+const drawer = ref(true)
 </script>

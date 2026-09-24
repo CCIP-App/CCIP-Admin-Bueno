@@ -33,7 +33,7 @@
             <ul v-if="user.user_id" role="userStatus">
               <li>Nickname: <span class="user_info">{{ user.user_id }}</span></li>
               <li>App login: <span class="user_info">{{ user.first_use ? user.first_use : 'Not yet' }}</span></li>
-              <template v-for="(scenarios, index) in sortScenarios(this.scenario, user.scenarios)" :key="index">
+              <template v-for="(scenarios, index) in sortScenarios(scenario, user.scenarios)" :key="index">
                 <li>
                   {{ scenarios.key }}:
                   <span class="user_info disabled" v-if="scenarios.disabled">{{ scenarios.disabled }}</span>
@@ -63,130 +63,130 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, watch, onMounted } from 'vue'
 import apiClient from '../module/apiClient'
-export default {
-  name: 'CheckIn',
-  data () {
-    return {
-      checkInItems: [],
-      nowFunc: '',
-      qrState: true,
-      token: '',
-      lastToken: '',
-      alert: false,
-      successCI: false,
-      alertMessage: '',
-      user: {},
-      scenario: ''
-    }
-  },
-  watch: {
-    nowFunc (newFunc, _) {
-      this.scenario = this.nowFunc.split('-').pop().trim()
-      this.user = {}
-      this.token = ''
-      this.lastToken = ''
-    }
-  },
-  methods: {
-    useTokenByKeyUp (event) {
-      if (event.key.toLowerCase() === 'enter') {
-        this.useToken()
-      }
-    },
-    useToken () {
-      if (this.lastToken === this.token && (this.lastToken + this.token).length > 0) {
-        // if (this.nowFunc.length > 0) {
-        //   this.alertMessage = '你重複掃太久了，請移開 QR Code'
-        //   this.alert = true
-        // }
-        return
-      }
+import QrcodeReader from '@/components/QrcodeReader.vue'
 
-      if (this.nowFunc === '') {
-        this.alertMessage = '請選擇要報到的方法'
-        this.alert = true
-        return
-      }
-      this.lastToken = this.token
+const checkInItems = ref([])
+const nowFunc = ref('')
+const qrState = ref(true)
+const token = ref('')
+const lastToken = ref('')
+const alert = ref(false)
+const successCI = ref(false)
+const alertMessage = ref('')
+const user = ref({})
+const scenario = ref('')
 
-      this.user = {}
-      this.alert = this.successCI = false
+watch(nowFunc, (newFunc, _) => {
+  scenario.value = nowFunc.value.split('-').pop().trim()
+  user.value = {}
+  token.value = ''
+  lastToken.value = ''
+})
 
-      apiClient.useScenarios(this.scenario, this.token).then((res) => {
-        this.updateUserData(res)
-        this.successCI = true
-        this.alertMessage = res.user_id + ' 報到成功'
-      }).catch((err) => {
-        if (err.response) {
-          if ('link expired/not available now'.match(err.response.data.message)) {
-            this.alertMessage = '還沒開始'
-          } else if ('has been used'.match(err.response.data.message)) {
-            this.alertMessage = '已經報到過了'
-          } else {
-            this.alertMessage = err.response.status + ' - ' + err.response.data.message
-          }
-        } else {
-          this.alertMessage = '網路壞了'
-        }
-        this.alert = true
-        this.getStatus(this.token)
-      })
-    },
-    OnQRCodeScanSuccess (token) {
-      this.token = token
-      this.useToken()
-    },
-    getStatus (token) {
-      apiClient.getStatus(token).then((res) => {
-        this.updateUserData(res)
-      }).catch((err) => {
-        if (err.response) {
-          this.alertMessage = err.response.status + ' - ' + err.response.data.message
-        } else {
-          this.alertMessage = '網路壞了'
-        }
-        this.alert = true
-      })
-    },
-    updateUserData (data) {
-      this.user = {
-        user_id: data.user_id,
-        first_use: data.first_use ? new Date(data.first_use * 1000).toLocaleString() : null,
-        role: data.role,
-        scenarios: data.scenarios.map((el) => ({
-          _raw: el,
-          id: el.id,
-          order: el.order,
-          disabled: el.disabled,
-          key: el.display_text['zh-TW'],
-          used: el.used ? new Date(el.used * 1000).toLocaleString() : null,
-          attr: el.attr
-        }))
-      }
-    },
-    sortScenarios (scenario, scenarios) {
-      const first = scenarios.filter((s) => s.id === scenario)
-      const nonFirst = scenarios.filter((s) => s.id !== scenario)
-      const sorted = first.concat(nonFirst)
-      return sorted
-    }
-  },
-  mounted () {
-    (async () => {
-      const data = (await Promise.all(
-        (await apiClient.getRoles()).map(async (role) => {
-          return {
-            role: role,
-            scenarios: await apiClient.allScenarios(role)
-          }
-        })
-      )).map((r) => r.scenarios.map((s) => `${r.role} - ${s}`)).flat()
-      this.checkInItems = data
-    })()
+function useTokenByKeyUp (event) {
+  if (event.key.toLowerCase() === 'enter') {
+    useToken()
   }
 }
+
+function useToken () {
+  if (lastToken.value === token.value && (lastToken.value + token.value).length > 0) {
+    // if (nowFunc.value.length > 0) {
+    //   alertMessage.value = '你重複掃太久了，請移開 QR Code'
+    //   alert.value = true
+    // }
+    return
+  }
+
+  if (nowFunc.value === '') {
+    alertMessage.value = '請選擇要報到的方法'
+    alert.value = true
+    return
+  }
+  lastToken.value = token.value
+
+  user.value = {}
+  alert.value = successCI.value = false
+
+  apiClient.useScenarios(scenario.value, token.value).then((res) => {
+    updateUserData(res)
+    successCI.value = true
+    alertMessage.value = res.user_id + ' 報到成功'
+  }).catch((err) => {
+    if (err.response) {
+      if ('link expired/not available now'.match(err.response.data.message)) {
+        alertMessage.value = '還沒開始'
+      } else if ('has been used'.match(err.response.data.message)) {
+        alertMessage.value = '已經報到過了'
+      } else {
+        alertMessage.value = err.response.status + ' - ' + err.response.data.message
+      }
+    } else {
+      alertMessage.value = '網路壞了'
+    }
+    alert.value = true
+    getStatus(token.value)
+  })
+}
+
+function OnQRCodeScanSuccess (newToken) {
+  token.value = newToken
+  useToken()
+}
+
+function getStatus (token) {
+  apiClient.getStatus(token).then((res) => {
+    updateUserData(res)
+  }).catch((err) => {
+    if (err.response) {
+      alertMessage.value = err.response.status + ' - ' + err.response.data.message
+    } else {
+      alertMessage.value = '網路壞了'
+    }
+    alert.value = true
+  })
+}
+
+function updateUserData (data) {
+  user.value = {
+    user_id: data.user_id,
+    first_use: data.first_use ? new Date(data.first_use * 1000).toLocaleString() : null,
+    role: data.role,
+    scenarios: data.scenarios.map((el) => ({
+      _raw: el,
+      id: el.id,
+      order: el.order,
+      disabled: el.disabled,
+      key: el.display_text['zh-TW'],
+      used: el.used ? new Date(el.used * 1000).toLocaleString() : null,
+      attr: el.attr
+    }))
+  }
+}
+
+function sortScenarios (scenario, scenarios) {
+  const first = scenarios.filter((s) => s.id === scenario)
+  const nonFirst = scenarios.filter((s) => s.id !== scenario)
+  const sorted = first.concat(nonFirst)
+  return sorted
+}
+
+onMounted(() => {
+  (async () => {
+    const data = (await Promise.all(
+      (await apiClient.getRoles()).map(async (role) => {
+        return {
+          role: role,
+          scenarios: await apiClient.allScenarios(role)
+        }
+      })
+    )).map((r) => r.scenarios.map((s) => `${r.role} - ${s}`)).flat()
+    checkInItems.value = data
+  })()
+})
 </script>
 
 <style lang="scss">

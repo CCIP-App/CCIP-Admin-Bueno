@@ -21,29 +21,26 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'SquareGrid',
-  props: {
-    booths: {
-      type: Array,
-      default: () => []
-    },
-    userStamps: {
-      type: Array,
-      default: () => []
-    },
-    showAnchor: {
-      type: Boolean,
-      default: false
-    }
+<script setup>
+import { computed } from 'vue'
+import Chip from '@/components/Chip.vue'
+
+const props = defineProps({
+  booths: {
+    type: Array,
+    default: () => []
   },
-  computed: {
-    edgeLength () {
-      return Math.ceil(Math.sqrt(this.booths.length, 2))
-    }
+  userStamps: {
+    type: Array,
+    default: () => []
+  },
+  showAnchor: {
+    type: Boolean,
+    default: false
   }
-}
+})
+
+const edgeLength = computed(() => Math.ceil(Math.sqrt(props.booths.length, 2)))
 </script>
 
 <style lang="scss">

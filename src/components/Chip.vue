@@ -4,29 +4,25 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'Chip',
-  props: {
-    displayName: {
-      type: String,
-      default: ''
-    },
-    logoUri: {
-      type: String,
-      default: ''
-    },
-    isActive: {
-      type: Boolean,
-      default: false
-    }
+<script setup>
+import { computed } from 'vue'
+
+const props = defineProps({
+  displayName: {
+    type: String,
+    default: ''
   },
-  computed: {
-    logourl () {
-      return this.logoUri
-    }
+  logoUri: {
+    type: String,
+    default: ''
+  },
+  isActive: {
+    type: Boolean,
+    default: false
   }
-}
+})
+
+const logourl = computed(() => props.logoUri)
 </script>
 
 <style lang="scss" scoped>

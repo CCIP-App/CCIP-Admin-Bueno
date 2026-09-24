@@ -46,91 +46,85 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted } from 'vue'
 import apiClient from '../module/apiClient'
 
-export default {
-  name: 'Announcement',
-  data () {
-    return {
-      options: [],
-      newAnnounce: {
-        role: '',
-        msg_zh: '',
-        msg_en: '',
-        uri: ''
-      },
-      disabled: false,
-      headers: ['公告時間', '發送對象', '中文訊息', '英文訊息', '網址'],
-      announcements: [],
-      alert: false,
-      alertMessage: ''
-    }
-  },
-  methods: {
-    send () {
-      this.disabled = true
-      this.alert = false
-      if (this.newAnnounce.msg_en.length > 0) {
-        apiClient.addAnnouncement(this.newAnnounce)
-          .then((res) => {
-            if (res.status === 'OK') {
-              this.newAnnounce.datetime = new Date().getTime() / 1000
-              this.announcements.unshift(this.newAnnounce)
-              this.newAnnounce = {
-                role: '',
-                msg_zh: '',
-                msg_en: '',
-                uri: ''
-              }
-            }
-            return this.announcements[0]
-          })
-          .catch((err) => {
-            console.log(err)
-            this.alertMessage = 'Something error on network'
-            this.alert = true
-          })
-          .then(() => {
-            this.disabled = false
-          })
-      } else {
-        this.alert = true
-        this.alertMessage = '至少需輸入英文'
-      }
-    },
-    formatDatetime (time) {
-      const datetime = new Date(time * 1000)
-      return this.leftpad(datetime.getMonth() + 1, 2) + '/' + this.leftpad(datetime.getDate(), 2) + ' '
-        + this.leftpad(datetime.getHours(), 2) + ':' + this.leftpad(datetime.getMinutes(), 2)
-    },
-    leftpad (number, targetLength) {
-      let output = number + ''
-      while (output.length < targetLength) {
-        output = '0' + output
-      }
-      return output
-    }
-  },
-  mounted () {
-    const self = this
-    apiClient.getRoles().then((res) => {
-      self.options = [
-        {
-          value: '',
-          title: '全體'
+const options = ref([])
+const newAnnounce = ref({
+  role: '',
+  msg_zh: '',
+  msg_en: '',
+  uri: ''
+})
+const disabled = ref(false)
+const headers = ref(['公告時間', '發送對象', '中文訊息', '英文訊息', '網址'])
+const announcements = ref([])
+const alert = ref(false)
+const alertMessage = ref('')
+
+function send () {
+  disabled.value = true
+  alert.value = false
+  if (newAnnounce.value.msg_en.length > 0) {
+    apiClient.addAnnouncement(newAnnounce.value)
+      .then((res) => {
+        if (res.status === 'OK') {
+          newAnnounce.value.datetime = new Date().getTime() / 1000
+          announcements.value.unshift(newAnnounce.value)
+          newAnnounce.value = {
+            role: '',
+            msg_zh: '',
+            msg_en: '',
+            uri: ''
+          }
         }
-      ].concat(res.map((r) => { return { value: [r], title: r } }))
-      self.options[0].value = self.options.slice(1).map(o => o.value).flat()
-    })
-    apiClient.getAnnouncement()
-      .then((Announcements) => {
-        this.announcements = Announcements
+        return announcements.value[0]
       })
       .catch((err) => {
-        console.log(err, err.config)
+        console.log(err)
+        alertMessage.value = 'Something error on network'
+        alert.value = true
       })
+      .then(() => {
+        disabled.value = false
+      })
+  } else {
+    alert.value = true
+    alertMessage.value = '至少需輸入英文'
   }
 }
 
+function formatDatetime (time) {
+  const datetime = new Date(time * 1000)
+  return leftpad(datetime.getMonth() + 1, 2) + '/' + leftpad(datetime.getDate(), 2) + ' '
+    + leftpad(datetime.getHours(), 2) + ':' + leftpad(datetime.getMinutes(), 2)
+}
+
+function leftpad (number, targetLength) {
+  let output = number + ''
+  while (output.length < targetLength) {
+    output = '0' + output
+  }
+  return output
+}
+
+onMounted(() => {
+  apiClient.getRoles().then((res) => {
+    options.value = [
+      {
+        value: '',
+        title: '全體'
+      }
+    ].concat(res.map((r) => { return { value: [r], title: r } }))
+    options.value[0].value = options.value.slice(1).map(o => o.value).flat()
+  })
+  apiClient.getAnnouncement()
+    .then((Announcements) => {
+      announcements.value = Announcements
+    })
+    .catch((err) => {
+      console.log(err, err.config)
+    })
+})
 </script>

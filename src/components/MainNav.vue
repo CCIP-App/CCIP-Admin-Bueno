@@ -10,20 +10,16 @@
   </header>
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted } from 'vue'
 import portalApi from '@/module/portalApi'
 
-export default {
-  name: 'main-nav',
-  emits: ['sidebar'],
-  data () {
-    return {
-      event_name: ''
-    }
-  },
-  async mounted () {
-    const eventInfo = await portalApi.getCurrentEvent()
-    this.event_name = eventInfo.event_id
-  }
-}
+defineEmits(['sidebar'])
+
+const event_name = ref('')
+
+onMounted(async () => {
+  const eventInfo = await portalApi.getCurrentEvent()
+  event_name.value = eventInfo.event_id
+})
 </script>

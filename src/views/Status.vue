@@ -53,94 +53,87 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, onMounted } from 'vue'
 import apiClient from '../module/apiClient'
-export default {
-  name: 'Status',
-  data () {
-    return {
-      search: '',
-      loading: false,
-      active: null,
-      tabName: [],
-      rawHeader: [],
-      rawData: [],
-      displayAllAttr: false
-      // qrState: true,
-      // token: "",
-      // alert: false,
-      // successCI: false,
-      // alertMessage: "",
-      // user: {}
-    }
-  },
-  computed: {
-    headers: function () {
-      const list = [{ text: 'name', value: 'name' }]
-      this.rawHeader.forEach((element) => {
-        list.push({
-          text: element,
-          value: element
-        })
-      })
-      list.push({ text: 'attr', value: 'attr' })
-      return list
-    },
-    desserts: function () {
-      const self = this
-      return this.rawData
-        .map((element) => {
-          const data = {
-            // name: element.attr.title + ' ' + element['user_id'],
-            name: element.user_id
-          }
-          self.rawHeader.forEach((ele) => {
-            if (element.scenario[ele] === undefined) {
-              data[ele] = 'n/a'
-            } else {
-              data[ele] = (element.scenario[ele].used === undefined) ? 'not used' : 'used'
-              if (this.displayAllAttr) {
-                if (element.scenario[ele].attr !== undefined && Object.keys(element.scenario[ele].attr).length > 0) {
-                  data[ele] += ' ' + JSON.stringify(element.scenario[ele].attr)
-                }
-              }
-            }
-          })
-          data.attr = JSON.stringify(element.attr)
-          return data
-        })
-        .filter((data) => !self.search ? true : data.name.includes(self.search))
-    }
-  },
-  methods: {
-    getData (key) {
-      const self = this
-      this.loading = true
-      apiClient.allScenarios(key).then((res) => {
-        self.rawHeader = res
-        return apiClient.getAllRoleScenarios(key)
-      }).then((res) => {
-        self.rawData = res
-        self.loading = false
-      })
-    },
-    change (key) {
-      this.rawHeader = []
-      this.rawData = []
-      this.getData(key)
-    }
-  },
-  mounted () {
-    const self = this
-    apiClient.getRoles().then((res) => {
-      self.tabName = res
-      self.active = res[0]
-      if (self.tabName.length > 0) {
-        self.change(self.tabName[0])
-      }
+
+const search = ref('')
+const loading = ref(false)
+const active = ref(null)
+const tabName = ref([])
+const rawHeader = ref([])
+const rawData = ref([])
+const displayAllAttr = ref(false)
+// const qrState = ref(true)
+// const token = ref('')
+// const alert = ref(false)
+// const successCI = ref(false)
+// const alertMessage = ref('')
+// const user = ref({})
+
+const headers = computed(() => {
+  const list = [{ text: 'name', value: 'name' }]
+  rawHeader.value.forEach((element) => {
+    list.push({
+      text: element,
+      value: element
     })
-  }
+  })
+  list.push({ text: 'attr', value: 'attr' })
+  return list
+})
+
+const desserts = computed(() => {
+  return rawData.value
+    .map((element) => {
+      const data = {
+        // name: element.attr.title + ' ' + element['user_id'],
+        name: element.user_id
+      }
+      rawHeader.value.forEach((ele) => {
+        if (element.scenario[ele] === undefined) {
+          data[ele] = 'n/a'
+        } else {
+          data[ele] = (element.scenario[ele].used === undefined) ? 'not used' : 'used'
+          if (displayAllAttr.value) {
+            if (element.scenario[ele].attr !== undefined && Object.keys(element.scenario[ele].attr).length > 0) {
+              data[ele] += ' ' + JSON.stringify(element.scenario[ele].attr)
+            }
+          }
+        }
+      })
+      data.attr = JSON.stringify(element.attr)
+      return data
+    })
+    .filter((data) => !search.value ? true : data.name.includes(search.value))
+})
+
+function getData (key) {
+  loading.value = true
+  apiClient.allScenarios(key).then((res) => {
+    rawHeader.value = res
+    return apiClient.getAllRoleScenarios(key)
+  }).then((res) => {
+    rawData.value = res
+    loading.value = false
+  })
 }
+
+function change (key) {
+  rawHeader.value = []
+  rawData.value = []
+  getData(key)
+}
+
+onMounted(() => {
+  apiClient.getRoles().then((res) => {
+    tabName.value = res
+    active.value = res[0]
+    if (tabName.value.length > 0) {
+      change(tabName.value[0])
+    }
+  })
+})
 </script>
 
 <style lang="scss">

@@ -82,106 +82,109 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { onMounted, ref } from 'vue'
 import kingApi from '../module/kingApi.js'
-export default {
-  name: 'KingGame',
-  data () {
-    return {
-      qrState: true,
-      token: '',
-      user: {
-        nick: '',
-        score: 0,
-        cost: 0,
-        prizes: []
-      },
-      alert: false,
-      alertMessage: '',
-      headers: [
-        {
-          text: 'id',
-          align: 'left',
-          value: 'id'
-        },
-        { text: '名稱', value: 'name' },
-        { text: '兌換分數', value: 'needScore' },
-        { text: '已兌換獎品數', value: 'convertTime' },
-        { text: '操作區', value: 'doing' }
-      ],
-      prizes: []
-    }
+import QrcodeReader from '@/components/QrcodeReader.vue'
+
+const qrState = ref(true)
+const token = ref('')
+const user = ref({
+  nick: '',
+  score: 0,
+  cost: 0,
+  prizes: []
+})
+const alert = ref(false)
+const alertMessage = ref('')
+// headers, prizes and convert back the prize table that is commented out in the template
+// eslint-disable-next-line no-unused-vars
+const headers = ref([
+  {
+    text: 'id',
+    align: 'left',
+    value: 'id'
   },
-  methods: {
-    onSuccess (token) {
-      this.token = token
-      this.loadUser()
-    },
-    onError (err) {
-      console.log(err)
-    },
-    loadUser () {
-      kingApi
-        .getUser(this.token)
-        .then(res => {
-          this.user.nick = res.data.nick
-          this.user.score = res.data.score
-          this.user.cost = res.data.cost
-          this.user.prizes = res.data.prizes
-        })
-        .catch(err => {
-          // Show dialog: show request err
-          if (err.response) {
-            this.alertMessage =
-              err.response.status + ' - ' + err.response.data.message
-          } else {
-            this.alertMessage = 'Something error on network'
-          }
-          this.alert = true
-        })
-    },
-    loadPrizes () {
-      kingApi
-        .getPrizes()
-        .then(res => {
-          this.prizes = res.data
-        })
-        .catch(err => {
-          // Show dialog: show request err
-          if (err.response) {
-            this.alertMessage =
-              err.response.status + ' - ' + err.response.data.message
-          } else {
-            this.alertMessage = 'Something error on network'
-          }
-          this.alert = true
-        })
-    },
-    convert (id) {
-      if (window.confirm('確定要兌換？')) {
-        kingApi
-          .convert(id, this.token)
-          .then(res => {
-            window.alert(res.data.status !== 'error' ? '兌換成功' : '兌換失敗')
-            this.loadUser()
-          })
-          .catch(err => {
-            // Show dialog: show request err
-            if (err.response) {
-              this.alertMessage =
-                err.response.status + ' - ' + err.response.data.message
-            } else {
-              this.alertMessage = 'Something error on network'
-            }
-            this.alert = true
-          })
+  { text: '名稱', value: 'name' },
+  { text: '兌換分數', value: 'needScore' },
+  { text: '已兌換獎品數', value: 'convertTime' },
+  { text: '操作區', value: 'doing' }
+])
+const prizes = ref([])
+
+function onSuccess (scannedToken) {
+  token.value = scannedToken
+  loadUser()
+}
+
+function onError (err) {
+  console.log(err)
+}
+
+function loadUser () {
+  kingApi
+    .getUser(token.value)
+    .then(res => {
+      user.value.nick = res.data.nick
+      user.value.score = res.data.score
+      user.value.cost = res.data.cost
+      user.value.prizes = res.data.prizes
+    })
+    .catch(err => {
+      // Show dialog: show request err
+      if (err.response) {
+        alertMessage.value =
+          err.response.status + ' - ' + err.response.data.message
+      } else {
+        alertMessage.value = 'Something error on network'
       }
-    }
-  },
-  mounted () {
-    this.loadPrizes()
+      alert.value = true
+    })
+}
+
+function loadPrizes () {
+  kingApi
+    .getPrizes()
+    .then(res => {
+      prizes.value = res.data
+    })
+    .catch(err => {
+      // Show dialog: show request err
+      if (err.response) {
+        alertMessage.value =
+          err.response.status + ' - ' + err.response.data.message
+      } else {
+        alertMessage.value = 'Something error on network'
+      }
+      alert.value = true
+    })
+}
+
+// eslint-disable-next-line no-unused-vars
+function convert (id) {
+  if (window.confirm('確定要兌換？')) {
+    kingApi
+      .convert(id, token.value)
+      .then(res => {
+        window.alert(res.data.status !== 'error' ? '兌換成功' : '兌換失敗')
+        loadUser()
+      })
+      .catch(err => {
+        // Show dialog: show request err
+        if (err.response) {
+          alertMessage.value =
+            err.response.status + ' - ' + err.response.data.message
+        } else {
+          alertMessage.value = 'Something error on network'
+        }
+        alert.value = true
+      })
   }
 }
+
+onMounted(() => {
+  loadPrizes()
+})
 </script>
 
 <style lang="scss">

@@ -43,136 +43,139 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { onMounted, ref } from 'vue'
 import apiClient from '../module/apiClient'
 import { sha1Hex } from '@/utils/hash.js'
-export default {
-  name: 'RewardGame',
-  data () {
-    return {
-      qrState: true,
-      players: [],
-      tokens: [],
-      alert: false,
-      alertMessage: '',
-      currentProcessToken: '',
-      revoking: false,
-      boothList: [],
-      rewardConfig: {
-        booths: [],
-        confName: '',
-        bingoPattern: '',
-        title: {
-          zh: '',
-          en: ''
-        }
-      },
-      snackbar: {
-        status: false,
-        text: ''
-      }
-    }
-  },
-  methods: {
-    onSuccess (token) {
-      if (this.currentScanToken !== token) {
-        this.currentScanToken = token
-        this.alert = false
-        apiClient.getReward(sha1Hex(token))
-          .then((res) => {
-            if (!res.valid) {
-              const bonusScore = this.rewardConfig.booths
-                .filter(booth => booth.isBonus)
-                .reduce((gotPoint, booth) => gotPoint + booth.point, 0)
-              const userScore = res.deliverers.reduce((gotPoint, stamp) => {
-                const deliverer = this.rewardConfig.booths.find(
-                  booth => booth.slug === stamp.deliverer && !booth.isBonus
-                )
-                return deliverer && deliverer.point
-                  ? gotPoint + Number(deliverer.point)
-                  : gotPoint
-              }, 0)
-              this.players.push({
-                nickname: res.user_id,
-                token: token,
-                score: bonusScore + userScore
-              })
-              this.tokens.push(token)
-            } else {
-              // Show dialog: user is invalid
-              this.alertMessage = 'This player has been revoked.'
-              this.alert = true
-            }
-          })
-          .catch((err) => {
-            // Show dialog: show request err
-            if (err.response) {
-              this.alertMessage = err.response.status + ' - ' + err.response.data.message
-            } else {
-              this.alertMessage = 'Something error on network'
-            }
-            this.alert = true
-          })
-      }
-    },
-    openToast (text) {
-      this.snackbar.text = text
-      this.snackbar.status = true
-    },
-    onError (err) {
-      console.log(err)
-    },
-    clearPlayer () {
-      this.openToast('玩家清單已經被清空(⊙ω⊙)')
-      this.currentScanToken = ''
-      this.players = []
-      this.tokens = []
-      this.alert = false
-      this.alertMessage = ''
-    },
-    revokPlayer () {
-      if (this.tokens.length === 0) {
-        this.openToast('沒有東西可以註銷，不要亂戳(;´༎ຶД༎ຶ`)')
-        return
-      }
+import QrcodeReader from '@/components/QrcodeReader.vue'
 
-      // if (this.players.filter((el) => el.clear).length === 0) {
-      //   this.openToast('沒有完成大地遊戲的玩家喔！')
-      //   return
-      // }
-      this.revoking = this.loader = true
-      Promise.all(this.players.map((el) => el.token).map((el) => apiClient.revokPlayer(el)))
-        .then((ress) => {
-          ress.forEach((res) => {
-            if (res.successful) {
-              this.tokens.splice(this.tokens.indexOf(res.token), 1)
-              this.players.find((el) => el.token === res.token).nickname += ' - 已註銷'
-            }
+const qrState = ref(true)
+const players = ref([])
+const tokens = ref([])
+const alert = ref(false)
+const alertMessage = ref('')
+const revoking = ref(false)
+const boothList = ref([])
+const rewardConfig = ref({
+  booths: [],
+  confName: '',
+  bingoPattern: '',
+  title: {
+    zh: '',
+    en: ''
+  }
+})
+const snackbar = ref({
+  status: false,
+  text: ''
+})
+// Not reactive and initially undefined, as before (it was never declared in data)
+let currentScanToken
+
+function onSuccess (token) {
+  if (currentScanToken !== token) {
+    currentScanToken = token
+    alert.value = false
+    apiClient.getReward(sha1Hex(token))
+      .then((res) => {
+        if (!res.valid) {
+          const bonusScore = rewardConfig.value.booths
+            .filter(booth => booth.isBonus)
+            .reduce((gotPoint, booth) => gotPoint + booth.point, 0)
+          const userScore = res.deliverers.reduce((gotPoint, stamp) => {
+            const deliverer = rewardConfig.value.booths.find(
+              booth => booth.slug === stamp.deliverer && !booth.isBonus
+            )
+            return deliverer && deliverer.point
+              ? gotPoint + Number(deliverer.point)
+              : gotPoint
+          }, 0)
+          players.value.push({
+            nickname: res.user_id,
+            token: token,
+            score: bonusScore + userScore
           })
-        })
-        .catch((err) => {
-          console.error(err)
-        })
-        .then(() => {
-          this.revoking = false
-        })
-    },
-    loadBoothList () {
-      apiClient.getBoothList().then((res) => {
-        this.boothList = res
+          tokens.value.push(token)
+        } else {
+          // Show dialog: user is invalid
+          alertMessage.value = 'This player has been revoked.'
+          alert.value = true
+        }
       })
-    },
-    loadRewardConfig () {
-      apiClient.getRewardConfig().then((res) => {
-        this.rewardConfig = res
+      .catch((err) => {
+        // Show dialog: show request err
+        if (err.response) {
+          alertMessage.value = err.response.status + ' - ' + err.response.data.message
+        } else {
+          alertMessage.value = 'Something error on network'
+        }
+        alert.value = true
       })
-    }
-  },
-  mounted () {
-    this.loadBoothList()
-    this.loadRewardConfig()
   }
 }
+
+function openToast (text) {
+  snackbar.value.text = text
+  snackbar.value.status = true
+}
+
+function onError (err) {
+  console.log(err)
+}
+
+function clearPlayer () {
+  openToast('玩家清單已經被清空(⊙ω⊙)')
+  currentScanToken = ''
+  players.value = []
+  tokens.value = []
+  alert.value = false
+  alertMessage.value = ''
+}
+
+function revokPlayer () {
+  if (tokens.value.length === 0) {
+    openToast('沒有東西可以註銷，不要亂戳(;´༎ຶД༎ຶ`)')
+    return
+  }
+
+  // if (players.value.filter((el) => el.clear).length === 0) {
+  //   openToast('沒有完成大地遊戲的玩家喔！')
+  //   return
+  // }
+  revoking.value = true
+  Promise.all(players.value.map((el) => el.token).map((el) => apiClient.revokPlayer(el)))
+    .then((ress) => {
+      ress.forEach((res) => {
+        if (res.successful) {
+          tokens.value.splice(tokens.value.indexOf(res.token), 1)
+          players.value.find((el) => el.token === res.token).nickname += ' - 已註銷'
+        }
+      })
+    })
+    .catch((err) => {
+      console.error(err)
+    })
+    .then(() => {
+      revoking.value = false
+    })
+}
+
+function loadBoothList () {
+  apiClient.getBoothList().then((res) => {
+    boothList.value = res
+  })
+}
+
+function loadRewardConfig () {
+  apiClient.getRewardConfig().then((res) => {
+    rewardConfig.value = res
+  })
+}
+
+onMounted(() => {
+  loadBoothList()
+  loadRewardConfig()
+})
 </script>
 
 <style lang="scss">
