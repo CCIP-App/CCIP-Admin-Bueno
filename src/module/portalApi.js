@@ -15,7 +15,6 @@ export default {
     return client.get(event).then((res) => res.data)
   },
   getCurrentEvent () {
-    console.log(this)
     return this.getEvent(configs.event_id)
   }
 }
