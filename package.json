@@ -17,7 +17,7 @@
   "dependencies": {
     "@noble/hashes": "^2.4.0",
     "axios": "^1.20.0",
-    "highcharts": "^13.0.2",
+    "highcharts": "^13.1.1",
     "material-design-icons-iconfont": "^6.7.0",
     "vue": "^3.5.43",
     "vue-router": "^5.3.1",
